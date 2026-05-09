@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>合盘 · 古籍合婚 · 一份不订阅的合盘报告</title>
+  <meta name="description" content="基于《穷通宝鉴》《三命通会》原文的合盘报告。每条结论附古籍页码。¥29 一次买断，无订阅。">
+  <meta property="og:title" content="合盘 · 古籍合婚">
+  <meta property="og:description" content="一份每条结论都有古籍页码的合盘报告。¥29 买断，不订阅。">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='12' fill='%23B8362A'/><text x='16' y='22' text-anchor='middle' font-family='Songti SC,serif' font-size='16' font-weight='700' fill='%23F5EFE0'>合</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #F5EFE0;
+      --paper-warm: #EDE3CB;
+      --paper-deep: #E8DBBE;
+      --ink: #1A1817;
+      --ink-soft: #3A332D;
+      --ink-mute: #6B5F52;
+      --vermillion: #B8362A;
+      --vermillion-soft: #C9554A;
+      --vermillion-deep: #8E2520;
+      --gold: #B8924A;
+      --gold-soft: #D4B370;
+      --gold-bright: #E5C385;
+      --jade: #4F6B5C;
+      --moon: #E8DFC8;
+      --serif-cn: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --serif-en: "Cormorant Garamond", "Iowan Old Style", "Georgia", serif;
+      --mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--serif-cn);
+      line-height: 1.7;
+      font-feature-settings: "palt";
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Paper texture */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.6 0 0 0 0 0.5 0 0 0 0 0.3 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+    main, nav, footer { position: relative; z-index: 1; }
+
+    /* ============= NAV ============= */
+    .nav {
+      position: sticky; top: 0;
+      padding: 18px 32px;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 50;
+      background: rgba(245, 239, 224, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(26, 24, 23, 0.08);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--ink);
+      letter-spacing: 4px;
+    }
+    .nav-mark {
+      width: 32px; height: 32px;
+      background: var(--vermillion);
+      color: var(--paper);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--ink-mute);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--vermillion); }
+    .nav-cta {
+      background: var(--vermillion);
+      color: var(--paper);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-decoration: none;
+    }
+    .nav-cta:hover { background: var(--vermillion-deep); }
+
+    /* ============= HERO ============= */
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 32px 60px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    @media (max-width: 880px) { .hero { grid-template-columns: 1fr; padding: 40px 24px; gap: 40px; } }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--vermillion);
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+    .hero-title {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 52px;
+      line-height: 1.18;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 880px) { .hero-title { font-size: 38px; } }
+
+    .hero-title em {
+      font-style: normal;
+      color: var(--vermillion);
+      position: relative;
+      display: inline-block;
+    }
+    .hero-title em::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -4px;
+      height: 6px;
+      background: var(--gold-soft);
+      opacity: 0.4;
+      z-index: -1;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      line-height: 1.85;
+      color: var(--ink-soft);
+      margin-bottom: 32px;
+      max-width: 520px;
+    }
+    .hero-sub strong { color: var(--ink); font-weight: 600; }
+
+    .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 32px; }
+    .btn-primary {
+      background: var(--vermillion);
+      color: var(--paper);
+      padding: 16px 32px;
+      border: none;
+      border-radius: 999px;
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(184, 54, 42, 0.25);
+    }
+    .btn-primary:hover { background: var(--vermillion-deep); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(184, 54, 42, 0.35); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      padding: 16px 24px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      font-family: var(--serif-cn);
+      font-weight: 500;
+      font-size: 15px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+    .hero-trust {
+      display: flex; gap: 24px; flex-wrap: wrap;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--ink-mute);
+    }
+    .hero-trust span { display: flex; align-items: center; gap: 6px; }
+    .hero-trust .dot { color: var(--vermillion); }
+
+    /* HERO VISUAL */
+    .hero-visual {
+      position: relative;
+      aspect-ratio: 1;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .hexagram {
+      width: 100%; height: 100%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(245, 239, 224, 0.6), rgba(232, 219, 190, 0.4)),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.6 0 0 0 0 0.5 0 0 0 0 0.3 0 0 0 0.1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      border-radius: 50%;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow:
+        inset 0 0 80px rgba(184, 146, 74, 0.2),
+        0 30px 60px rgba(26, 24, 23, 0.12);
+    }
+    .hexagram-symbol {
+      font-size: 140px;
+      line-height: 1;
+      color: var(--vermillion);
+      letter-spacing: 12px;
+      margin-bottom: 12px;
+    }
+    .hexagram-text {
+      position: absolute;
+      bottom: 60px;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 28px;
+      letter-spacing: 8px;
+      color: var(--ink);
+    }
+    .stamp-corner {
+      position: absolute;
+      top: -12px; right: -8px;
+      width: 96px; height: 96px;
+      background: var(--vermillion);
+      border-radius: 50%;
+      color: var(--paper);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 4px;
+      writing-mode: vertical-rl;
+      transform: rotate(-8deg);
+      box-shadow: 0 8px 24px rgba(184, 54, 42, 0.3);
+      opacity: 0.95;
+      border: 2px solid rgba(245, 239, 224, 0.3);
+    }
+    .annotation {
+      position: absolute;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-mute);
+    }
+    .ann-1 { top: 8%; left: -20px; }
+    .ann-2 { bottom: 12%; right: -10px; transform: rotate(2deg); }
+
+    /* ============= COMPARISON ============= */
+    .compare {
+      max-width: 980px;
+      margin: 60px auto;
+      padding: 0 32px;
+    }
+    .compare-eyebrow {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--vermillion);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .compare-title {
+      text-align: center;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 36px;
+      margin-bottom: 48px;
+      letter-spacing: 1px;
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid rgba(26, 24, 23, 0.15);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--paper-warm);
+    }
+    @media (max-width: 720px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-col {
+      padding: 32px;
+    }
+    .compare-col + .compare-col {
+      border-left: 1px dashed rgba(26, 24, 23, 0.15);
+    }
+    @media (max-width: 720px) { .compare-col + .compare-col { border-left: 0; border-top: 1px dashed rgba(26, 24, 23, 0.15); } }
+    .compare-col-them {
+      background: rgba(26, 24, 23, 0.04);
+    }
+    .compare-col-us {
+      background: linear-gradient(180deg, rgba(184, 146, 74, 0.05), rgba(245, 239, 224, 0));
+      position: relative;
+    }
+    .compare-col-us::before {
+      content: '我们';
+      position: absolute;
+      top: 16px; right: 16px;
+      background: var(--vermillion);
+      color: var(--paper);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+    .compare-h {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .compare-row-c {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(26, 24, 23, 0.08);
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .compare-row-c:last-child { border-bottom: 0; }
+    .compare-mark { flex-shrink: 0; font-weight: 700; width: 18px; }
+    .compare-mark-x { color: #888; }
+    .compare-mark-v { color: var(--vermillion); }
+
+    /* ============= FORM ============= */
+    .form-section {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 80px 32px;
+      margin-top: 60px;
+      position: relative;
+    }
+    .form-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(184, 54, 42, 0.1), transparent 50%),
+        radial-gradient(circle at 80% 60%, rgba(184, 146, 74, 0.08), transparent 50%);
+      pointer-events: none;
+    }
+    .form-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .form-eyebrow {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--gold-soft);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .form-title {
+      text-align: center;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 40px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .form-subtitle {
+      text-align: center;
+      font-size: 15px;
+      color: rgba(245, 239, 224, 0.65);
+      margin-bottom: 40px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 720px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-card {
+      background: rgba(245, 239, 224, 0.06);
+      border: 1px solid rgba(245, 239, 224, 0.12);
+      border-radius: 12px;
+      padding: 28px 24px;
+    }
+    .form-card-h {
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+      color: var(--gold-soft);
+    }
+    .form-card-male .form-card-h { color: #FF8B7C; }
+    .form-card-female .form-card-h { color: var(--gold-bright); }
+    .form-row {
+      display: flex; gap: 8px; margin-bottom: 12px;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(245, 239, 224, 0.08);
+      border: 1px solid rgba(245, 239, 224, 0.15);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--paper);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--gold-soft); }
+    .form-input::placeholder { color: rgba(245, 239, 224, 0.35); }
+    .form-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: rgba(245, 239, 224, 0.5);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .form-submit {
+      width: 100%;
+      background: var(--vermillion);
+      color: var(--paper);
+      border: none;
+      padding: 18px;
+      border-radius: 999px;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 12px;
+    }
+    .form-submit:hover { background: var(--vermillion-deep); transform: translateY(-2px); }
+    .form-trust {
+      text-align: center;
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(245, 239, 224, 0.5);
+      letter-spacing: 1px;
+    }
+
+    /* ============= PRICING ============= */
+    .pricing {
+      max-width: 980px;
+      margin: 80px auto 60px;
+      padding: 0 32px;
+    }
+    .pricing-eyebrow {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--vermillion);
+      margin-bottom: 12px;
+    }
+    .pricing-title {
+      text-align: center;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 36px;
+      margin-bottom: 48px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 880px) { .pricing-grid { grid-template-columns: 1fr; } }
+    .price-card {
+      background: var(--paper);
+      border: 1px solid rgba(26, 24, 23, 0.12);
+      border-radius: 16px;
+      padding: 32px 28px;
+      position: relative;
+    }
+    .price-card-mid {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--vermillion);
+      transform: scale(1.04);
+      box-shadow: 0 16px 40px rgba(26, 24, 23, 0.2);
+    }
+    @media (max-width: 880px) { .price-card-mid { transform: none; } }
+    .price-card-mid::before {
+      content: '推荐';
+      position: absolute; top: -12px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--vermillion);
+      color: var(--paper);
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    .price-tier {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .price-card-mid .price-tier { color: var(--gold-soft); }
+    .price-amount {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .price-amount-cents {
+      font-size: 22px;
+      vertical-align: top;
+      color: var(--vermillion);
+      margin-right: 4px;
+    }
+    .price-name {
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    .price-once {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--vermillion);
+      margin-bottom: 20px;
+    }
+    .price-card-mid .price-once { color: var(--gold-soft); }
+    .price-list {
+      list-style: none;
+      margin-bottom: 24px;
+    }
+    .price-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(26, 24, 23, 0.08);
+      font-size: 14px;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .price-card-mid .price-list li { border-bottom-color: rgba(245, 239, 224, 0.1); }
+    .price-list li::before {
+      content: '✓';
+      color: var(--vermillion);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .price-card-mid .price-list li::before { color: var(--gold-soft); }
+    .price-cta {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      border-radius: 999px;
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+    }
+    .price-cta:hover { background: var(--ink); color: var(--paper); }
+    .price-card-mid .price-cta {
+      background: var(--vermillion);
+      border-color: var(--vermillion);
+      color: var(--paper);
+    }
+    .price-card-mid .price-cta:hover { background: var(--vermillion-deep); }
+
+    /* ============= FAQ ============= */
+    .faq {
+      max-width: 760px;
+      margin: 80px auto;
+      padding: 0 32px;
+    }
+    .faq-eyebrow {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--vermillion);
+      margin-bottom: 12px;
+    }
+    .faq-title {
+      text-align: center;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 36px;
+      margin-bottom: 48px;
+    }
+    .faq-item {
+      border-bottom: 1px solid rgba(26, 24, 23, 0.12);
+      padding: 20px 0;
+    }
+    .faq-q {
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+    .faq-a {
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--ink-soft);
+    }
+    .faq-a a { color: var(--vermillion); }
+
+    /* ============= FOOTER ============= */
+    footer {
+      background: var(--ink);
+      color: rgba(245, 239, 224, 0.6);
+      padding: 60px 32px 40px;
+      margin-top: 80px;
+      text-align: center;
+    }
+    .footer-mark {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: 8px;
+      color: var(--paper);
+      margin-bottom: 12px;
+    }
+    .footer-line {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 15px;
+      margin-bottom: 32px;
+      color: rgba(245, 239, 224, 0.4);
+    }
+    .footer-meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(245, 239, 224, 0.1);
+    }
+    .footer-meta a { color: var(--gold-soft); text-decoration: none; }
+
+    /* ============= LOADING / RESULT REVEAL ============= */
+    .loading-overlay {
+      position: fixed; inset: 0;
+      background: rgba(26, 24, 23, 0.95);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center; justify-content: center;
+      flex-direction: column;
+    }
+    .loading-overlay.show { display: flex; }
+    .loading-mark {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 60px;
+      color: var(--vermillion);
+      animation: pulse 1.5s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+    .loading-text {
+      color: var(--paper);
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+    .loading-step {
+      color: rgba(245, 239, 224, 0.5);
+      font-family: var(--serif-cn);
+      font-size: 14px;
+      min-height: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============== NAV ============== -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="nav-mark">合</span>
+      <span>合 盘</span>
+    </div>
+    <div class="nav-links">
+      <a class="nav-link" href="#why">为什么不一样</a>
+      <a class="nav-link" href="#price">定价</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+      <a class="nav-cta" href="#form">开始合盘 →</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ============== HERO ============== -->
+    <section class="hero">
+      <div>
+        <div class="hero-eyebrow">CLASSICAL MARRIAGE COMPATIBILITY · 古籍合婚</div>
+        <h1 class="hero-title">
+          90% 的合盘 APP<br>
+          在<em>编故事</em>。<br>
+          这一份每条都附<br>
+          《穷通宝鉴》页码。
+        </h1>
+        <p class="hero-sub">
+          基于 <strong>1,461 条古籍 RAG 数据库</strong>（《穷通宝鉴》《三命通会》《八字提要》《周易》），为你和对方生成一份完整合盘报告。<strong>14 张卡 + 7 章长读 + PDF 永久保存</strong>。<br>
+          <strong>¥29 一次买断，不订阅，不充值。</strong>
+        </p>
+        <div class="hero-actions">
+          <a href="#form" class="btn-primary">开始合盘 →</a>
+          <a href="#why" class="btn-ghost">为什么不一样</a>
+        </div>
+        <div class="hero-trust">
+          <span><span class="dot">●</span> 古籍原文页码可验证</span>
+          <span><span class="dot">●</span> 一次性付费 · 不订阅</span>
+          <span><span class="dot">●</span> PDF 永久下载</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hexagram">
+          <div class="hexagram-symbol">☶☲</div>
+          <div class="hexagram-text">山火贲</div>
+          <div class="stamp-corner">古 籍 · 据 典</div>
+        </div>
+        <span class="annotation ann-1">— 《周易》贲卦</span>
+        <span class="annotation ann-2">「文饰相生」</span>
+      </div>
+    </section>
+
+    <!-- ============== COMPARISON ============== -->
+    <section class="compare" id="why">
+      <div class="compare-eyebrow">WHY NOT FATETELL</div>
+      <h2 class="compare-title">和市面上的合盘 APP 比，差在哪</h2>
+      <div class="compare-grid">
+        <div class="compare-col compare-col-them">
+          <div class="compare-h">市面 APP（fatetell 等）</div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-x">×</span><span>AI 编造无源头，无法验证</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-x">×</span><span>月费订阅，绑定续费</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-x">×</span><span>多种玄学杂烩（星座 + 塔罗 + 八字 + MBTI）</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-x">×</span><span>表情包 + 抖音风文案，30+ 看着尴尬</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-x">×</span><span>解锁单卡 / 进阶解读各种付费墙</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-x">×</span><span>看完就忘，没有 PDF 留存</span></div>
+        </div>
+        <div class="compare-col compare-col-us">
+          <div class="compare-h">合盘 · 古籍合婚</div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-v">✓</span><span><b>每条结论附原文页码</b>（穷通宝鉴 P.149 王一亭命）</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-v">✓</span><span><b>¥29 买断</b>，无订阅</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-v">✓</span><span>专做合盘一件事，<b>窄而深</b></span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-v">✓</span><span>编辑式古典文风（衬线 + 朱砂印 + 古籍引）</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-v">✓</span><span><b>一刀价</b>解锁全部 14 张卡 + 7 章长读</span></div>
+          <div class="compare-row-c"><span class="compare-mark compare-mark-v">✓</span><span>PDF <b>永久下载</b>，每次想看都能翻</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== FORM (D2 will wire RAG) ============== -->
+    <section class="form-section" id="form">
+      <div class="form-inner">
+        <div class="form-eyebrow">START YOUR READING · 开始合盘</div>
+        <h2 class="form-title">输入两人生辰</h2>
+        <p class="form-subtitle">
+          数据仅用于本次合盘生成，<strong>不存储 / 不分享</strong>。<br>
+          生成时间约 3 秒。
+        </p>
+        <form id="reading-form" onsubmit="handleSubmit(event)">
+          <div class="form-grid">
+            <div class="form-card form-card-male">
+              <div class="form-card-h">♂ 男方</div>
+              <div>
+                <label class="form-label">公历出生日期</label>
+                <input type="date" class="form-input" name="male-date" required>
+              </div>
+              <div style="margin-top: 12px;">
+                <label class="form-label">出生时辰（24h）</label>
+                <input type="time" class="form-input" name="male-time" value="12:00" required>
+              </div>
+              <div style="margin-top: 12px;">
+                <label class="form-label">出生地（可选）</label>
+                <input type="text" class="form-input" name="male-place" placeholder="如：上海">
+              </div>
+            </div>
+            <div class="form-card form-card-female">
+              <div class="form-card-h">♀ 女方</div>
+              <div>
+                <label class="form-label">公历出生日期</label>
+                <input type="date" class="form-input" name="female-date" required>
+              </div>
+              <div style="margin-top: 12px;">
+                <label class="form-label">出生时辰（24h）</label>
+                <input type="time" class="form-input" name="female-time" value="12:00" required>
+              </div>
+              <div style="margin-top: 12px;">
+                <label class="form-label">出生地（可选）</label>
+                <input type="text" class="form-input" name="female-place" placeholder="如：北京">
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="form-submit">生成合盘 →</button>
+          <div class="form-trust">
+            ★ 生成的前 3 张卡免费试看 · 完整解锁 ¥29 ★
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============== PRICING ============== -->
+    <section class="pricing" id="price">
+      <div class="pricing-eyebrow">PRICING · 一次性付费</div>
+      <h2 class="pricing-title">三档定价 · 没有订阅</h2>
+      <div class="pricing-grid">
+
+        <div class="price-card">
+          <div class="price-tier">免费 · FREE</div>
+          <div class="price-amount" style="color: var(--ink-mute);"><span class="price-amount-cents">¥</span>0</div>
+          <div class="price-name">试看版</div>
+          <div class="price-once">体验完整流程</div>
+          <ul class="price-list">
+            <li>合盘评分（出 83/100）</li>
+            <li>前 3 张卡（评分 / 你 / 她）</li>
+            <li>第 1 章长读（男方命盘）</li>
+            <li>看见整个产品的样子</li>
+          </ul>
+          <a href="#form" class="price-cta">立即试看 →</a>
+        </div>
+
+        <div class="price-card price-card-mid">
+          <div class="price-tier">完整 · COMPLETE</div>
+          <div class="price-amount"><span class="price-amount-cents">¥</span>29</div>
+          <div class="price-name">完整报告</div>
+          <div class="price-once">一次性买断 · 永久查看</div>
+          <ul class="price-list">
+            <li>14 张完整 Wrapped 卡片</li>
+            <li>7 章古籍长读（含原文引用）</li>
+            <li>双人 Dashboard（五行 + 大运）</li>
+            <li>2026 流年深读 · 注意事项</li>
+            <li>PDF 永久下载</li>
+            <li>分享链接（生成专属 OG 图）</li>
+          </ul>
+          <a href="#form" class="price-cta">¥29 解锁完整 →</a>
+        </div>
+
+        <div class="price-card">
+          <div class="price-tier">黄金版 · GOLD</div>
+          <div class="price-amount"><span class="price-amount-cents">¥</span>99</div>
+          <div class="price-name">完整 + 择吉日</div>
+          <div class="price-once">一次性买断 · 含个性化择日</div>
+          <ul class="price-list">
+            <li>完整版全部内容</li>
+            <li>个性化 <b>结婚择吉日</b>（12 个月）</li>
+            <li>排盘原始数据 JSON</li>
+            <li>古籍 RAG 检索结果</li>
+            <li>高清 PDF（A4 打印质量）</li>
+            <li>1 次免费校对（邮件咨询）</li>
+          </ul>
+          <a href="#form" class="price-cta">¥99 解锁黄金 →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== FAQ ============== -->
+    <section class="faq" id="faq">
+      <div class="faq-eyebrow">FAQ · 常见问题</div>
+      <h2 class="faq-title">关于这份合盘</h2>
+
+      <div class="faq-item">
+        <div class="faq-q">数据来源是什么？真的有古籍依据吗？</div>
+        <div class="faq-a">是的，可验证。我们的 RAG 数据库包含 1,461 条来自《穷通宝鉴》《三命通会》《八字提要》（韦千里）《周易》的原文片段。每个结论都标注出处和页码——你完全可以打开实体古籍验证。代码完全开源在 <a href="https://github.com/flychicken067/ivan-3d-world" target="_blank">GitHub</a>。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">和 Fatetell（测测）等 APP 比，差异是什么？</div>
+        <div class="faq-a">三点核心差异：<br>① <b>透明度</b>：他们 AI 编造无源头，我们每条引古籍页码 ② <b>商业模式</b>：他们月费订阅，我们 ¥29 买断 ③ <b>聚焦</b>：他们星座+塔罗+八字大杂烩，我们只做合盘。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">¥29 包括什么？真的没有续费？</div>
+        <div class="faq-a">真的没有。¥29 = 14 张完整卡 + 7 章长读 + 双人 Dashboard + 2026 流年分析 + 注意事项 + PDF 永久下载。一次性买断。报告链接永久可访问。<b>不订阅，不会自动续费，不会推销升级。</b></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">生成结果准确吗？依据是什么？</div>
+        <div class="faq-a">技术上：算法基于经典子平命理（透天干、藏地支、十神、五行强弱、用神判断、大运推演、合冲刑害）。每个结论都有古籍对照案例。<br>但请注意：命理学不是科学预测，是<b>对命局结构的解读</b>。我们做的是「忠实呈现古籍怎么说」，不做「预测你哪天有钱」。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">我的生辰数据安全吗？</div>
+        <div class="faq-a">数据仅用于本次合盘生成，不存储、不分享、不用于训练。生成完后立即从内存清除。访问报告通过专属 token，无邮箱注册。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">作者是谁？</div>
+        <div class="faq-a">独立开发者 Ivan Liu，公众号「<b>一万刘</b>」作者，知识星球「<a href="https://t.zsxq.com/cMXTr" target="_blank">一万刘的知识星球</a>」运营者。代码 <a href="https://github.com/flychicken067" target="_blank">GitHub @flychicken067</a>，X <a href="https://x.com/vanyiliu" target="_blank">@vanyiliu</a>。这个产品和我所有项目一样，**开源 + 透明定价**。</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-mark">合 盘</div>
+    <div class="footer-line">Classical marriage compatibility, built on sources you can verify.</div>
+    <p style="font-size: 14px; max-width: 480px; margin: 0 auto;">
+      由独立开发者 <a href="https://x.com/vanyiliu" style="color: var(--gold-soft);">Ivan @vanyiliu</a> 用 Claude Code + RAG 古籍数据库制作。<br>
+      代码开源在 <a href="https://github.com/flychicken067" style="color: var(--gold-soft);">GitHub @flychicken067</a>。
+    </p>
+    <div class="footer-meta">
+      v0.1 · MVP · 2026 · MADE IN CHINA · MIT
+    </div>
+  </footer>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loading">
+    <div class="loading-mark">合</div>
+    <div class="loading-text">GENERATING YOUR READING</div>
+    <div class="loading-step" id="loading-step">正在排盘...</div>
+  </div>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const params = new URLSearchParams();
+      for (const [k, v] of fd.entries()) params.set(k, v);
+
+      // Show loading
+      const overlay = document.getElementById('loading');
+      const step = document.getElementById('loading-step');
+      overlay.classList.add('show');
+
+      const steps = [
+        '正在排盘...',
+        '检索《穷通宝鉴》...',
+        '比对历史命例...',
+        '计算五行互补...',
+        '推演大运流年...',
+        '生成卦象...',
+        '准备 14 张卡...'
+      ];
+      let i = 0;
+      const stepInterval = setInterval(() => {
+        if (i < steps.length) step.textContent = steps[i++];
+      }, 600);
+
+      // Redirect to report (D2 will wire actual RAG; for D1 just go to existing demo)
+      setTimeout(() => {
+        clearInterval(stepInterval);
+        window.location.href = `report.html?${params.toString()}`;
+      }, 4500);
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
