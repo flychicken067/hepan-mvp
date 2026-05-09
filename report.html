@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.13/lunar.min.js"></script>
+  <script src="assets/bazi.js"></script>
   <style>
     :root {
       --paper: #F5EFE0;
@@ -1373,6 +1375,64 @@
         track.scrollLeft += e.deltaY;
       }
     }, { passive: false });
+
+    // ========= D2: PERSONALIZE FROM URL PARAMS =========
+    const urlParamsForBazi = new URLSearchParams(window.location.search);
+    const maleDate = urlParamsForBazi.get('male-date');
+    const maleTime = urlParamsForBazi.get('male-time');
+    const femaleDate = urlParamsForBazi.get('female-date');
+    const femaleTime = urlParamsForBazi.get('female-time');
+
+    if (maleDate && femaleDate && window.Hepan) {
+      try {
+        const malePillars = window.Hepan.buildPillars(maleDate, maleTime || '12:00');
+        const femalePillars = window.Hepan.buildPillars(femaleDate, femaleTime || '12:00');
+        const maleChart = window.Hepan.interpretChart(malePillars, 'male');
+        const femaleChart = window.Hepan.interpretChart(femalePillars, 'female');
+        const compat = window.Hepan.computeCompatibility(maleChart, femaleChart);
+
+        // Update Card 1 (score)
+        const card1Big = document.querySelector('.card-1 .card-big');
+        if (card1Big) card1Big.textContent = compat.score;
+        const card1Quote = document.querySelector('.card-1 .card-quote');
+        if (card1Quote) card1Quote.textContent = `/ 100 · ${compat.tier}`;
+
+        // Update Card 2 (male)
+        const card2Bigs = document.querySelectorAll('.card-2 .card-big');
+        if (card2Bigs.length >= 2) {
+          card2Bigs[0].textContent = `${malePillars.year.stem}${malePillars.year.branch} · ${malePillars.month.stem}${malePillars.month.branch}`;
+          card2Bigs[1].textContent = `${malePillars.day.stem}${malePillars.day.branch} · ${malePillars.hour.stem}${malePillars.hour.branch}`;
+        }
+        const card2Title = document.querySelector('.card-2 .card-title');
+        if (card2Title) card2Title.textContent = `他 · ${maleChart.dayMaster}${window.Hepan.STEM_FIVE[maleChart.dayMaster]}日主`;
+        const card2Quote = document.querySelector('.card-2 .card-quote');
+        if (card2Quote) card2Quote.textContent = `「${maleChart.persona.metaphor}」`;
+        const card2Foot = document.querySelector('.card-2 .card-foot');
+        if (card2Foot) card2Foot.textContent = `${maleChart.persona.trait} · ${malePillars.solar.y}`;
+        const card2Eyebrow = document.querySelector('.card-2 .card-eyebrow');
+        if (card2Eyebrow) card2Eyebrow.textContent = maleChart.persona.en;
+
+        // Update Card 3 (female)
+        const card3Bigs = document.querySelectorAll('.card-3 .card-big');
+        if (card3Bigs.length >= 2) {
+          card3Bigs[0].textContent = `${femalePillars.year.stem}${femalePillars.year.branch} · ${femalePillars.month.stem}${femalePillars.month.branch}`;
+          card3Bigs[1].textContent = `${femalePillars.day.stem}${femalePillars.day.branch} · ${femalePillars.hour.stem}${femalePillars.hour.branch}`;
+        }
+        const card3Title = document.querySelector('.card-3 .card-title');
+        if (card3Title) card3Title.textContent = `她 · ${femaleChart.dayMaster}${window.Hepan.STEM_FIVE[femaleChart.dayMaster]}日主`;
+        const card3Quote = document.querySelector('.card-3 .card-quote');
+        if (card3Quote) card3Quote.textContent = `「${femaleChart.persona.metaphor}」`;
+        const card3Foot = document.querySelector('.card-3 .card-foot');
+        if (card3Foot) card3Foot.textContent = `${femaleChart.persona.trait} · ${femalePillars.solar.y}`;
+        const card3Eyebrow = document.querySelector('.card-3 .card-eyebrow');
+        if (card3Eyebrow) card3Eyebrow.textContent = femaleChart.persona.en;
+
+        // Save for unlock-side reuse
+        window.__hepan = { malePillars, femalePillars, maleChart, femaleChart, compat };
+      } catch (e) {
+        console.warn('Bazi calc failed; showing default sample chart:', e);
+      }
+    }
 
     // ========= PAYWALL =========
     // Check unlock token
