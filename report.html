@@ -1511,49 +1511,93 @@
     function selectMethod(m) {
       selectedMethod = m;
       document.querySelectorAll('.pay-method-btn').forEach(el => el.classList.toggle('active', el.dataset.method === m));
-    }
-    function fakePaid() {
-      // D1: simulate successful payment
-      localStorage.setItem('hepan-unlocked', '1');
-      alert('支付成功（D1 模拟）！正在解锁完整报告...');
-      window.location.href = window.location.pathname + '?token=unlocked';
+      const label = document.getElementById('pay-method-label');
+      if (label) label.textContent = m === 'wechat' ? 'WECHAT PAY' : 'ALIPAY';
     }
   </script>
 
-  <!-- Pay Modal -->
+  <!-- Pay Modal (D3: manual QR + email unlock) -->
   <div class="pay-modal" id="pay-modal">
     <div class="pay-card">
       <button class="pay-card-close" onclick="closePay()">×</button>
-      <div class="pay-h">解锁完整合盘</div>
-      <div class="pay-sub">一次性付费 · 永久查看 · 无订阅</div>
 
-      <div class="pay-tier-row">
-        <div class="pay-tier active" data-tier="29" onclick="selectTier('29')">
-          <div class="pay-tier-name">完整报告</div>
-          <div class="pay-tier-amt">¥29</div>
+      <div id="pay-step-1">
+        <div class="pay-h">解锁完整合盘</div>
+        <div class="pay-sub">一次性付费 · 永久查看 · 无订阅</div>
+
+        <div class="pay-tier-row">
+          <div class="pay-tier active" data-tier="29" onclick="selectTier('29')">
+            <div class="pay-tier-name">完整报告</div>
+            <div class="pay-tier-amt">¥29</div>
+          </div>
+          <div class="pay-tier" data-tier="99" onclick="selectTier('99')">
+            <div class="pay-tier-name">+ 择吉日</div>
+            <div class="pay-tier-amt">¥99</div>
+          </div>
         </div>
-        <div class="pay-tier" data-tier="99" onclick="selectTier('99')">
-          <div class="pay-tier-name">+ 择吉日</div>
-          <div class="pay-tier-amt">¥99</div>
+
+        <div class="pay-method">
+          <button class="pay-method-btn active" data-method="wechat" onclick="selectMethod('wechat')">微信支付</button>
+          <button class="pay-method-btn" data-method="alipay" onclick="selectMethod('alipay')">支付宝</button>
+        </div>
+
+        <div class="pay-qr" id="pay-qr-img">
+          <div style="text-align: center;">
+            <div style="font-family: var(--mono); font-size: 13px; color: var(--ink-soft); margin-bottom: 12px;">扫码支付</div>
+            <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 32px; color: var(--vermillion);" id="pay-amount-display">¥29</div>
+            <div style="font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 8px; letter-spacing: 2px;" id="pay-method-label">WECHAT PAY</div>
+          </div>
+        </div>
+
+        <div class="pay-note" style="margin-top: 16px; line-height: 1.7;">
+          <div style="font-family: var(--serif-cn); font-size: 13px; color: var(--ink-soft); margin-bottom: 12px;">
+            <b>三步完成：</b>付款 → 截图 → 发送给我
+          </div>
+          <button onclick="goToStep2()" style="padding: 12px 28px; background: var(--vermillion); color: var(--paper); border: none; border-radius: 999px; font-family: var(--serif-cn); font-weight: 700; cursor: pointer; letter-spacing: 2px; font-size: 14px;">已付款 · 下一步 →</button>
         </div>
       </div>
 
-      <div class="pay-method">
-        <button class="pay-method-btn active" data-method="wechat" onclick="selectMethod('wechat')">微信支付</button>
-        <button class="pay-method-btn" data-method="alipay" onclick="selectMethod('alipay')">支付宝</button>
-      </div>
+      <div id="pay-step-2" style="display: none;">
+        <div class="pay-h">最后一步 · 发送付款截图</div>
+        <div class="pay-sub">我会在 30 分钟内回复解锁链接（北京时间 8:00–24:00）</div>
 
-      <div class="pay-qr">扫码支付</div>
+        <div style="background: var(--paper-warm); border-radius: 8px; padding: 16px; margin: 20px 0; text-align: left;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--vermillion); letter-spacing: 2px; margin-bottom: 8px;">📧 EMAIL（推荐）</div>
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--ink); user-select: all;">liufan067@gmail.com</div>
+        </div>
 
-      <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-mute); letter-spacing: 1px;">
-        请支付 <span id="pay-amount-display" style="color: var(--vermillion); font-weight: 700; font-size: 16px;">¥29</span>
-      </div>
-      <div class="pay-note">
-        D1 演示版本 · 实际支付待 D3 接入易支付<br>
-        <button onclick="fakePaid()" style="margin-top: 12px; padding: 10px 24px; background: var(--vermillion); color: var(--paper); border: none; border-radius: 999px; font-family: var(--serif-cn); font-weight: 700; cursor: pointer; letter-spacing: 2px;">模拟已支付（仅 D1 测试）</button>
+        <div style="background: var(--paper-warm); border-radius: 8px; padding: 16px; margin: 12px 0; text-align: left;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--vermillion); letter-spacing: 2px; margin-bottom: 8px;">💬 微信</div>
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--ink); user-select: all;">公众号「一万刘」后台留言</div>
+        </div>
+
+        <div style="background: var(--paper-warm); border-radius: 8px; padding: 16px; margin: 12px 0 24px; text-align: left;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--vermillion); letter-spacing: 2px; margin-bottom: 8px;">📋 请附以下三项</div>
+          <div style="font-family: var(--serif-cn); font-size: 13px; color: var(--ink-soft); line-height: 1.8;">
+            1. 付款截图（含金额 + 时间）<br>
+            2. 你的男方 / 女方生辰（用于核对）<br>
+            3. 接收解锁链接的邮箱
+          </div>
+        </div>
+
+        <button onclick="copyEmailToClipboard()" style="padding: 12px 24px; background: var(--ink); color: var(--paper); border: none; border-radius: 999px; font-family: var(--serif-cn); font-weight: 600; cursor: pointer; letter-spacing: 2px; font-size: 13px; margin-right: 8px;">复制邮箱地址</button>
+        <button onclick="goToStep1()" style="padding: 12px 24px; background: transparent; color: var(--ink); border: 1px solid var(--ink); border-radius: 999px; font-family: var(--serif-cn); font-weight: 600; cursor: pointer; letter-spacing: 2px; font-size: 13px;">← 返回</button>
+
+        <div class="pay-note" style="margin-top: 24px;">
+          收到付款 30 分钟内（北京时间 8:00-24:00）<br>
+          解锁链接发到你邮箱 · 永久可访问
+        </div>
       </div>
     </div>
   </div>
+
+  <script>
+    function goToStep1() { document.getElementById('pay-step-1').style.display = ''; document.getElementById('pay-step-2').style.display = 'none'; }
+    function goToStep2() { document.getElementById('pay-step-1').style.display = 'none'; document.getElementById('pay-step-2').style.display = ''; }
+    function copyEmailToClipboard() {
+      navigator.clipboard?.writeText('liufan067@gmail.com').then(() => alert('邮箱已复制'));
+    }
+  </script>
 
 </body>
 </html>
