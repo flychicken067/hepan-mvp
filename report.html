@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>合盘 · 你与她</title>
+  <meta name="description" content="基于《穷通宝鉴》《三命通会》的合盘报告 · 每条结论附古籍页码 · ¥29 一次买断">
+  <meta property="og:title" content="合盘 · 古籍合婚">
+  <meta property="og:description" content="一份每条结论都有古籍页码的合盘报告。¥29 买断，不订阅。">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='12' fill='%23B8362A'/><text x='16' y='22' text-anchor='middle' font-family='Songti SC,serif' font-size='16' font-weight='700' fill='%23F5EFE0'>合</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -630,6 +636,59 @@
 
     /* Dashboard scrolltarget */
     .dashboard-anchor { scroll-margin-top: 60px; }
+
+    /* ============== PRINT (D4: PDF export via Cmd+P) ============== */
+    @media print {
+      .nav, .paywall-banner, .pay-modal, .modal-overlay, .footer, .scroll-hint, .nav-link, .nav-cta, .unlock-cta { display: none !important; }
+      body, html { background: var(--paper) !important; color: var(--ink) !important; }
+      .wrapped-section { background: var(--paper) !important; color: var(--ink) !important; padding: 20px 0 !important; }
+      .wrapped-section::before { display: none !important; }
+      .wrapped-eyebrow, .wrapped-heading, .wrapped-subtitle { color: var(--ink) !important; }
+      .cards-track { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; padding: 12px !important; overflow: visible !important; }
+      .card { flex: 0 0 auto !important; aspect-ratio: auto !important; min-height: 320px !important; page-break-inside: avoid !important; box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important; }
+      .classical { padding: 20px 0 !important; }
+      .section { page-break-inside: avoid !important; }
+      .section .section-body { max-height: none !important; padding: 8px 0 !important; }
+      .section-arrow { display: none !important; }
+      .section-toggle { cursor: default !important; }
+      body.locked .card[data-locked], body.locked .section[data-locked] .section-body { filter: none !important; }
+    }
+
+    /* PDF export button (small, fixed top-right next to nav) */
+    .pdf-btn {
+      position: fixed; top: 14px; right: 14px;
+      z-index: 90;
+      background: var(--paper-warm, #EDE3CB);
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      display: none;
+    }
+    body:not(.locked) .pdf-btn { display: block; }
+    @media print { .pdf-btn { display: none !important; } }
+
+    /* Share buttons (next to PDF) */
+    .share-btn {
+      position: fixed; top: 14px; right: 130px;
+      z-index: 90;
+      background: var(--vermillion);
+      color: var(--paper);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      display: none;
+    }
+    body:not(.locked) .share-btn { display: block; }
+    @media print { .share-btn { display: none !important; } }
 
     /* ============== PAYWALL ============== */
     body.locked .card[data-locked] { filter: blur(8px) saturate(0.6); pointer-events: none; user-select: none; }
@@ -1516,6 +1575,10 @@
     }
   </script>
 
+  <!-- D4: PDF export + Share buttons (only when unlocked) -->
+  <button class="pdf-btn" onclick="window.print()" title="导出为 PDF（Cmd+P）">📄 PDF</button>
+  <button class="share-btn" onclick="shareReport()" title="分享给对方">↗ 分享</button>
+
   <!-- Pay Modal (D3: manual QR + email unlock) -->
   <div class="pay-modal" id="pay-modal">
     <div class="pay-card">
@@ -1596,6 +1659,19 @@
     function goToStep2() { document.getElementById('pay-step-1').style.display = 'none'; document.getElementById('pay-step-2').style.display = ''; }
     function copyEmailToClipboard() {
       navigator.clipboard?.writeText('liufan067@gmail.com').then(() => alert('邮箱已复制'));
+    }
+
+    // D4: Share — Web Share API + clipboard fallback
+    function shareReport() {
+      const url = window.location.href;
+      const score = document.querySelector('.card-1 .card-big')?.textContent || '';
+      const title = `我们的合盘评分 ${score} / 100`;
+      const text = `古籍合婚 · 基于《穷通宝鉴》的合盘报告`;
+      if (navigator.share) {
+        navigator.share({ title, text, url }).catch(() => {});
+      } else {
+        navigator.clipboard?.writeText(url).then(() => alert('链接已复制 · 发给对方让 ta 也看看')).catch(() => prompt('复制链接：', url));
+      }
     }
   </script>
 
