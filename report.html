@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.13/lunar.min.js"></script>
   <script src="assets/bazi.js"></script>
+  <script defer src="/_vercel/insights/script.js"></script>
   <style>
     :root {
       --paper: #F5EFE0;
@@ -1486,10 +1487,333 @@
         const card3Eyebrow = document.querySelector('.card-3 .card-eyebrow');
         if (card3Eyebrow) card3Eyebrow.textContent = femaleChart.persona.en;
 
+        // ====== ENRICHED COMPATIBILITY ======
+        const fullCompat = window.Hepan.fullCompatibility(maleChart, malePillars, femaleChart, femalePillars);
+
+        // Update Card 1 with proper trigram + score
+        if (card1Big) card1Big.textContent = fullCompat.score;
+        if (card1Quote) card1Quote.textContent = `/ 100 · ${fullCompat.tier}`;
+        const card1Trigram = document.querySelector('.card-1 .card-trigram');
+        if (card1Trigram) card1Trigram.textContent = fullCompat.heGuaSymbol;
+        const card1Foot = document.querySelector('.card-1 .card-foot');
+        if (card1Foot) card1Foot.textContent = `${fullCompat.trigrams[0]}${fullCompat.trigrams[1]}卦 · 男 ${maleChart.dayMaster}火/${maleChart.dayMaster === '甲' || maleChart.dayMaster === '乙' ? '木' : window.Hepan.STEM_FIVE[maleChart.dayMaster]} 女 ${femaleChart.dayMaster}${window.Hepan.STEM_FIVE[femaleChart.dayMaster]}`;
+
+        // ====== Card 4: 五行镜像互补 ======
+        const card4 = document.querySelector('.card-4');
+        if (card4) {
+          const maleW = maleChart.weakest;
+          const femaleW = femaleChart.weakest;
+          const maleS = maleChart.strongest;
+          const femaleS = femaleChart.strongest;
+          // Find the most dramatic complementary pair
+          const allFives = ['木','火','土','金','水'];
+          let bestPair = null, bestDelta = 0;
+          allFives.forEach(f => {
+            const m = maleChart.wuxing[f] || 0;
+            const fe = femaleChart.wuxing[f] || 0;
+            const delta = Math.abs(m - fe);
+            if (delta > bestDelta) { bestDelta = delta; bestPair = { five: f, male: m, female: fe }; }
+          });
+          if (bestPair) {
+            const card4Compare = card4.querySelectorAll('div[style*="margin"]');
+            // Replace text content of the bars
+            card4.innerHTML = `
+              <div class="card-num">04 / 14</div>
+              <div class="card-eyebrow">Mirror Match</div>
+              <div class="card-title">五行镜像互补</div>
+              <div style="margin: 18px 0;">
+                <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; margin-bottom: 4px; letter-spacing: 2px;">${bestPair.five.toUpperCase()} · ${bestPair.five}</div>
+                <div class="compare-row"><span>他 ${bestPair.male.toFixed(1)}${bestPair.male > bestPair.female ? '' : ' ⚠'}</span><span>她 ${bestPair.female.toFixed(1)}${bestPair.female > bestPair.male ? '' : ' ⚠'}</span></div>
+                <div class="compare-bar" style="display: flex;">
+                  <div style="width: ${Math.min(bestPair.male * 8, 100)}%; background: var(--vermillion-soft); height: 100%;"></div>
+                </div>
+                <div class="compare-bar" style="display: flex; margin-top: 6px;">
+                  <div style="width: ${Math.min(bestPair.female * 8, 100)}%; background: var(--gold-soft); height: 100%;"></div>
+                </div>
+              </div>
+              <div style="margin-top: 16px;">
+                <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; margin-bottom: 4px; letter-spacing: 2px;">最弱缺口</div>
+                <div style="font-size: 14px;">他缺 <b style="color: var(--gold-soft);">${maleChart.weakest.five}</b> · 她缺 <b style="color: var(--gold-soft);">${femaleChart.weakest.five}</b></div>
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-quote" style="font-size: 16px; margin-top: 16px; color: var(--gold-soft);">${bestDelta >= 5 ? '互为用神 · 命定的拼图' : '差异适中 · 平衡共生'}</div>
+              <div class="card-foot" style="color: var(--gold-soft); opacity: 0.7;">delta ${bestDelta.toFixed(1)} · score ${fullCompat.mirrorScore}/40</div>
+            `;
+          }
+        }
+
+        // ====== Card 5: 天干六合 ======
+        const card5 = document.querySelector('.card-5');
+        if (card5) {
+          if (fullCompat.liuhe.length > 0) {
+            const h = fullCompat.liuhe[0];
+            card5.innerHTML = `
+              <div class="card-num">05 / 14</div>
+              <div class="card-eyebrow">Heavenly Bond</div>
+              <div class="card-title">${h.label}</div>
+              <div style="text-align: center; margin: 32px 0;">
+                <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #FF6B5A;">${h.stems[0]}</span>
+                <span style="font-size: 28px; margin: 0 16px; opacity: 0.6;">+</span>
+                <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #DDD;">${h.stems[1]}</span>
+              </div>
+              <div style="text-align: center; font-size: 24px; opacity: 0.6;">↓</div>
+              <div style="text-align: center; margin-top: 8px;">
+                <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #6FA0C0;">${h.product}</span>
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-foot text-center">${h.product === maleChart.weakest.five ? '化他最缺的用神' : h.product === femaleChart.weakest.five ? '化她最缺的用神' : '六合化神 · 命运感强'}</div>
+            `;
+          } else {
+            card5.innerHTML = `
+              <div class="card-num">05 / 14</div>
+              <div class="card-eyebrow">No Direct Bond</div>
+              <div class="card-title">无天干六合</div>
+              <div class="card-quote" style="font-size: 16px; margin-top: 24px;">
+                此命没有「丙辛 / 甲己 / 乙庚 / 丁壬 / 戊癸」<br>
+                这五对天作之合
+              </div>
+              <div class="card-quote" style="font-size: 14px; color: rgba(255,255,255,0.65); margin-top: 16px;">
+                但日主 ${fullCompat.dayMasterRelation}<br>
+                仍有相互滋养之象
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-foot text-center">无六合不必焦虑 · 看用神互补</div>
+            `;
+          }
+        }
+
+        // ====== Card 6: 地支冲/刑 ======
+        const card6 = document.querySelector('.card-6');
+        if (card6) {
+          if (fullCompat.conflicts.length > 0) {
+            const c = fullCompat.conflicts[0];
+            const isZixing = c.type === 'zixing';
+            card6.innerHTML = `
+              <div class="card-num">06 / 14</div>
+              <div class="card-eyebrow">${isZixing ? '⚠ ATTENTION' : 'The Tension'}</div>
+              <div class="card-title">${c.label}</div>
+              <div class="card-quote" style="margin-top: 24px;">
+                ${isZixing
+                  ? '两人地支同为 ' + c.branches[0] + '<br>古法称「自刑」<br>配偶宫有"内耗"特征'
+                  : '地支' + c.branches[0] + '冲' + c.branches[1] + '<br>夫妻宫有动荡<br>但寅中藏丙、午中藏己——'}
+              </div>
+              <div class="card-quote" style="font-size: 16px; color: #FFB99A; margin-top: 16px;">
+                ${isZixing ? '解：守住"各做各的"边界' : '总有可化解之处'}
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-foot">${isZixing ? '三命通会 · 三刑之一' : '动而不破 · A predestined resolution'}</div>
+            `;
+          } else {
+            card6.innerHTML = `
+              <div class="card-num">06 / 14</div>
+              <div class="card-eyebrow">No Tension</div>
+              <div class="card-title">无地支冲刑</div>
+              <div class="card-quote" style="margin-top: 32px; font-size: 17px;">
+                八个地支无相冲<br>
+                无相刑<br>
+                也无自刑
+              </div>
+              <div class="card-quote" style="font-size: 16px; color: #FFB99A; margin-top: 16px;">
+                这是少见的「无大碍」之合<br>
+                关系少波折
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-foot">天作 · A clean alignment</div>
+            `;
+          }
+        }
+
+        // ====== Card 7: 2026 流年 ======
+        const card7 = document.querySelector('.card-7');
+        if (card7) {
+          const yearStem = window.Hepan.getYearGanZhi(2026); // 丙午
+          const yearStemChar = yearStem[0]; // 丙
+          const maleSS = window.Hepan.getShiShen(maleChart.dayMaster, yearStemChar);
+          const femaleSS = window.Hepan.getShiShen(femaleChart.dayMaster, yearStemChar);
+          const goodLabels = { '正印':'★★★★★ 用神入命','偏印':'★★★★ 助力之年','正官':'★★★★ 担当之年','正财':'★★★ 财运稳定','偏财':'★★★★ 财运动','食神':'★★★ 才华显','伤官':'★★ 才情外露','比肩':'★★ 同道','劫财':'★★ 竞争年','七杀':'★★ 压力之年' };
+          card7.innerHTML = `
+            <div class="card-num">07 / 14</div>
+            <div class="card-eyebrow">This Year · ${yearStem}</div>
+            <div class="card-title">2026 流年</div>
+            <div style="margin: 20px 0;">
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 2px; opacity: 0.7;">对他</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 22px; margin: 4px 0;">${maleSS}</div>
+              <div style="font-size: 14px; opacity: 0.8;">${goodLabels[maleSS] || ''}</div>
+            </div>
+            <div style="margin: 20px 0; padding-top: 16px; border-top: 1px solid rgba(26,24,23, 0.15);">
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 2px; opacity: 0.7;">对她</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 22px; margin: 4px 0;">${femaleSS}</div>
+              <div style="font-size: 14px; opacity: 0.8;">${goodLabels[femaleSS] || ''}</div>
+            </div>
+            <div class="card-flex-bottom"></div>
+            <div class="card-foot">${yearStem}年 · 太岁与命局互动</div>
+          `;
+        }
+
+        // ====== Card 8: 大运对比 ======
+        const card8 = document.querySelector('.card-8');
+        if (card8) {
+          const currentYear = new Date().getFullYear();
+          const maleAge = currentYear - malePillars.solar.y;
+          const femaleAge = currentYear - femalePillars.solar.y;
+          const maleDashu = window.Hepan.getDashu(malePillars, 'male');
+          const femaleDashu = window.Hepan.getDashu(femalePillars, 'female');
+          const maleCurrent = window.Hepan.getCurrentDashu(maleDashu, maleAge);
+          const femaleCurrent = window.Hepan.getCurrentDashu(femaleDashu, femaleAge);
+          card8.innerHTML = `
+            <div class="card-num">08 / 14</div>
+            <div class="card-eyebrow">Decade Cycles</div>
+            <div class="card-title">大运 · 时间轴</div>
+            <div style="margin-top: 28px;">
+              <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; letter-spacing: 2px;">他 · ${maleAge}岁</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 36px; color: var(--gold-soft); margin: 4px 0;">${maleCurrent ? maleCurrent.stem + maleCurrent.branch : '—'}</div>
+              <div style="font-size: 13px; opacity: 0.7;">当前大运 · ${maleCurrent ? maleCurrent.ageStart : '—'}–${maleCurrent ? maleCurrent.ageEnd : '—'}</div>
+            </div>
+            <div style="margin-top: 24px;">
+              <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; letter-spacing: 2px;">她 · ${femaleAge}岁</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 36px; color: #E5A6A0; margin: 4px 0;">${femaleCurrent ? femaleCurrent.stem + femaleCurrent.branch : '—'}</div>
+              <div style="font-size: 13px; opacity: 0.7;">当前大运 · ${femaleCurrent ? femaleCurrent.ageStart : '—'}–${femaleCurrent ? femaleCurrent.ageEnd : '—'}</div>
+            </div>
+            <div class="card-flex-bottom"></div>
+            <div class="card-foot">十年一运 · 解码节律</div>
+          `;
+        }
+
+        // ====== Card 9: 未来高峰 ======
+        const card9 = document.querySelector('.card-9');
+        if (card9) {
+          const maleDashu = window.Hepan.getDashu(malePillars, 'male');
+          const femaleDashu = window.Hepan.getDashu(femalePillars, 'female');
+          const maleNext = maleDashu[3] || maleDashu[2];
+          const femaleNext = femaleDashu[3] || femaleDashu[2];
+          card9.innerHTML = `
+            <div class="card-num">09 / 14</div>
+            <div class="card-eyebrow">Decades Ahead</div>
+            <div class="card-title">未来大运</div>
+            <div style="margin-top: 32px;">
+              <div style="font-size: 13px; opacity: 0.7; font-family: var(--mono); letter-spacing: 2px;">他 · ${maleNext.ageStart}–${maleNext.ageEnd}</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 30px; margin: 6px 0;">${maleNext.stem}${maleNext.branch}</div>
+              <div style="font-size: 13px; opacity: 0.7;">${window.Hepan.getShiShen(maleChart.dayMaster, maleNext.stem)} · 节律切换</div>
+            </div>
+            <div style="margin-top: 20px;">
+              <div style="font-size: 13px; opacity: 0.7; font-family: var(--mono); letter-spacing: 2px;">她 · ${femaleNext.ageStart}–${femaleNext.ageEnd}</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 30px; margin: 6px 0;">${femaleNext.stem}${femaleNext.branch}</div>
+              <div style="font-size: 13px; opacity: 0.7;">${window.Hepan.getShiShen(femaleChart.dayMaster, femaleNext.stem)} · 节律切换</div>
+            </div>
+            <div class="card-flex-bottom"></div>
+            <div class="card-foot">下一个十年 · 一起向哪去</div>
+          `;
+        }
+
+        // ====== Card 11: 2026 推荐 ======
+        const card11 = document.querySelector('.card-11');
+        if (card11) {
+          const yearStem = window.Hepan.getYearGanZhi(2026);
+          const maleSS = window.Hepan.getShiShen(maleChart.dayMaster, yearStem[0]);
+          const femaleSS = window.Hepan.getShiShen(femaleChart.dayMaster, yearStem[0]);
+          const recommended = (maleSS === '正印' || maleSS === '偏印' || femaleSS === '正印' || femaleSS === '偏印');
+          card11.innerHTML = `
+            <div class="card-num">11 / 14</div>
+            <div class="card-eyebrow">2026 · ${yearStem}年</div>
+            <div class="card-title">${recommended ? '★★★★★ 推荐年份' : '★★★ 中等年份'}</div>
+            <div style="margin-top: 18px;">
+              <div style="font-family: var(--mono); font-size: 11px; opacity: 0.7; letter-spacing: 2px;">流年对他</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 20px; margin: 4px 0;">${maleSS}</div>
+            </div>
+            <div style="margin-top: 12px;">
+              <div style="font-family: var(--mono); font-size: 11px; opacity: 0.7; letter-spacing: 2px;">流年对她</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 20px; margin: 4px 0;">${femaleSS}</div>
+            </div>
+            <div class="card-flex-bottom"></div>
+            <div class="card-foot">${recommended ? '用神 / 印星之年' : '稳健推进之年'}</div>
+          `;
+        }
+
+        // ====== Card 13/14: 注意事项（personalized headings）======
+        const card13 = document.querySelector('.card-13');
+        if (card13) {
+          const card13Title = card13.querySelector('.card-title');
+          if (card13Title) card13Title.textContent = `他的三件事`;
+          const card13Eyebrow = card13.querySelector('.card-eyebrow');
+          if (card13Eyebrow) card13Eyebrow.textContent = `For Him · ${maleChart.dayMaster}日主`;
+        }
+        const card14 = document.querySelector('.card-14');
+        if (card14) {
+          const card14Title = card14.querySelector('.card-title');
+          if (card14Title) card14Title.textContent = `她的三件事`;
+          const card14Eyebrow = card14.querySelector('.card-eyebrow');
+          if (card14Eyebrow) card14Eyebrow.textContent = `For Her · ${femaleChart.dayMaster}日主`;
+        }
+
+        // ====== LONG-FORM SECTIONS PERSONALIZATION ======
+        // Section 1 male pillars
+        const sec1Pillars = document.querySelectorAll('#sec1 .pillar-row .pillar');
+        if (sec1Pillars.length === 4) {
+          const order = [malePillars.hour, malePillars.day, malePillars.month, malePillars.year]; // 时日月年
+          const labels = ['时','日','月','年'];
+          sec1Pillars.forEach((p, i) => {
+            const tian = p.querySelector('.pillar-tian');
+            const di = p.querySelector('.pillar-di');
+            if (tian) tian.textContent = order[i].stem;
+            if (di) di.textContent = order[i].branch;
+          });
+        }
+        // Section 1 first paragraph: "男方生于一九九一年辛未..."
+        const sec1Body = document.getElementById('sec1');
+        if (sec1Body) {
+          const firstP = sec1Body.querySelector('.section-body p');
+          if (firstP) firstP.textContent = `男方生于公历 ${malePillars.solar.y} 年（${malePillars.year.stem}${malePillars.year.branch}），月柱 ${malePillars.month.stem}${malePillars.month.branch}，日柱 ${malePillars.day.stem}${malePillars.day.branch}，时柱 ${malePillars.hour.stem}${malePillars.hour.branch}。日主 ${maleChart.dayMaster} —— ${maleChart.persona.metaphor}。`;
+        }
+        // Section 2 same for female
+        const sec2Pillars = document.querySelectorAll('#sec2 .pillar-row .pillar');
+        if (sec2Pillars.length === 4) {
+          const order = [femalePillars.hour, femalePillars.day, femalePillars.month, femalePillars.year];
+          sec2Pillars.forEach((p, i) => {
+            const tian = p.querySelector('.pillar-tian');
+            const di = p.querySelector('.pillar-di');
+            if (tian) tian.textContent = order[i].stem;
+            if (di) di.textContent = order[i].branch;
+          });
+        }
+        const sec2Body = document.getElementById('sec2');
+        if (sec2Body) {
+          const firstP = sec2Body.querySelector('.section-body p');
+          if (firstP) firstP.textContent = `女方生于公历 ${femalePillars.solar.y} 年（${femalePillars.year.stem}${femalePillars.year.branch}），月柱 ${femalePillars.month.stem}${femalePillars.month.branch}，日柱 ${femalePillars.day.stem}${femalePillars.day.branch}，时柱 ${femalePillars.hour.stem}${femalePillars.hour.branch}。日主 ${femaleChart.dayMaster} —— ${femaleChart.persona.metaphor}。`;
+        }
+
+        // ====== DASHBOARD MODAL: real wuxing bars + dashu ======
+        const dashCols = document.querySelectorAll('.dash-col');
+        if (dashCols.length === 2) {
+          const setDashCol = (col, pillars, chart, label, year) => {
+            const name = col.querySelector('.dash-name');
+            const master = col.querySelector('.dash-master');
+            const pillarsEl = col.querySelector('.dash-pillars');
+            if (name) name.textContent = `${label} · ${year}`;
+            if (master) master.textContent = `${chart.dayMaster} · ${chart.persona.metaphor}`;
+            if (pillarsEl) pillarsEl.textContent = `${pillars.year.stem}${pillars.year.branch} · ${pillars.month.stem}${pillars.month.branch} · ${pillars.day.stem}${pillars.day.branch} · ${pillars.hour.stem}${pillars.hour.branch}`;
+            // wuxing rows
+            const rows = col.querySelectorAll('.wuxing-row');
+            const fives = ['木','火','土','金','水'];
+            const max = Math.max(...Object.values(chart.wuxing));
+            fives.forEach((f, i) => {
+              const row = rows[i];
+              if (!row) return;
+              const fill = row.querySelector('.wuxing-fill');
+              const score = chart.wuxing[f] || 0;
+              if (fill) fill.style.width = `${Math.min(score / 12 * 100, 100)}%`;
+              const lastSpan = row.querySelector('span:last-child');
+              if (lastSpan) lastSpan.textContent = score.toFixed(1);
+            });
+          };
+          setDashCol(dashCols[0], malePillars, maleChart, 'MALE', malePillars.solar.y);
+          setDashCol(dashCols[1], femalePillars, femaleChart, 'FEMALE', femalePillars.solar.y);
+        }
+
         // Save for unlock-side reuse
-        window.__hepan = { malePillars, femalePillars, maleChart, femaleChart, compat };
+        window.__hepan = { malePillars, femalePillars, maleChart, femaleChart, compat: fullCompat };
       } catch (e) {
         console.warn('Bazi calc failed; showing default sample chart:', e);
+        window.__lastErr = e.message;
       }
     }
 

@@ -254,12 +254,118 @@
     };
   }
 
+  // ============== TIANGAN LIUHE (天干六合) ==============
+  // Returns { product, score, label } if any pair forms liuhe
+  const LIUHE_PAIRS = {
+    '甲己': { product: '土', label: '甲己合化土' },
+    '乙庚': { product: '金', label: '乙庚合化金' },
+    '丙辛': { product: '水', label: '丙辛合化水' },
+    '丁壬': { product: '木', label: '丁壬合化木' },
+    '戊癸': { product: '火', label: '戊癸合化火' },
+  };
+  function findTianganLiuhe(stems1, stems2) {
+    const matches = [];
+    stems1.forEach(s1 => stems2.forEach(s2 => {
+      const k1 = s1 + s2;
+      const k2 = s2 + s1;
+      if (LIUHE_PAIRS[k1]) matches.push({ ...LIUHE_PAIRS[k1], stems: [s1, s2] });
+      else if (LIUHE_PAIRS[k2]) matches.push({ ...LIUHE_PAIRS[k2], stems: [s1, s2] });
+    }));
+    return matches;
+  }
+
+  // ============== DIZHI 冲 / 刑 (branch conflicts) ==============
+  const CHONG_PAIRS = ['子午','丑未','寅申','卯酉','辰戌','巳亥'];
+  const ZIXING = ['辰辰','午午','酉酉','亥亥','申申']; // 自刑
+  function findBranchConflicts(branches1, branches2) {
+    const all = [...branches1, ...branches2];
+    const conflicts = [];
+    // chong
+    CHONG_PAIRS.forEach(p => {
+      const a = p[0], b = p[1];
+      const inA = branches1.includes(a) || branches2.includes(a);
+      const inB = branches1.includes(b) || branches2.includes(b);
+      if (inA && inB) conflicts.push({ type: 'chong', branches: [a, b], label: `${a}${b}冲` });
+    });
+    // self-刑 (same branch in both pillars)
+    branches1.forEach(b => {
+      const count = all.filter(x => x === b).length;
+      if (count >= 2 && ['辰','午','酉','亥','申'].includes(b)) {
+        if (!conflicts.find(c => c.label === `${b}${b}自刑`)) {
+          conflicts.push({ type: 'zixing', branches: [b, b], label: `${b}${b}自刑` });
+        }
+      }
+    });
+    return conflicts;
+  }
+
+  // ============== ENRICHED COMPATIBILITY ==============
+  function fullCompatibility(maleChart, malePillars, femaleChart, femalePillars) {
+    const baseCompat = computeCompatibility(maleChart, femaleChart);
+
+    const maleStems = [malePillars.year.stem, malePillars.month.stem, malePillars.day.stem, malePillars.hour.stem];
+    const femaleStems = [femalePillars.year.stem, femalePillars.month.stem, femalePillars.day.stem, femalePillars.hour.stem];
+    const maleBranches = [malePillars.year.branch, malePillars.month.branch, malePillars.day.branch, malePillars.hour.branch];
+    const femaleBranches = [femalePillars.year.branch, femalePillars.month.branch, femalePillars.day.branch, femalePillars.hour.branch];
+
+    const liuhe = findTianganLiuhe(maleStems, femaleStems);
+    const conflicts = findBranchConflicts(maleBranches, femaleBranches);
+
+    // bonus for liuhe whose product fills male's weakness
+    let bonus = 0;
+    liuhe.forEach(h => {
+      if (h.product === maleChart.weakest.five || h.product === femaleChart.weakest.five) bonus += 5;
+    });
+    // penalty for chong involving day-pillar
+    conflicts.forEach(c => {
+      if (c.type === 'chong' && (c.branches.includes(malePillars.day.branch) || c.branches.includes(femalePillars.day.branch))) bonus -= 4;
+      if (c.type === 'zixing' && (c.branches[0] === malePillars.day.branch || c.branches[0] === femalePillars.day.branch)) bonus -= 3;
+    });
+
+    const finalScore = Math.max(40, Math.min(99, baseCompat.score + bonus));
+
+    // Day-master family kanyou (similar group)
+    const maleFive = STEM_FIVE[maleChart.dayMaster];
+    const femaleFive = STEM_FIVE[femaleChart.dayMaster];
+    const generates = { 木:'火', 火:'土', 土:'金', 金:'水', 水:'木' };
+    let trigram = ['离', '坤']; // default
+    const FIVE_TO_TRIGRAM = { 木: '震', 火: '离', 土: '坤', 金: '兑', 水: '坎' };
+    trigram = [FIVE_TO_TRIGRAM[maleFive] || '离', FIVE_TO_TRIGRAM[femaleFive] || '坤'];
+
+    const TRIGRAM_SYMBOL = { 乾:'☰', 坤:'☷', 震:'☳', 巽:'☴', 坎:'☵', 离:'☲', 艮:'☶', 兑:'☱' };
+    const heGua = `${TRIGRAM_SYMBOL[trigram[1]]}${TRIGRAM_SYMBOL[trigram[0]]}`;
+
+    return {
+      ...baseCompat,
+      score: finalScore,
+      tier: finalScore >= 80 ? '上佳合婚' : finalScore >= 65 ? '良缘' : finalScore >= 50 ? '中等' : '需努力',
+      liuhe,
+      conflicts,
+      trigrams: { male: trigram[0], female: trigram[1] },
+      heGuaSymbol: heGua,
+    };
+  }
+
+  // ============== SUMMARY HELPERS ==============
+  // Year stem-branch from solar year (approximates by Chinese New Year)
+  function getYearGanZhi(year) {
+    // Reference: 1984 = 甲子 (cycle index 0)
+    const idx = ((year - 1984) % 60 + 60) % 60;
+    return STEMS[idx % 10] + BRANCHES[idx % 12];
+  }
+
+  // Find which dashu the person is currently in (very rough — by age)
+  function getCurrentDashu(dashuList, currentAge) {
+    return dashuList.find(d => currentAge >= d.ageStart && currentAge < d.ageEnd) || dashuList[Math.min(3, dashuList.length - 1)];
+  }
+
   // ============== EXPORTS ==============
   global.Hepan = {
     STEMS, BRANCHES, STEM_FIVE, BRANCH_FIVE, STEM_YIN_YANG, BRANCH_HIDDEN,
-    DAY_MASTER_PERSONA,
+    DAY_MASTER_PERSONA, LIUHE_PAIRS, CHONG_PAIRS,
     buildPillars, computeWuxing, getDashu, interpretChart, computeCompatibility,
-    getShiShen,
+    fullCompatibility, findTianganLiuhe, findBranchConflicts,
+    getShiShen, getYearGanZhi, getCurrentDashu,
   };
 
 })(typeof window !== 'undefined' ? window : globalThis);
