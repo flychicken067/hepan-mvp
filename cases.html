@@ -4,217 +4,347 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>名人合盘案例 · 古籍合婚</title>
-  <meta name="description" content="6 份免费名人合盘示例 — 邓超孙俪 / 谢霆锋王菲 / 黄磊孙莉 / 孙悟空紫霞 / 唐僧女儿国 / 牛魔王铁扇。每条结论附《穷通宝鉴》篇卷。">
-  <meta property="og:title" content="名人合盘案例 · 6 份免费示例">
+  <meta name="description" content="6 份免费合盘示例 · 3 真 + 3 西游 · 邓超孙俪 / 谢霆锋王菲 / 黄磊孙莉 / 孙悟空紫霞 / 唐僧女儿国 / 牛魔王铁扇。">
+  <meta property="og:title" content="名人合盘 · 6 份免费示例">
   <meta property="og:description" content="3 位真人 + 3 位西游角色 · 看看古籍合婚长什么样">
-  <meta property="og:type" content="website">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --paper: #F5EFE0;
-      --ink: #1A1817;
-      --ink-soft: #3A332D;
-      --ink-mute: #6B5F52;
+      --paper: #FAF7F0;
+      --ink: #14110E;
+      --ink-soft: #2D2823;
+      --ink-mute: #8B8275;
+      --hair: rgba(20, 17, 14, 0.08);
       --vermillion: #B8362A;
-      --gold: #B8924A;
-      --gold-soft: #D4B370;
-      --serif-cn: 'Noto Serif SC', 'Songti SC', serif;
-      --serif-en: 'Cormorant Garamond', serif;
-      --mono: 'JetBrains Mono', monospace;
+      --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
       background: var(--paper);
       color: var(--ink);
-      font-family: var(--serif-cn);
-      line-height: 1.7;
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 2.0;
       -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 60px 28px 100px; }
-    .nav-back {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 3px;
-      color: var(--ink-mute); text-decoration: none; text-transform: uppercase;
+    a { color: inherit; }
+
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 22px 32px;
+      z-index: 60;
     }
-    .nav-back:hover { color: var(--vermillion); }
-    .hero-eyebrow {
-      font-family: var(--mono); font-size: 12px; letter-spacing: 6px;
-      color: var(--vermillion); margin: 40px 0 16px;
+    .topbar-mark {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 6px;
+      text-decoration: none;
+    }
+    .topbar-back {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .topbar-back:hover { color: var(--vermillion); }
+
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 140px 32px 100px; }
+
+    .hero-num {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 100px;
+      line-height: 1;
+      color: var(--vermillion);
+      margin-bottom: 16px;
     }
     .hero-title {
-      font-family: var(--serif-cn); font-weight: 700;
-      font-size: 56px; line-height: 1.18; letter-spacing: 2px;
-      margin-bottom: 18px;
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 56px;
+      letter-spacing: 6px;
+      line-height: 1.2;
+      margin-bottom: 24px;
     }
     .hero-byline {
-      font-family: var(--serif-en); font-style: italic;
-      font-size: 19px; color: var(--ink-mute); margin-bottom: 60px;
+      font-family: var(--serif);
+      font-size: 19px;
+      color: var(--ink-soft);
       max-width: 640px;
+      line-height: 2.0;
+      margin-bottom: 80px;
     }
+
     .group-label {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 4px;
-      color: var(--vermillion); margin: 50px 0 20px;
-      display: flex; align-items: center; gap: 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+      margin: 80px 0 32px;
+      text-transform: uppercase;
+      display: flex; align-items: center; gap: 16px;
     }
     .group-label::after {
-      content: ''; flex: 1; height: 1px; background: rgba(184,54,42,0.2);
+      content: ''; flex: 1; height: 1px; background: var(--hair);
     }
+
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 22px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 0;
     }
     .case {
-      background: #fff;
-      border: 1px solid rgba(26,24,23,0.08);
-      border-radius: 14px;
-      padding: 26px 24px 22px;
+      padding: 36px 32px;
       text-decoration: none;
       color: inherit;
-      transition: all 0.22s cubic-bezier(.2,.7,.2,1);
+      transition: background 0.18s;
       display: flex; flex-direction: column;
       position: relative;
-      overflow: hidden;
+      border-top: 1px solid var(--hair);
+      border-right: 1px solid var(--hair);
     }
-    .case:hover {
-      transform: translateY(-3px);
-      border-color: var(--vermillion);
-      box-shadow: 0 12px 28px rgba(184,54,42,0.1);
-    }
+    .case:hover { background: rgba(184, 54, 42, 0.03); }
+    .case:hover .case-cta { color: var(--vermillion); }
+
     .case-num {
-      font-family: var(--mono); font-size: 10px; letter-spacing: 2px;
-      color: var(--vermillion); margin-bottom: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      margin-bottom: 14px;
+      text-transform: uppercase;
     }
     .case-pair {
-      font-family: var(--serif-cn); font-weight: 700;
-      font-size: 22px; letter-spacing: 1px; line-height: 1.3;
-      margin-bottom: 10px; color: var(--ink);
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 28px;
+      letter-spacing: 4px;
+      line-height: 1.3;
+      margin-bottom: 18px;
     }
     .case-trigram {
-      font-size: 32px; line-height: 1; color: var(--gold);
-      margin: 6px 0 14px; letter-spacing: 4px;
+      font-size: 32px;
+      color: var(--ink-soft);
+      letter-spacing: 6px;
+      margin: 6px 0 24px;
+      opacity: 0.55;
     }
     .case-quote {
-      font-family: var(--serif-en); font-style: italic;
-      font-size: 14px; color: var(--ink-mute);
-      margin-bottom: 14px; min-height: 36px;
+      font-family: var(--serif);
+      font-size: 16px;
+      line-height: 1.85;
+      color: var(--ink-soft);
+      margin-bottom: 28px;
+      flex: 1;
     }
     .case-meta {
       display: flex; justify-content: space-between; gap: 8px;
-      padding-top: 12px;
-      border-top: 1px dashed rgba(26,24,23,0.12);
-      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      padding-top: 16px;
+      border-top: 1px solid var(--hair);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
       color: var(--ink-mute);
+      align-items: baseline;
     }
-    .case-score b { color: var(--vermillion); font-size: 16px; }
-    .case-cta {
-      margin-top: 14px;
-      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
-      color: var(--vermillion); text-transform: uppercase;
-    }
-    .case.legend::before {
-      content: '传'; position: absolute; top: 14px; right: 16px;
-      width: 28px; height: 28px; border-radius: 50%;
-      background: rgba(184,146,74,0.15); color: var(--gold);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700;
-    }
-    .case.real::before {
-      content: '真'; position: absolute; top: 14px; right: 16px;
-      width: 28px; height: 28px; border-radius: 50%;
-      background: rgba(184,54,42,0.1); color: var(--vermillion);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700;
-    }
-    .footer {
-      margin-top: 80px; padding-top: 40px;
-      border-top: 1px solid rgba(26,24,23,0.1);
-      font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
-      color: var(--ink-mute); text-align: center;
-    }
-    .footer a { color: var(--vermillion); text-decoration: none; }
-    .disclaimer {
-      margin-top: 14px; font-family: var(--serif-cn);
-      font-size: 13px; line-height: 1.7; color: var(--ink-mute);
-      max-width: 640px; margin-left: auto; margin-right: auto;
+    .case-score {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--vermillion);
       letter-spacing: 0;
     }
+    .case-score small {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-mute);
+      letter-spacing: 1px;
+      margin-left: 4px;
+      font-weight: 400;
+    }
+    .case-cta {
+      margin-top: 18px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      transition: color 0.18s;
+    }
+    .case-tag {
+      position: absolute;
+      top: 36px;
+      right: 32px;
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--ink-mute);
+      opacity: 0.5;
+    }
+
+    .disclaimer {
+      max-width: 640px;
+      margin: 100px auto 0;
+      padding: 36px 0;
+      font-family: var(--serif);
+      font-size: 14px;
+      line-height: 2.0;
+      color: var(--ink-mute);
+      text-align: center;
+      border-top: 1px solid var(--hair);
+    }
+    .disclaimer strong { color: var(--ink-soft); font-weight: 600; }
+
+    .footer {
+      text-align: center;
+      padding: 60px 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+    }
+    .footer a {
+      color: var(--vermillion);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .footer a:hover { border-bottom-color: var(--vermillion); }
+
+    .colophon {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      text-align: center;
+      padding: 60px 24px 80px;
+      line-height: 2.2;
+      border-top: 1px solid var(--hair);
+    }
+
     @media (max-width: 720px) {
-      .hero-title { font-size: 40px; }
-      .wrap { padding: 40px 22px 60px; }
+      .wrap { padding: 100px 22px 60px; }
+      .hero-title { font-size: 36px; letter-spacing: 4px; }
+      .case { padding: 28px 24px; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <a href="/" class="nav-back">← 返回首页</a>
-    <div class="hero-eyebrow">CASE STUDIES · 名人合盘</div>
-    <h1 class="hero-title">六份合盘案例<br>免费看完整版</h1>
-    <p class="hero-byline">3 位公开婚姻状态的实在人 + 3 位经典文学角色 — 同一套子平命理推演本体论，演给你看。</p>
 
-    <div class="group-label">真实组 · ESTABLISHED COUPLES</div>
+  <header class="topbar">
+    <a href="/" class="topbar-mark">合 盘</a>
+    <a href="/" class="topbar-back">← 返 回 首 页</a>
+  </header>
+
+  <div class="wrap">
+    <div class="hero-num">案</div>
+    <h1 class="hero-title">名 人 合 盘 · 六 份 案 例</h1>
+    <p class="hero-byline">
+      三位公开婚姻状态的实在人 · 三位经典文学角色。<br>
+      同一套子平命理本体论，演给你看。<br>
+      所有案例 <em style="color:var(--vermillion);font-style:normal">免费看完整版</em>。
+    </p>
+
+    <div class="group-label">真 实 组 · ESTABLISHED</div>
     <div class="grid">
-      <a class="case real" href="report.html?male-date=1979-02-08&male-time=08:00&female-date=1982-08-26&female-time=14:00&token=unlocked&caseId=dengchao">
+      <a class="case" href="report.html?male-date=1979-02-08&male-time=08:00&female-date=1982-08-26&female-time=14:00&token=unlocked&caseId=dengchao">
         <div class="case-num">CASE 01</div>
-        <div class="case-pair">邓超 × 孙俪</div>
+        <div class="case-tag">真</div>
+        <div class="case-pair">邓 超<br>× 孙 俪</div>
         <div class="case-trigram">☲ ☶</div>
-        <div class="case-quote">"娘娘和孩子他爸 · 17 年稳如山火贲卦"</div>
-        <div class="case-meta"><span>1979 × 1982</span><span class="case-score">88 <b>/100</b></span></div>
-        <div class="case-cta">查看完整合盘 →</div>
+        <div class="case-quote">娘娘和孩子他爸——十七年稳如山火贲卦。</div>
+        <div class="case-meta">
+          <span>1979 × 1982</span>
+          <span class="case-score">88<small>/100</small></span>
+        </div>
+        <div class="case-cta">查 看 完 整 →</div>
       </a>
-      <a class="case real" href="report.html?male-date=1980-08-29&male-time=12:00&female-date=1969-08-08&female-time=10:00&token=unlocked&caseId=xiewang">
+      <a class="case" href="report.html?male-date=1980-08-29&male-time=12:00&female-date=1969-08-08&female-time=10:00&token=unlocked&caseId=xiewang">
         <div class="case-num">CASE 02</div>
-        <div class="case-pair">谢霆锋 × 王菲</div>
+        <div class="case-tag">真</div>
+        <div class="case-pair">谢 霆 锋<br>× 王 菲</div>
         <div class="case-trigram">☱ ☵</div>
-        <div class="case-quote">"金水相生 · 11 岁差的传奇兜回"</div>
-        <div class="case-meta"><span>1980 × 1969</span><span class="case-score">81 <b>/100</b></span></div>
-        <div class="case-cta">查看完整合盘 →</div>
+        <div class="case-quote">金水相生——十一岁差的传奇兜回。</div>
+        <div class="case-meta">
+          <span>1980 × 1969</span>
+          <span class="case-score">81<small>/100</small></span>
+        </div>
+        <div class="case-cta">查 看 完 整 →</div>
       </a>
-      <a class="case real" href="report.html?male-date=1971-12-06&male-time=04:00&female-date=1979-09-09&female-time=20:00&token=unlocked&caseId=huangsun">
+      <a class="case" href="report.html?male-date=1971-12-06&male-time=04:00&female-date=1979-09-09&female-time=20:00&token=unlocked&caseId=huangsun">
         <div class="case-num">CASE 03</div>
-        <div class="case-pair">黄磊 × 孙莉</div>
+        <div class="case-tag">真</div>
+        <div class="case-pair">黄 磊<br>× 孙 莉</div>
         <div class="case-trigram">☷ ☴</div>
-        <div class="case-quote">"23 年 · 老夫老妻的坤巽相承"</div>
-        <div class="case-meta"><span>1971 × 1979</span><span class="case-score">85 <b>/100</b></span></div>
-        <div class="case-cta">查看完整合盘 →</div>
+        <div class="case-quote">二十三年——老夫老妻的坤巽相承。</div>
+        <div class="case-meta">
+          <span>1971 × 1979</span>
+          <span class="case-score">85<small>/100</small></span>
+        </div>
+        <div class="case-cta">查 看 完 整 →</div>
       </a>
     </div>
 
-    <div class="group-label">西游组 · LITERARY COUPLES</div>
+    <div class="group-label">西 游 组 · LITERARY</div>
     <div class="grid">
-      <a class="case legend" href="report.html?male-date=1980-05-04&male-time=02:00&female-date=1985-07-15&female-time=20:00&token=unlocked&caseId=wukong">
+      <a class="case" href="report.html?male-date=1980-05-04&male-time=02:00&female-date=1985-07-15&female-time=20:00&token=unlocked&caseId=wukong">
         <div class="case-num">CASE 04</div>
-        <div class="case-pair">孙悟空 × 紫霞仙子</div>
+        <div class="case-tag">传</div>
+        <div class="case-pair">孙 悟 空<br>× 紫 霞</div>
         <div class="case-trigram">☲ ☵</div>
-        <div class="case-quote">"五百年的丙辛合 · 火与水彼此找回"</div>
-        <div class="case-meta"><span>大话西游</span><span class="case-score">76 <b>/100</b></span></div>
-        <div class="case-cta">查看完整合盘 →</div>
+        <div class="case-quote">五百年的丙辛合——火与水彼此找回。</div>
+        <div class="case-meta">
+          <span>大话西游</span>
+          <span class="case-score">76<small>/100</small></span>
+        </div>
+        <div class="case-cta">查 看 完 整 →</div>
       </a>
-      <a class="case legend" href="report.html?male-date=1985-04-08&male-time=06:00&female-date=1985-09-12&female-time=14:00&token=unlocked&caseId=tangseng">
+      <a class="case" href="report.html?male-date=1985-04-08&male-time=06:00&female-date=1985-09-12&female-time=14:00&token=unlocked&caseId=tangseng">
         <div class="case-num">CASE 05</div>
-        <div class="case-pair">唐僧 × 女儿国国王</div>
+        <div class="case-tag">传</div>
+        <div class="case-pair">唐 僧<br>× 女 儿 国</div>
         <div class="case-trigram">☶ ☱</div>
-        <div class="case-quote">"艮兑相错 · 取经路上唯一动心的女子"</div>
-        <div class="case-meta"><span>女儿国</span><span class="case-score">62 <b>/100</b></span></div>
-        <div class="case-cta">查看完整合盘 →</div>
+        <div class="case-quote">艮兑相错——取经路上唯一动心的女子。</div>
+        <div class="case-meta">
+          <span>女 儿 国</span>
+          <span class="case-score">62<small>/100</small></span>
+        </div>
+        <div class="case-cta">查 看 完 整 →</div>
       </a>
-      <a class="case legend" href="report.html?male-date=1975-06-15&male-time=10:00&female-date=1976-08-22&female-time=14:00&token=unlocked&caseId=niumowang">
+      <a class="case" href="report.html?male-date=1975-06-15&male-time=10:00&female-date=1976-08-22&female-time=14:00&token=unlocked&caseId=niumowang">
         <div class="case-num">CASE 06</div>
-        <div class="case-pair">牛魔王 × 铁扇公主</div>
+        <div class="case-tag">传</div>
+        <div class="case-pair">牛 魔 王<br>× 铁 扇</div>
         <div class="case-trigram">☶ ☴</div>
-        <div class="case-quote">"火焰山下 · 老夫老妻仍要分居 500 年"</div>
-        <div class="case-meta"><span>火焰山</span><span class="case-score">58 <b>/100</b></span></div>
-        <div class="case-cta">查看完整合盘 →</div>
+        <div class="case-quote">火焰山下——老夫老妻仍要分居五百年。</div>
+        <div class="case-meta">
+          <span>火 焰 山</span>
+          <span class="case-score">58<small>/100</small></span>
+        </div>
+        <div class="case-cta">查 看 完 整 →</div>
       </a>
     </div>
 
     <p class="disclaimer">
-      "真" = 公开婚姻信息的现实伴侣，仅以公开生年为参考估算；"传" = 文学角色，时辰由作者依文本气质定位，纯属娱乐。<br>
-      合盘解读基于子平命理本体论 · 出处：《穷通宝鉴》《三命通会》《八字提要》《周易》。
+      <strong>真</strong>＝公开婚姻信息的现实伴侣，仅以公开生年估算。<br>
+      <strong>传</strong>＝文学角色，时辰由作者依文本气质虚拟，纯属娱乐。
     </p>
-
-    <div class="footer">
-      <a href="/">← 算我和 ta 的合盘</a> · ¥29 一次买断 · 不订阅
-    </div>
   </div>
+
+  <div class="footer">
+    <a href="/">← 算 我 和 ta 的 合 盘</a>
+  </div>
+
+  <p class="colophon">
+    <strong>设 计 哲 学</strong> · 《周易·贲卦》上九：「白贲，无咎。」<br>
+    引文均出自《穷通宝鉴》《三命通会》《八字提要》《滴天髓》《周易》<br>
+    一 次 买 断 · 不 订 阅 · 不 充 值
+  </p>
 </body>
 </html>
