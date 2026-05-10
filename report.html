@@ -1457,7 +1457,9 @@
               ? `<em>${maleChart.dayMaster}</em> 生 ${malePillars.month.branch}月 · <em>${femaleChart.dayMaster}</em> 生 ${femalePillars.month.branch}月<br>各 有 命 书 落 处`
               : `<em>${maleChart.dayMaster}</em> 生 ${malePillars.month.branch}月<br>命 书 有 落 处`;
             setHTML('v3-line', verdictHtml);
-            setText('v3-meta', e.book ? `${e.book} · 月令篇` : `子 平 推 演 · 格 局`);
+            // Honesty: only show book name (verified from RAG) + query (transparent hint to user)
+            // Do NOT manufacture section names ("月令篇" etc) — RAG has no section metadata
+            setText('v3-meta', e.book ? `${e.book} · 检 索「${e.q}」` : `子 平 推 演 · 格 局`);
           } else {
             // Fallback if cache missed
             setHTML('v3-line', `<em>${mPersona.metaphor}</em> 与 <em>${fPersona.metaphor}</em><br>各是各的格，不混同。`);
