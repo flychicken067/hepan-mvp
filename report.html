@@ -38,6 +38,10 @@
     fetch('assets/mingli-cache.json').then(r => r.json()).then(d => {
       window.__mingliCache = d || { entries: [], by_day: {} };
     }).catch(() => {});
+    window.__shenshaCache = null;
+    fetch('assets/shensha-cache.json').then(r => r.json()).then(d => {
+      window.__shenshaCache = d.entries || {};
+    }).catch(() => {});
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
   <style>
@@ -254,7 +258,8 @@
     }
     .chapter-svg svg { width: 100%; height: auto; display: block; }
 
-    /* 命例同格 — historical figure match */
+    /* 命例同格 + 神煞 share style */
+    .shensha-block,
     .mingli-match {
       margin: 48px 0;
       padding: 36px 28px;
@@ -1536,6 +1541,51 @@
             if (window.__mingliCache || ++tries > 30) {
               clearInterval(wait);
               if (window.__mingliCache) applyMingliMatch();
+            }
+          }, 100);
+        }
+
+        // ===== 神煞检测 — easy ones from day pillar =====
+        const KUIGANG_DAYS = ['庚辰','庚戌','壬辰','壬戌','戊戌'];
+        const detectShensha = () => {
+          const ss = window.__shenshaCache;
+          if (!ss) return;
+          const findings = [];
+          const malDay = `${malePillars.day.stem}${malePillars.day.branch}`;
+          const fmlDay = `${femalePillars.day.stem}${femalePillars.day.branch}`;
+          if (KUIGANG_DAYS.includes(malDay)) findings.push({ who: '男命', name: '魁罡', day: malDay });
+          if (KUIGANG_DAYS.includes(fmlDay)) findings.push({ who: '女命', name: '魁罡', day: fmlDay });
+          // 羊刃 (阳干日 + 比劫月支): 甲卯, 丙午, 戊午, 庚酉, 壬子
+          const YANGREN = { 甲:'卯', 丙:'午', 戊:'午', 庚:'酉', 壬:'子' };
+          for (const [dm, br] of [[maleChart.dayMaster, malePillars.month.branch], [maleChart.dayMaster, malePillars.hour.branch]]) {
+            if (YANGREN[dm] === br) { findings.push({ who: '男命', name: '羊刃', day: `${dm}${br}` }); break; }
+          }
+          for (const [dm, br] of [[femaleChart.dayMaster, femalePillars.month.branch], [femaleChart.dayMaster, femalePillars.hour.branch]]) {
+            if (YANGREN[dm] === br) { findings.push({ who: '女命', name: '羊刃', day: `${dm}${br}` }); break; }
+          }
+          if (findings.length === 0) return;
+          const ch1Body = document.querySelector('#ch1 .chapter-body');
+          if (!ch1Body || ch1Body.querySelector('.shensha-block')) return;
+          const div = document.createElement('div');
+          div.className = 'shensha-block';
+          let html = '<div class="mingli-eyebrow">神 煞</div>';
+          findings.forEach(f => {
+            const def = ss[f.name];
+            html += `<p>${f.who} · 命带 <em>${f.name}</em>（${f.day}）。</p>`;
+            if (def) html += `<p class="mingli-summary">${def.quote}</p><cite>— ${def.book}</cite>`;
+          });
+          div.innerHTML = html;
+          const verdict = ch1Body.querySelector('.verdict');
+          if (verdict) ch1Body.insertBefore(div, verdict);
+          else ch1Body.appendChild(div);
+        };
+        if (window.__shenshaCache) detectShensha();
+        else {
+          let tries = 0;
+          const wait = setInterval(() => {
+            if (window.__shenshaCache || ++tries > 30) {
+              clearInterval(wait);
+              if (window.__shenshaCache) detectShensha();
             }
           }, 100);
         }
