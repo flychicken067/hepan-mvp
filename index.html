@@ -13,7 +13,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://hepan-mvp.vercel.app/og-image.png">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="assets/lunar.min.js"></script>
   <script src="assets/bazi.js"></script>
   <script defer src="/_vercel/insights/script.js"></script>
@@ -26,6 +26,7 @@
       --hair: rgba(20, 17, 14, 0.08);
       --vermillion: #B8362A;
       --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+      --serif-en: 'Cormorant Garamond', 'Garamond', serif;
       --mono: 'JetBrains Mono', ui-monospace, monospace;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -87,12 +88,12 @@
     .hero-3d canvas { display: block; width: 100%; height: 100%; }
     .hero > *:not(.hero-3d):not(.hero-baibi) { position: relative; z-index: 1; }
     .hero-eyebrow {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 8px;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 20px;
+      letter-spacing: 4px;
       color: var(--vermillion);
       margin-bottom: 56px;
-      text-transform: uppercase;
     }
     .hero-mark {
       font-family: var(--serif);
@@ -505,7 +506,7 @@
   <!-- ============== HERO ============== -->
   <section class="hero">
     <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
-    <div class="hero-eyebrow">YOU · AND · TA</div>
+    <div class="hero-eyebrow">You and Ta · Marriage Compatibility</div>
     <div class="hero-mark">合</div>
     <div class="hero-line">你 和 ta 到 底 合 不 合</div>
     <div class="hero-sub">一 个 答 案 · 12 张 卡 · 12 个 月</div>

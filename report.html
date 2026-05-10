@@ -8,7 +8,7 @@
   <meta property="og:title" content="合盘 · 古籍合婚">
   <meta property="og:description" content="你和 ta 到底合不合 · 一笔可断">
   <meta property="og:type" content="article">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="assets/lunar.min.js"></script>
   <script src="assets/bazi.js"></script>
   <script src="assets/svg-charts.js"></script>
@@ -29,6 +29,7 @@
       --hair: rgba(20, 17, 14, 0.08);
       --vermillion: #B8362A;
       --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+      --serif-en: 'Cormorant Garamond', 'Garamond', serif;
       --mono: 'JetBrains Mono', ui-monospace, monospace;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -152,11 +153,11 @@
       margin-bottom: 12px;
     }
     .chapter-en {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 4px;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 22px;
+      letter-spacing: 0;
       color: var(--ink-mute);
-      text-transform: uppercase;
       margin-bottom: 80px;
     }
     .chapter-body {
@@ -529,16 +530,16 @@
     /* Per-chapter corner 3D — single shared canvas, morphs by active chapter */
     .chapter-art {
       position: fixed;
-      top: 90px;
-      right: 56px;
-      width: 110px;
-      height: 110px;
+      top: 80px;
+      right: 40px;
+      width: 220px;
+      height: 220px;
       z-index: 30;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.6s ease;
     }
-    .chapter-art.active { opacity: 0.45; }
+    .chapter-art.active { opacity: 0.7; }
     .chapter-art canvas { width: 100%; height: 100%; display: block; }
     @media (max-width: 880px) { .chapter-art { display: none; } }
     @media print { .chapter-art { display: none; } }
@@ -1172,62 +1173,67 @@
       camera.position.set(0, 0, 9);
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(110, 110);
+      renderer.setSize(220, 220);
       renderer.setClearColor(0x000000, 0);
       mount.appendChild(renderer.domElement);
 
-      // ----- factory: each chapter gets its own wayofcode-style line form
-      // All forms are LineSegments only (no fills), single ink color, low-poly.
-      // Each form is chosen to *evoke* the chapter content without being literal.
-      function makeFor (id) {
-        const g = new THREE.Group();
-        const lineEdges = (geo, thr = 12) => new THREE.LineSegments(new THREE.EdgesGeometry(geo, thr), matLine);
+      // ----- factory: each chapter gets a parametric flowing mesh (wayofcode-style)
+      // PlaneGeometry 50x50, per-frame vertex displacement via sin/cos waves.
+      // Renders as wireframe LineSegments — looks like flowing cloth / wave field.
+      // Each chapter has unique (freq, amp, phase, tilt) params for visual variety.
+      const PARAMS = {
+        ch1: { fx: 1.5, fy: 1.2, az: 0.6,  px: 0.0, py: 0.0, tilt: 0.5 },  // 排盘 · stable
+        ch2: { fx: 1.8, fy: 1.4, az: 0.55, px: 0.5, py: 0.3, tilt: 0.7 },  // 五行 · circular
+        ch3: { fx: 2.2, fy: 1.1, az: 0.5,  px: 0.0, py: 0.8, tilt: 0.4 },  // 格局
+        ch4: { fx: 1.2, fy: 2.4, az: 0.7,  px: 0.7, py: 0.0, tilt: 0.6 },  // 用神
+        ch5: { fx: 1.0, fy: 1.0, az: 0.8,  px: 0.0, py: 0.0, tilt: 0.3 },  // 大运 · long wave
+        ch6: { fx: 2.4, fy: 2.2, az: 0.5,  px: 1.0, py: 0.5, tilt: 0.5 },  // 流年 · 12 ripples
+        ch7: { fx: 1.6, fy: 1.6, az: 0.65, px: 0.3, py: 0.3, tilt: 0.5 },  // 合婚 · symmetric
+        ch8: { fx: 2.8, fy: 1.8, az: 0.55, px: 0.0, py: 1.2, tilt: 0.6 },  // 十二问
+        ch9: { fx: 1.4, fy: 2.6, az: 0.6,  px: 0.8, py: 0.0, tilt: 0.7 },  // 十二月
+      };
 
-        switch (id) {
-          case 'ch1': { // 排盘 — Tetrahedron (foundation, 3 sides → 4 pillars)
-            g.add(lineEdges(new THREE.TetrahedronGeometry(1.9)));
-            break;
-          }
-          case 'ch2': { // 五行 — TorusKnot (3,2) — five-element circulation
-            g.add(lineEdges(new THREE.TorusKnotGeometry(1.3, 0.4, 60, 6, 3, 2), 14));
-            break;
-          }
-          case 'ch3': { // 格局 — Octahedron (8 trigrams, central pattern)
-            g.add(lineEdges(new THREE.OctahedronGeometry(1.9, 0)));
-            break;
-          }
-          case 'ch4': { // 用神 — Icosahedron (12 vertices, refined balance)
-            g.add(lineEdges(new THREE.IcosahedronGeometry(1.7, 0)));
-            break;
-          }
-          case 'ch5': { // 大运 — TorusKnot (5,2) — flowing decade rhythm
-            g.add(lineEdges(new THREE.TorusKnotGeometry(1.3, 0.36, 80, 6, 5, 2), 18));
-            break;
-          }
-          case 'ch6': { // 流年 — Dodecahedron (12 faces = 12 branches)
-            g.add(lineEdges(new THREE.DodecahedronGeometry(1.7, 0)));
-            break;
-          }
-          case 'ch7': { // 合婚 — Stella Octangula (compound of 2 tetrahedra)
-            const tet = new THREE.TetrahedronGeometry(1.7);
-            g.add(new THREE.LineSegments(new THREE.EdgesGeometry(tet), matLine));
-            const m2 = new THREE.LineSegments(new THREE.EdgesGeometry(tet), matLineSoft);
-            m2.rotation.y = Math.PI; m2.rotation.z = Math.PI;
-            g.add(m2);
-            break;
-          }
-          case 'ch8': { // 十二问 — TorusKnot (3,7) — interwoven questions
-            g.add(lineEdges(new THREE.TorusKnotGeometry(1.3, 0.3, 100, 6, 3, 7), 18));
-            break;
-          }
-          case 'ch9': { // 十二月 — Truncated Icosahedron via Sphere subdivision (more spheres = months)
-            const ico = new THREE.IcosahedronGeometry(1.8, 1); // 1 subdivision
-            g.add(lineEdges(ico, 25));
-            break;
-          }
-        }
+      // Reusable mesh template — same geometry instance, params change per chapter
+      function makeFor (id) {
+        const p = PARAMS[id] || PARAMS.ch1;
+        const g = new THREE.Group();
+        const W = 4.2, segs = 50;
+        const geo = new THREE.PlaneGeometry(W, W, segs, segs);
+        const mesh = new THREE.LineSegments(
+          new THREE.WireframeGeometry(geo),
+          matLine,
+        );
+        mesh.rotation.x = -Math.PI / 2 + p.tilt;
+        mesh.rotation.z = p.tilt * 0.4;
+        g.add(mesh);
+        // store params on group for animate() to use
+        g.userData = { p, geo, mesh };
         return g;
       }
+
+      // Per-frame mesh distortion (called from animate)
+      function distort (group, t) {
+        if (!group || !group.userData || !group.userData.geo) return;
+        const { p, geo } = group.userData;
+        const pos = geo.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          const x = pos.getX(i), y = pos.getY(i);
+          // initial flat at z=0; displace via wavy noise field
+          const z = Math.sin(x * p.fx + t * 0.7 + p.px) *
+                    Math.cos(y * p.fy + t * 0.5 + p.py) * p.az
+                  + Math.sin((x + y) * 0.8 + t * 0.4) * p.az * 0.3;
+          pos.setZ(i, z);
+        }
+        pos.needsUpdate = true;
+        // Rebuild wireframe from updated positions
+        if (group.userData.mesh) {
+          const wf = new THREE.WireframeGeometry(geo);
+          group.userData.mesh.geometry.dispose();
+          group.userData.mesh.geometry = wf;
+        }
+      }
+      // Expose distort to outer animate scope
+      window.__distortChapterMesh = distort;
 
       let current = null, currentId = null, dirty = true;
       function setChapter (id) {
@@ -1267,8 +1273,9 @@
       function animate () {
         const t = clock.getElapsedTime();
         if (current) {
-          current.rotation.y = t * 0.18;
-          current.rotation.x = Math.sin(t * 0.12) * 0.25;
+          // Flow the parametric mesh
+          if (window.__distortChapterMesh) window.__distortChapterMesh(current, t);
+          current.rotation.z = Math.sin(t * 0.08) * 0.05;
           renderer.render(scene, camera);
         } else if (dirty) {
           renderer.clear();
