@@ -2071,12 +2071,13 @@
             const inject = (id, svg) => {
               const sec = document.getElementById(id);
               if (!sec) return;
+              if (sec.querySelector(':scope > .section-svg')) return;
               const body = sec.querySelector('.section-body');
-              if (!body || body.querySelector('.section-svg')) return;
               const wrap = document.createElement('div');
               wrap.className = 'section-svg';
               wrap.innerHTML = svg;
-              body.insertBefore(wrap, body.firstChild);
+              // Insert as sibling BEFORE .section-body so it's always visible (not gated by collapse)
+              if (body) sec.insertBefore(wrap, body); else sec.appendChild(wrap);
             };
             const maleAge = (new Date().getFullYear()) - malePillars.solar.y;
             const femaleAge = (new Date().getFullYear()) - femalePillars.solar.y;
