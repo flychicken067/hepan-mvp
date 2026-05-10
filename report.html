@@ -34,6 +34,10 @@
     fetch('assets/hehun-cache.json').then(r => r.json()).then(d => {
       window.__hehunCache = d.entries || {};
     }).catch(() => {});
+    window.__mingliCache = null;
+    fetch('assets/mingli-cache.json').then(r => r.json()).then(d => {
+      window.__mingliCache = d || { entries: [], by_day: {} };
+    }).catch(() => {});
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
   <style>
@@ -249,6 +253,52 @@
       margin: 48px auto 56px;
     }
     .chapter-svg svg { width: 100%; height: auto; display: block; }
+
+    /* 命例同格 — historical figure match */
+    .mingli-match {
+      margin: 48px 0;
+      padding: 36px 28px;
+      background: rgba(184, 146, 74, 0.04);
+      border-left: 2px solid var(--vermillion);
+    }
+    .mingli-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 6px;
+      color: var(--vermillion);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .mingli-match p {
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.9;
+      color: var(--ink-soft);
+      margin: 8px 0;
+    }
+    .mingli-match em {
+      color: var(--vermillion);
+      font-style: normal;
+      font-weight: 600;
+    }
+    .mingli-match .mingli-summary {
+      font-size: 15px;
+      color: var(--ink-mute);
+      line-height: 1.85;
+      padding: 8px 16px;
+      border-left: 1px solid var(--hair);
+      margin: 12px 0;
+    }
+    .mingli-match cite {
+      display: block;
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      font-style: normal;
+    }
 
     /* Frame-able verdict — each chapter has one, screenshot-ready */
     .verdict {
@@ -1438,6 +1488,57 @@
         }
         setText('ch1-male', `男命，${mp.solar.y} 年生。四柱：${malePillarsStr}。日干 ${maleChart.dayMaster}，象 ${maleChart.persona.metaphor}。`);
         setText('ch1-female', `女命，${fp.solar.y} 年生。四柱：${femalePillarsStr}。日干 ${femaleChart.dayMaster}，象 ${femaleChart.persona.metaphor}。`);
+
+        // ===== 命例匹配 — find historical figures with same day pillar =====
+        const applyMingliMatch = () => {
+          const ml = window.__mingliCache;
+          if (!ml || !ml.entries) return;
+          const malDay = `${malePillars.day.stem}${malePillars.day.branch}`;
+          const fmlDay = `${femalePillars.day.stem}${femalePillars.day.branch}`;
+          const findMatches = (dayStr, gender) => {
+            const matches = ml.entries.filter(e => `${e.day}` === dayStr);
+            if (matches.length === 0) return null;
+            // Prefer entries with summary
+            const best = matches.find(e => e.summary && e.summary.length > 10) || matches[0];
+            return { day: dayStr, gender, name: best.name, summary: best.summary || '', book: best.book, all: matches.map(m => m.name) };
+          };
+          const mMatch = findMatches(malDay, '男');
+          const fMatch = findMatches(fmlDay, '女');
+          if (!mMatch && !fMatch) return;
+
+          const ch1Body = document.querySelector('#ch1 .chapter-body');
+          if (!ch1Body || ch1Body.querySelector('.mingli-match')) return;
+          const div = document.createElement('div');
+          div.className = 'mingli-match';
+          let html = '<div class="mingli-eyebrow">命 例 同 格</div>';
+          if (mMatch) {
+            const others = mMatch.all.filter(n => n !== mMatch.name).slice(0, 3);
+            html += `<p>男命 ${mMatch.day} 日柱，与近代 <em>${mMatch.name}</em> 同格${others.length ? `（亦同：${others.join('、')}）` : ''}。</p>`;
+            if (mMatch.summary) html += `<p class="mingli-summary">${mMatch.summary}</p>`;
+            html += `<cite>— ${mMatch.book}</cite>`;
+          }
+          if (fMatch) {
+            const others = fMatch.all.filter(n => n !== fMatch.name).slice(0, 3);
+            html += `<p style="margin-top:24px;">女命 ${fMatch.day} 日柱，与近代 <em>${fMatch.name}</em> 同格${others.length ? `（亦同：${others.join('、')}）` : ''}。</p>`;
+            if (fMatch.summary) html += `<p class="mingli-summary">${fMatch.summary}</p>`;
+            if (!mMatch || mMatch.book !== fMatch.book) html += `<cite>— ${fMatch.book}</cite>`;
+          }
+          div.innerHTML = html;
+          // Insert at end of ch1 body (after verdict)
+          const verdict = ch1Body.querySelector('.verdict');
+          if (verdict) ch1Body.insertBefore(div, verdict);
+          else ch1Body.appendChild(div);
+        };
+        if (window.__mingliCache) applyMingliMatch();
+        else {
+          let tries = 0;
+          const wait = setInterval(() => {
+            if (window.__mingliCache || ++tries > 30) {
+              clearInterval(wait);
+              if (window.__mingliCache) applyMingliMatch();
+            }
+          }, 100);
+        }
 
         // 二 · 五行
         const wxStr = (chart) => {
