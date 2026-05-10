@@ -45,7 +45,21 @@
       align-items: center; justify-content: center;
       padding: 60px 24px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
+    .cover-3d {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .cover-3d canvas { display: block; width: 100%; height: 100%; }
+    .cover > *:not(.cover-3d) { position: relative; z-index: 1; }
+    .cover-score, .cover-tier, .cover-of, .cover-pair {
+      mix-blend-mode: multiply;
+    }
+    @media print { .cover-3d { display: none; } }
     .cover-eyebrow {
       font-family: var(--mono);
       font-size: 11px;
@@ -424,6 +438,7 @@
 
   <!-- ====== COVER ====== -->
   <section class="cover">
+    <div class="cover-3d" id="cover3d" aria-hidden="true"></div>
     <div class="cover-eyebrow">合 盘 · MARRIAGE COMPATIBILITY</div>
     <div class="cover-score" data-h="score">—</div>
     <div class="cover-tier" data-h="tier">推 演 中</div>
@@ -565,6 +580,84 @@
       <div class="modal-close" onclick="closePay()">关 闭</div>
     </div>
   </div>
+
+  <script type="module">
+    // ====== 3D · cover form (two interlocked low-poly tori, slowly counter-rotating) ======
+    // Why exists: the report's core proposition is "合" — two elements interlocking but distinct.
+    // This single 3D form on the cover dramatizes that proposition while text states the verdict.
+    // No interaction. Slow. Mostly negative space. Disappears on scroll past cover.
+    import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+
+    (function init3D () {
+      const mount = document.getElementById('cover3d');
+      if (!mount) return;
+
+      const w = () => mount.clientWidth;
+      const h = () => mount.clientHeight;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, w() / h(), 0.1, 100);
+      camera.position.set(0, 0, 9);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(w(), h());
+      renderer.setClearColor(0x000000, 0);
+      mount.appendChild(renderer.domElement);
+
+      // Two interlocked tori — yang (vermillion) + yin (ink)
+      const PAPER = 0xFAF7F0;
+      const VERMILLION = 0xB8362A;
+      const INK = 0x14110E;
+
+      const matYang = new THREE.MeshBasicMaterial({
+        color: VERMILLION, wireframe: true, transparent: true, opacity: 0.42,
+      });
+      const matYin = new THREE.MeshBasicMaterial({
+        color: INK, wireframe: true, transparent: true, opacity: 0.16,
+      });
+
+      // Low-poly torus: TorusGeometry(radius, tubeRadius, radialSegments, tubularSegments)
+      const geo = new THREE.TorusGeometry(2.2, 0.55, 8, 24);
+
+      const yang = new THREE.Mesh(geo, matYang);
+      yang.rotation.x = Math.PI / 4;
+      scene.add(yang);
+
+      const yin = new THREE.Mesh(geo, matYin);
+      yin.rotation.x = -Math.PI / 4;
+      yin.rotation.z = Math.PI / 2;
+      scene.add(yin);
+
+      // Resize
+      const onResize = () => {
+        camera.aspect = w() / h();
+        camera.updateProjectionMatrix();
+        renderer.setSize(w(), h());
+      };
+      window.addEventListener('resize', onResize);
+
+      // Render loop — opt out when cover scrolled past viewport
+      let visible = true;
+      const observer = new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+      }, { threshold: 0.01 });
+      observer.observe(mount);
+
+      const clock = new THREE.Clock();
+      function animate () {
+        const t = clock.getElapsedTime();
+        // Slow: full revolution ≈ 18s
+        yang.rotation.y = t * 0.35;
+        yang.rotation.z = Math.sin(t * 0.18) * 0.12;
+        yin.rotation.y = -t * 0.28;
+        yin.rotation.x = -Math.PI / 4 + Math.cos(t * 0.15) * 0.1;
+        if (visible) renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+  </script>
 
   <script>
     // ====== HYDRATION ======
