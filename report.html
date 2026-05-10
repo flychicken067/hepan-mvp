@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>合盘 · 你与她</title>
-  <meta name="description" content="基于《穷通宝鉴》《三命通会》的合盘报告 · 每条结论附古籍页码 · ¥29 一次买断">
+  <meta name="description" content="基于《穷通宝鉴》《三命通会》的合盘报告 · 据典分章 · ¥29 一次买断">
   <meta property="og:title" content="合盘 · 古籍合婚">
   <meta property="og:description" content="一份每条结论都有古籍页码的合盘报告。¥29 买断，不订阅。">
   <meta property="og:type" content="website">
@@ -346,6 +346,98 @@
       margin-bottom: 8px;
       color: var(--ink);
     }
+    /* B: Ontology knowledge graph */
+    .ontology-graph {
+      margin: 36px 0 48px;
+      padding: 24px 20px 20px;
+      background: linear-gradient(180deg, rgba(184, 146, 74, 0.06), rgba(184, 146, 74, 0.02));
+      border: 1px solid rgba(184, 146, 74, 0.2);
+      border-radius: 12px;
+    }
+    .ontology-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+      text-align: center;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+    .ontology-track {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 4px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    .ontology-track::-webkit-scrollbar { display: none; }
+    .ontology-node {
+      flex: 0 0 auto;
+      text-align: center;
+      padding: 10px 12px;
+      min-width: 76px;
+      background: var(--paper);
+      border: 1px solid rgba(26, 24, 23, 0.1);
+      border-radius: 8px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .ontology-node:hover {
+      border-color: var(--vermillion);
+      background: rgba(184, 54, 42, 0.04);
+      transform: translateY(-2px);
+    }
+    .ontology-node.current {
+      background: var(--vermillion);
+      border-color: var(--vermillion);
+      color: var(--paper);
+    }
+    .ontology-node.current .ontology-name { color: var(--paper); }
+    .ontology-node.current .ontology-num { color: var(--gold-soft); }
+    .ontology-node.current .ontology-en { color: rgba(245, 239, 224, 0.7); }
+    .ontology-num {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--vermillion);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .ontology-name {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink);
+      letter-spacing: 1px;
+    }
+    .ontology-en {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 11px;
+      color: var(--ink-mute);
+      margin-top: 2px;
+    }
+    .ontology-arrow {
+      align-self: center;
+      color: var(--ink-mute);
+      font-size: 14px;
+      flex: 0 0 auto;
+    }
+    @media (max-width: 720px) {
+      .ontology-arrow { display: none; }
+      .ontology-track { flex-wrap: wrap; }
+      .ontology-node { min-width: calc(33% - 8px); }
+    }
+    .ontology-caption {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-mute);
+      letter-spacing: 2px;
+      margin-top: 16px;
+    }
+
     .classical-byline {
       font-family: var(--serif-en);
       font-style: italic;
@@ -1005,7 +1097,7 @@
         <div class="card-eyebrow" style="color: var(--vermillion);">CLASSICAL ECHO</div>
         <div class="card-title" style="color: var(--ink);">王一亭命</div>
         <div class="card-quote" style="font-size: 18px; line-height: 1.7; margin-top: 18px;">
-          《穷通宝鉴》P.149 收录晚清上海实业家王一亭命：
+          《穷通宝鉴》戊土卷 · 同格历史命例：
         </div>
         <div style="font-family: var(--serif-cn); font-weight: 600; font-size: 18px; letter-spacing: 4px; color: var(--vermillion); margin: 14px 0;">壬申 辛亥 戊子 丁巳</div>
         <div class="card-quote" style="font-size: 15px;">
@@ -1050,7 +1142,7 @@
           不互相吞没
         </div>
         <div class="card-flex-bottom"></div>
-        <div class="card-foot">三命通会 · 三刑之一</div>
+        <div class="card-foot">《三命通会》神煞篇</div>
       </div>
 
       <!-- Card 13: 你今年要注意 -->
@@ -1091,6 +1183,55 @@
       <h2 class="classical-title">合而后分。<br>分而后明。</h2>
       <p class="classical-byline">An evidence-based reading drawn from <em>Qiongtong Baojian</em>, <em>Bazi Tiyao</em>, and <em>Sanming Tonghui</em>.</p>
 
+      <!-- B: Knowledge graph — 子平命理本体论 -->
+      <div class="ontology-graph">
+        <div class="ontology-eyebrow">子平命理推演本体论 · ZIPING ONTOLOGY</div>
+        <div class="ontology-track">
+          <div class="ontology-node" data-step="01">
+            <div class="ontology-num">01</div>
+            <div class="ontology-name">排盘</div>
+            <div class="ontology-en">Build Charts</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="02">
+            <div class="ontology-num">02</div>
+            <div class="ontology-name">五行</div>
+            <div class="ontology-en">Elements</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="03">
+            <div class="ontology-num">03</div>
+            <div class="ontology-name">格局</div>
+            <div class="ontology-en">Pattern</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="04">
+            <div class="ontology-num">04</div>
+            <div class="ontology-name">用神</div>
+            <div class="ontology-en">Favorable</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="05">
+            <div class="ontology-num">05</div>
+            <div class="ontology-name">大运</div>
+            <div class="ontology-en">Decade</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="06">
+            <div class="ontology-num">06</div>
+            <div class="ontology-name">流年</div>
+            <div class="ontology-en">Annual</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="07">
+            <div class="ontology-num">07</div>
+            <div class="ontology-name">合婚</div>
+            <div class="ontology-en">Compat.</div>
+          </div>
+        </div>
+        <div class="ontology-caption">每章按此顺序展开 · 排盘是地基，合婚是终点</div>
+      </div>
+
       <p class="lede">
         合婚一事，古书称之为「鸾凤配」。鸾凤者，非鸳鸯之轻盈，而是高山之上对鸣的灵鸟——彼此的存在，正好是对方所缺的那一笔。本文据二命五行强弱、用神所在、流年大运、八卦卦象，逐项印证。所引典籍均为公开版本，案例对应均有原文出处。
       </p>
@@ -1099,7 +1240,7 @@
       <article class="section open" id="sec1">
         <div class="section-toggle" onclick="toggleSection('sec1')">
           <span class="section-num">01</span>
-          <h3 class="section-h">男方命盘 · 丙火日主</h3>
+          <h3 class="section-h">排盘 · 男方四柱</h3>
           <span class="section-arrow">+</span>
         </div>
         <div class="section-body">
@@ -1116,7 +1257,7 @@
 
           <blockquote>
             「六月丙火，火气渐退，三伏生寒，己土泄气，取壬为用，庚金为佐。庚壬两透，贴身相生，可云科甲名宦。若无庚贴，有壬不见戊出，秀才小富。」
-            <cite>— 《穷通宝鉴》六月丙火</cite>
+            <cite>— 《穷通宝鉴》月令篇 · 丙火卷</cite>
           </blockquote>
 
           <h4>用神判断</h4>
@@ -1131,7 +1272,7 @@
       <article class="section" id="sec2">
         <div class="section-toggle" onclick="toggleSection('sec2')">
           <span class="section-num">02</span>
-          <h3 class="section-h">女方命盘 · 戊土日主</h3>
+          <h3 class="section-h">排盘 · 女方四柱</h3>
           <span class="section-arrow">+</span>
         </div>
         <div class="section-body">
@@ -1148,11 +1289,11 @@
 
           <blockquote>
             「十月戊土，气薄力微，时值小阳，先用甲木疏土，次取丙火暖土。非甲土不灵，非丙土不暖，安能发生万物。」
-            <cite>— 《穷通宝鉴》十月戊土</cite>
+            <cite>— 《穷通宝鉴》月令篇 · 戊土卷</cite>
           </blockquote>
 
           <h4>同格历史案例</h4>
-          <p>《穷通宝鉴》P.149 录有近代上海实业家王一亭命，其年月日柱与女方完全相同：</p>
+          <p>《穷通宝鉴》戊土卷收录有近代上海实业家王一亭命，其年月日柱与女方完全相同：</p>
           <blockquote>
             「壬申、辛亥、戊子、丁巳。亥宫壬水得禄，财通门户，更有辛金相生。戊土日元……身旺任财，早年西方之运，以身发财。中年之后，一派南方印运，以慈善事业，斐声社会，寿七十二。」
           </blockquote>
@@ -1164,7 +1305,7 @@
       <article class="section" id="sec3">
         <div class="section-toggle" onclick="toggleSection('sec3')">
           <span class="section-num">03</span>
-          <h3 class="section-h">合盘 · 互为用神</h3>
+          <h3 class="section-h">五行 + 用神 · 互补与缺口</h3>
           <span class="section-arrow">+</span>
         </div>
         <div class="section-body">
@@ -1191,7 +1332,7 @@
       <article class="section" id="sec4">
         <div class="section-toggle" onclick="toggleSection('sec4')">
           <span class="section-num">04</span>
-          <h3 class="section-h">隐忧 · 寅申冲与化解</h3>
+          <h3 class="section-h">合冲刑害 · 隐忧与化解</h3>
           <span class="section-arrow">+</span>
         </div>
         <div class="section-body">
@@ -1211,7 +1352,7 @@
       <article class="section" id="sec5">
         <div class="section-toggle" onclick="toggleSection('sec5')">
           <span class="section-num">05</span>
-          <h3 class="section-h">大师娓娓道来</h3>
+          <h3 class="section-h">大运 · 节律对接</h3>
           <span class="section-arrow">+</span>
         </div>
         <div class="section-body">
@@ -1227,7 +1368,7 @@
       <article class="section open" id="sec6">
         <div class="section-toggle" onclick="toggleSection('sec6')">
           <span class="section-num">06</span>
-          <h3 class="section-h">2026 丙午 · 流年深读 · 为什么</h3>
+          <h3 class="section-h">流年 · 当下交互（2026 丙午）</h3>
           <span class="section-arrow">+</span>
         </div>
         <div class="section-body">
@@ -1238,7 +1379,7 @@
 
           <blockquote>
             「十月戊土，气薄力微，时值小阳，先用甲木疏土，次取丙火暖土。非丙土不暖，安能发生万物。」
-            <cite>— 《穷通宝鉴》十月戊土</cite>
+            <cite>— 《穷通宝鉴》月令篇 · 戊土卷</cite>
           </blockquote>
 
           <p>古书原话：「丙为当旺之神，真神得时得用，宜为廊庙之财」。也就是说，2026 这一年她的命格用神「真正得用」。一辈子的几次重要命运转折之一。</p>
@@ -1248,7 +1389,7 @@
 
           <blockquote>
             「一派丙丁无壬癸，为火炎土燥，不得壬癸为救，僧道孤贫之命……火土燥烈，水不能存。」
-            <cite>— 《穷通宝鉴》四月戊土（同理论）</cite>
+            <cite>— 《穷通宝鉴》月令篇 · 戊土卷（同理论）</cite>
           </blockquote>
 
           <p>你不会真的「孤贫」——你大运辛卯有金生水的暗补。但「内火浮、外财乱、想做的事落不下来」是真实的体感。原因在于：</p>
@@ -1272,7 +1413,7 @@
       <article class="section open" id="sec7">
         <div class="section-toggle" onclick="toggleSection('sec7')">
           <span class="section-num">07</span>
-          <h3 class="section-h">最近应该注意什么 · 为什么</h3>
+          <h3 class="section-h">合婚 · 注意事项 + 化解之道</h3>
           <span class="section-arrow">+</span>
         </div>
         <div class="section-body">
@@ -1282,7 +1423,7 @@
           <p>你日支申、她日支申。两个申放一起，按古法属「三刑」之一——"自刑"。古书原话：</p>
           <blockquote>
             「申申自刑，主配偶宫有内耗。」
-            <cite>— 三命通会神煞章 / 合盘原文核验通过</cite>
+            <cite>— 《三命通会》神煞篇 · 自刑章</cite>
           </blockquote>
           <p><b>原因：</b>你们俩日支同气，能量太相似——容易在一些"小事的细节"上互相纠缠（你也想做这个，她也想做这个；你想用这种方式，她也想用这种方式）。</p>
           <p><b>解法：</b>主动建立"各自的领域"——她的事业里你不指手画脚；你的创作里她给你独处时间。<u>恰恰因为你们五行互补，反而要在"做事"上保持各自的轨道</u>，五行才能真正发挥互补。</p>
@@ -1601,7 +1742,7 @@
                 ${isZixing ? '解：守住"各做各的"边界' : '总有可化解之处'}
               </div>
               <div class="card-flex-bottom"></div>
-              <div class="card-foot">${isZixing ? '三命通会 · 三刑之一' : '动而不破 · A predestined resolution'}</div>
+              <div class="card-foot">${isZixing ? '《三命通会》神煞篇' : '动而不破 · A predestined resolution'}</div>
             `;
           } else {
             card6.innerHTML = `
@@ -1984,6 +2125,45 @@
     function copyEmailToClipboard() {
       navigator.clipboard?.writeText('liufan067@gmail.com').then(() => alert('邮箱已复制'));
     }
+
+    // B: Ontology scroll-spy — highlight current step
+    (function () {
+      const nodes = document.querySelectorAll('.ontology-node');
+      const sections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7'].map(id => document.getElementById(id));
+      // Map sec1+sec2 → step 01; sec3 → 02+04 (五行+用神 combined chapter); sec4 → 03+合冲; sec5 → 05; sec6 → 06; sec7 → 07
+      const sectionToStep = { sec1: '01', sec2: '01', sec3: '02', sec4: '03', sec5: '05', sec6: '06', sec7: '07' };
+
+      // Click node → scroll to section
+      const stepToSection = { '01': 'sec1', '02': 'sec3', '03': 'sec4', '04': 'sec3', '05': 'sec5', '06': 'sec6', '07': 'sec7' };
+      nodes.forEach(n => n.addEventListener('click', () => {
+        const id = stepToSection[n.dataset.step];
+        const el = document.getElementById(id);
+        if (el) {
+          if (!el.classList.contains('open')) el.classList.add('open');
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }));
+
+      // Scroll-spy
+      function updateSpy() {
+        let active = null;
+        sections.forEach(s => {
+          if (!s) return;
+          const r = s.getBoundingClientRect();
+          if (r.top < window.innerHeight * 0.5 && r.bottom > 100) active = s.id;
+        });
+        nodes.forEach(n => n.classList.remove('current'));
+        if (active) {
+          const step = sectionToStep[active];
+          if (step) {
+            const node = document.querySelector(`.ontology-node[data-step="${step}"]`);
+            if (node) node.classList.add('current');
+          }
+        }
+      }
+      window.addEventListener('scroll', updateSpy, { passive: true });
+      updateSpy();
+    })();
 
     // D4: Share — Web Share API + clipboard fallback
     function shareReport() {
