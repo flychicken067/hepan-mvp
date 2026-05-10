@@ -256,6 +256,24 @@
     }
     @media (max-width: 720px), print { .counter { display: none; } }
 
+    /* Bottom hairline progress bar — silent, wayofcode-style */
+    .progress {
+      position: fixed;
+      left: 0; bottom: 0;
+      width: 100%;
+      height: 1px;
+      background: transparent;
+      z-index: 40;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: var(--vermillion);
+      opacity: 0.5;
+      transition: width 0.15s linear;
+    }
+    @media print { .progress { display: none; } }
+
     /* ============== PAYWALL ============== */
     body.locked .ch-paid {
       filter: blur(7px) saturate(0.4);
@@ -435,6 +453,7 @@
   </nav>
 
   <div class="counter" id="counter">00 / 07</div>
+  <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
 
   <!-- ====== COVER ====== -->
   <section class="cover">
@@ -559,15 +578,19 @@
     <p class="final-line">读到这里。<br>命书所写，皆是过去人观察天地与生命的痕迹。<br>是不是参考，由你与 ta 决定。</p>
     <div class="final-actions">
       <a href="javascript:window.print()">下载 PDF</a>
-      <a href="cases.html">看名人案例</a>
+      <a href="javascript:randomCase()">随机一份名人合盘</a>
+      <a href="cases.html">看全部案例</a>
       <a href="/">再算一份</a>
     </div>
   </section>
 
   <p class="colophon">
+    设 计 哲 学 · 《周易·贲卦》上九：「白贲，无咎。」<br>
+    贲 饰 之 极 · 反 归 于 素<br>
+    <br>
     HEPAN · ZIPING ONTOLOGY · v2 · 2026<br>
-    本报告引文均出自《穷通宝鉴》《三命通会》《八字提要》《滴天髓》《周易》<br>
-    一次买断 · 不订阅 · 不充值
+    引文均出自《穷通宝鉴》《三命通会》《八字提要》《滴天髓》《周易》<br>
+    一 次 买 断 · 不 订 阅 · 不 充 值
   </p>
 
   <!-- ====== PAY MODAL ====== -->
@@ -610,24 +633,26 @@
       const VERMILLION = 0xB8362A;
       const INK = 0x14110E;
 
-      const matYang = new THREE.MeshBasicMaterial({
-        color: VERMILLION, wireframe: true, transparent: true, opacity: 0.42,
+      // TorusKnot(p=3, q=7) — one closed curve that never self-intersects but
+      // visually reads as two interlocking forms. 3+7 = 十天干. One thing that is
+      // also two things — the literal meaning of 合.
+      // Rendered as edge-only line segments (wayofcode aesthetic: lines, not shaded mesh)
+      const knotGeo = new THREE.TorusKnotGeometry(1.9, 0.42, 96, 12, 3, 7);
+      const knotEdges = new THREE.EdgesGeometry(knotGeo, 8);
+      const matLine = new THREE.LineBasicMaterial({
+        color: VERMILLION, transparent: true, opacity: 0.55,
       });
-      const matYin = new THREE.MeshBasicMaterial({
-        color: INK, wireframe: true, transparent: true, opacity: 0.16,
+      const knot = new THREE.LineSegments(knotEdges, matLine);
+      scene.add(knot);
+
+      // A faint ink ghost — slightly larger and counter-rotating, suggests yin
+      const ghostGeo = new THREE.TorusKnotGeometry(2.05, 0.46, 64, 8, 3, 7);
+      const ghostEdges = new THREE.EdgesGeometry(ghostGeo, 12);
+      const matGhost = new THREE.LineBasicMaterial({
+        color: INK, transparent: true, opacity: 0.13,
       });
-
-      // Low-poly torus: TorusGeometry(radius, tubeRadius, radialSegments, tubularSegments)
-      const geo = new THREE.TorusGeometry(2.2, 0.55, 8, 24);
-
-      const yang = new THREE.Mesh(geo, matYang);
-      yang.rotation.x = Math.PI / 4;
-      scene.add(yang);
-
-      const yin = new THREE.Mesh(geo, matYin);
-      yin.rotation.x = -Math.PI / 4;
-      yin.rotation.z = Math.PI / 2;
-      scene.add(yin);
+      const ghost = new THREE.LineSegments(ghostEdges, matGhost);
+      scene.add(ghost);
 
       // Resize
       const onResize = () => {
@@ -647,11 +672,11 @@
       const clock = new THREE.Clock();
       function animate () {
         const t = clock.getElapsedTime();
-        // Slow: full revolution ≈ 18s
-        yang.rotation.y = t * 0.35;
-        yang.rotation.z = Math.sin(t * 0.18) * 0.12;
-        yin.rotation.y = -t * 0.28;
-        yin.rotation.x = -Math.PI / 4 + Math.cos(t * 0.15) * 0.1;
+        // Very slow — full revolution ~60s, with breathing wobble
+        knot.rotation.y = t * 0.08;
+        knot.rotation.x = Math.sin(t * 0.05) * 0.18;
+        ghost.rotation.y = -t * 0.05;
+        ghost.rotation.x = Math.cos(t * 0.04) * 0.22;
         if (visible) renderer.render(scene, camera);
         requestAnimationFrame(animate);
       }
@@ -795,10 +820,27 @@
       document.getElementById('modal').classList.remove('show');
     }
 
+    // Random case — pick one of 6 demo couples
+    const CASES = [
+      { m: '1979-02-08', mt: '08:00', f: '1982-08-26', ft: '14:00', id: 'dengchao' },
+      { m: '1980-08-29', mt: '12:00', f: '1969-08-08', ft: '10:00', id: 'xiewang' },
+      { m: '1971-12-06', mt: '04:00', f: '1979-09-09', ft: '20:00', id: 'huangsun' },
+      { m: '1980-05-04', mt: '02:00', f: '1985-07-15', ft: '20:00', id: 'wukong' },
+      { m: '1985-04-08', mt: '06:00', f: '1985-09-12', ft: '14:00', id: 'tangseng' },
+      { m: '1975-06-15', mt: '10:00', f: '1976-08-22', ft: '14:00', id: 'niumowang' },
+    ];
+    function randomCase () {
+      const c = CASES[Math.floor(Math.random() * CASES.length)];
+      const url = `report.html?male-date=${c.m}&male-time=${c.mt}&female-date=${c.f}&female-time=${c.ft}&token=unlocked&caseId=${c.id}`;
+      location.href = url;
+    }
+    window.randomCase = randomCase;
+
     // ====== SCROLL-SPY ======
     const sectionIds = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7'];
     const railLinks = document.querySelectorAll('.nav-rail a');
     const counter = document.getElementById('counter');
+    const progressFill = document.getElementById('progressFill');
     function updateNav() {
       const offset = window.scrollY + 240;
       let active = null, idx = 0;
@@ -808,6 +850,9 @@
       });
       railLinks.forEach(a => a.classList.toggle('active', a.dataset.target === active));
       counter.textContent = `${String(idx).padStart(2,'0')} / 07`;
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docH > 0 ? Math.min(100, (window.scrollY / docH) * 100) : 0;
+      if (progressFill) progressFill.style.width = pct + '%';
     }
     window.addEventListener('scroll', updateNav, { passive: true });
     updateNav();
