@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>合盘 · 你与她</title>
+  <meta name="description" content="基于《穷通宝鉴》《三命通会》的合盘报告 · 据典分章 · ¥29 一次买断">
+  <meta property="og:title" content="合盘 · 古籍合婚">
+  <meta property="og:description" content="一份每条结论都有古籍页码的合盘报告。¥29 买断，不订阅。">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='12' fill='%23B8362A'/><text x='16' y='22' text-anchor='middle' font-family='Songti SC,serif' font-size='16' font-weight='700' fill='%23F5EFE0'>合</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.13/lunar.min.js"></script>
+  <script src="assets/bazi.js"></script>
+  <script src="assets/svg-charts.js"></script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    :root {
+      --paper: #F5EFE0;
+      --paper-warm: #EDE3CB;
+      --ink: #1A1817;
+      --ink-soft: #3A332D;
+      --ink-mute: #6B5F52;
+      --vermillion: #B8362A;
+      --vermillion-soft: #C9554A;
+      --gold: #B8924A;
+      --gold-soft: #D4B370;
+      --jade: #4F6B5C;
+      --moon: #E8DFC8;
+      --serif-cn: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --serif-en: "Cormorant Garamond", "Iowan Old Style", "Georgia", serif;
+      --mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--serif-cn);
+      line-height: 1.7;
+      font-feature-settings: "palt";
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ============= NAV ============= */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 16px 32px;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      background: rgba(26, 24, 23, 0.55);
+      border-bottom: 1px solid rgba(245, 239, 224, 0.08);
+    }
+    .nav-mark {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--gold-soft);
+    }
+    .nav-title {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 18px;
+      color: var(--paper);
+    }
+    .nav-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--ink-mute);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-link:hover { color: var(--gold-soft); }
+
+    /* ============= TOP HALF: WRAPPED CARDS ============= */
+    .wrapped-section {
+      padding: 100px 0 60px;
+      background: linear-gradient(180deg, #1A1817 0%, #2A211C 60%, #2A1F1A 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .wrapped-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 20% 40%, rgba(184, 54, 42, 0.08), transparent 40%),
+        radial-gradient(circle at 80% 60%, rgba(184, 146, 74, 0.06), transparent 40%);
+      pointer-events: none;
+    }
+    .wrapped-eyebrow {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: var(--gold-soft);
+      margin-bottom: 12px;
+    }
+    .wrapped-heading {
+      text-align: center;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 42px;
+      color: var(--paper);
+      margin-bottom: 6px;
+    }
+    .wrapped-subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: var(--ink-mute);
+      letter-spacing: 1px;
+      margin-bottom: 48px;
+    }
+    .scroll-hint {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      margin-bottom: 24px;
+    }
+
+    .cards-track {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      padding: 24px 80px 48px;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .cards-track::-webkit-scrollbar { display: none; }
+
+    .card {
+      flex: 0 0 360px;
+      aspect-ratio: 4 / 5;
+      border-radius: 24px;
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      scroll-snap-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex; flex-direction: column;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6);
+    }
+    .card-num {
+      position: absolute;
+      top: 24px; right: 28px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      opacity: 0.5;
+    }
+    .card-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 28px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .card-big {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 96px;
+      line-height: 1;
+      margin: 12px 0;
+      letter-spacing: -2px;
+    }
+    .card-quote {
+      font-family: var(--serif-cn);
+      font-size: 19px;
+      line-height: 1.5;
+      font-weight: 400;
+      margin: 8px 0;
+    }
+    .card-spacer { flex: 1; }
+    .card-foot {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      opacity: 0.5;
+    }
+    .card-trigram {
+      font-size: 80px;
+      line-height: 1;
+      letter-spacing: 8px;
+      margin: 12px 0;
+      opacity: 0.95;
+    }
+
+    /* Card variants */
+    .card-1 {
+      background: radial-gradient(circle at 50% 30%, #4A2820, #1A0A08);
+      color: var(--paper);
+    }
+    .card-1 .card-big { color: var(--gold-soft); }
+
+    .card-2 {
+      background: linear-gradient(135deg, #B8362A, #6E1A12);
+      color: #FFE7DD;
+    }
+    .card-3 {
+      background: linear-gradient(135deg, #6B5429, #3A2A12);
+      color: #F0E2C0;
+    }
+    .card-4 {
+      background: linear-gradient(160deg, #1F2A1F, #0E1410);
+      color: var(--paper);
+      border: 1px solid rgba(212, 179, 112, 0.2);
+    }
+    .card-5 {
+      background: radial-gradient(circle at 70% 30%, #2A4858, #0E1A22);
+      color: #DAE9F0;
+    }
+    .card-6 {
+      background: linear-gradient(180deg, #3A1F22, #1A0E10);
+      color: #E5D2D5;
+    }
+    .card-7 {
+      background: linear-gradient(135deg, #C9A96E, #7A5C2E);
+      color: var(--ink);
+    }
+    .card-7 .card-num,
+    .card-7 .card-foot { color: var(--ink-soft); opacity: 0.7; }
+    .card-8 {
+      background: linear-gradient(120deg, #2D2D38, #15151D);
+      color: var(--paper);
+    }
+    .card-9 {
+      background: linear-gradient(135deg, #4A6B4A, #1F2D1F);
+      color: var(--moon);
+    }
+    .card-10 {
+      background:
+        linear-gradient(180deg, rgba(245, 239, 224, 0.95), rgba(232, 223, 200, 0.85));
+      color: var(--ink);
+    }
+    .card-10 .card-num, .card-10 .card-foot { color: var(--ink-soft); opacity: 0.7; }
+    .card-11 {
+      background: radial-gradient(circle at 30% 20%, #C9554A, #4A1812);
+      color: #FFE0D6;
+    }
+    .card-12 {
+      background: linear-gradient(160deg, #2A1F1A, #4A2820);
+      color: #F5DDC8;
+      border: 1px solid rgba(255, 200, 130, 0.18);
+    }
+    .card-13 {
+      background: linear-gradient(135deg, #6B5429, #2A1F0E);
+      color: #F2E4C8;
+    }
+    .card-14 {
+      background: linear-gradient(135deg, #B8924A, #5C3F1A);
+      color: #FFF3D8;
+    }
+
+    .compare-row {
+      display: flex; justify-content: space-between;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      margin: 6px 0;
+    }
+    .compare-row b { color: inherit; }
+    .compare-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 3px;
+      margin: 8px 0;
+      overflow: hidden;
+    }
+    .compare-bar-fill {
+      height: 100%;
+      background: currentColor;
+      opacity: 0.85;
+      border-radius: 3px;
+    }
+    .stamp {
+      position: absolute;
+      bottom: 24px; right: 24px;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--vermillion);
+      color: var(--vermillion);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 2px;
+      writing-mode: vertical-rl;
+      transform: rotate(8deg);
+      opacity: 0.85;
+    }
+
+    /* ============= BOTTOM HALF: CLASSICAL LONG-FORM ============= */
+    .classical {
+      background: var(--paper);
+      color: var(--ink);
+      padding: 100px 0 120px;
+      font-family: var(--serif-cn);
+      position: relative;
+    }
+    .classical::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(184, 146, 74, 0.08), transparent 50%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.6 0 0 0 0 0.5 0 0 0 0 0.3 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .classical-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 32px;
+      position: relative;
+    }
+    .classical-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+      margin-bottom: 16px;
+    }
+    .classical-title {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 44px;
+      line-height: 1.25;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+    /* B: Ontology knowledge graph */
+    .ontology-graph {
+      margin: 36px 0 48px;
+      padding: 24px 20px 20px;
+      background: linear-gradient(180deg, rgba(184, 146, 74, 0.06), rgba(184, 146, 74, 0.02));
+      border: 1px solid rgba(184, 146, 74, 0.2);
+      border-radius: 12px;
+    }
+    .ontology-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+      text-align: center;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+    .ontology-track {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 4px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    .ontology-track::-webkit-scrollbar { display: none; }
+    .ontology-node {
+      flex: 0 0 auto;
+      text-align: center;
+      padding: 10px 12px;
+      min-width: 76px;
+      background: var(--paper);
+      border: 1px solid rgba(26, 24, 23, 0.1);
+      border-radius: 8px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .ontology-node:hover {
+      border-color: var(--vermillion);
+      background: rgba(184, 54, 42, 0.04);
+      transform: translateY(-2px);
+    }
+    .ontology-node.current {
+      background: var(--vermillion);
+      border-color: var(--vermillion);
+      color: var(--paper);
+    }
+    .ontology-node.current .ontology-name { color: var(--paper); }
+    .ontology-node.current .ontology-num { color: var(--gold-soft); }
+    .ontology-node.current .ontology-en { color: rgba(245, 239, 224, 0.7); }
+    .ontology-num {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--vermillion);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .ontology-name {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink);
+      letter-spacing: 1px;
+    }
+    .ontology-en {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 11px;
+      color: var(--ink-mute);
+      margin-top: 2px;
+    }
+    .ontology-arrow {
+      align-self: center;
+      color: var(--ink-mute);
+      font-size: 14px;
+      flex: 0 0 auto;
+    }
+    @media (max-width: 720px) {
+      .ontology-arrow { display: none; }
+      .ontology-track { flex-wrap: wrap; }
+      .ontology-node { min-width: calc(33% - 8px); }
+    }
+    .ontology-caption {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-mute);
+      letter-spacing: 2px;
+      margin-top: 16px;
+    }
+
+    /* Left-rail vertical ontology nav (>= 1100px) */
+    .ontology-rail {
+      display: none;
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      padding: 16px 14px;
+      background: rgba(245, 239, 224, 0.92);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(184, 146, 74, 0.25);
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(26, 24, 23, 0.06);
+    }
+    .ontology-rail-eyebrow {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--vermillion);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .ontology-rail-list { list-style: none; padding: 0; margin: 0; }
+    .ontology-rail-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.18s;
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+    .ontology-rail-item:hover { background: rgba(184, 54, 42, 0.06); color: var(--vermillion); }
+    .ontology-rail-item.active { background: var(--vermillion); color: var(--paper); }
+    .ontology-rail-item.active .ontology-rail-num { color: var(--gold-soft); }
+    .ontology-rail-num {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: var(--vermillion);
+      font-weight: 600; min-width: 18px;
+    }
+    .ontology-rail-name {
+      font-family: var(--serif-cn); font-weight: 600; font-size: 14px; letter-spacing: 1px;
+    }
+    @media (min-width: 1180px) {
+      .ontology-rail { display: block; }
+      .ontology-graph { display: none; }
+    }
+    @media print {
+      .ontology-rail { display: none !important; }
+    }
+
+    .classical-byline {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 16px;
+      color: var(--ink-mute);
+      margin-bottom: 48px;
+    }
+
+    .lede {
+      font-size: 19px;
+      line-height: 1.85;
+      color: var(--ink-soft);
+      margin-bottom: 36px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid rgba(26, 24, 23, 0.1);
+    }
+    .lede::first-letter {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 64px;
+      line-height: 1;
+      float: left;
+      margin: 6px 12px 0 -2px;
+      color: var(--vermillion);
+    }
+
+    .section {
+      margin-bottom: 36px;
+      border-bottom: 1px dashed rgba(26, 24, 23, 0.15);
+      padding-bottom: 12px;
+    }
+    .section-toggle {
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer;
+      padding: 16px 0;
+      transition: color 0.2s;
+    }
+    .section-toggle:hover { color: var(--vermillion); }
+    .section-num {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--vermillion);
+      margin-right: 16px;
+    }
+    .section-h {
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 22px;
+      letter-spacing: 1px;
+      flex: 1;
+      color: var(--ink);
+    }
+    .section-arrow {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--ink-mute);
+      transition: transform 0.3s;
+    }
+    .section.open .section-arrow { transform: rotate(45deg); color: var(--vermillion); }
+
+    .section-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+      font-size: 17px;
+      line-height: 1.9;
+      color: var(--ink-soft);
+    }
+    /* SVG chart strip injected at top of each chapter */
+    .section-svg {
+      margin: 6px 0 22px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(184, 146, 74, 0.05), rgba(184, 146, 74, 0.01));
+      border: 1px solid rgba(184, 146, 74, 0.18);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+    }
+    .section-svg svg { max-width: 100%; height: auto; }
+    @media print {
+      .section-svg { background: none; border-color: rgba(0,0,0,0.15); page-break-inside: avoid; }
+    }
+    .section.open .section-body { max-height: 4000px; padding-top: 12px; padding-bottom: 24px; }
+    .section-body p { margin: 14px 0; }
+    .section-body h4 {
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 18px;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+    blockquote {
+      font-family: var(--serif-cn);
+      font-style: normal;
+      border-left: 3px solid var(--vermillion);
+      padding: 8px 18px;
+      margin: 18px 0;
+      background: rgba(184, 54, 42, 0.04);
+      color: var(--ink-soft);
+      font-size: 16px;
+      line-height: 1.85;
+    }
+    blockquote cite {
+      display: block;
+      margin-top: 8px;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-mute);
+    }
+    .pillar-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 20px 0;
+      padding: 16px;
+      background: rgba(184, 146, 74, 0.06);
+      border: 1px solid rgba(184, 146, 74, 0.18);
+      border-radius: 4px;
+    }
+    .pillar { text-align: center; }
+    .pillar-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-mute);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .pillar-tian {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--vermillion);
+      line-height: 1;
+    }
+    .pillar-di {
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 24px;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .pillar-shi {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--ink-mute);
+      letter-spacing: 1px;
+      margin-top: 6px;
+    }
+
+    /* ============= MODAL: DASHBOARD ============= */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      z-index: 200;
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 32px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.show { display: flex; opacity: 1; }
+    .modal {
+      background: var(--paper);
+      color: var(--ink);
+      max-width: 1100px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 12px;
+      padding: 48px;
+      position: relative;
+      transform: scale(0.96);
+      transition: transform 0.3s ease;
+    }
+    .modal-overlay.show .modal { transform: scale(1); }
+    .modal-close {
+      position: absolute; top: 24px; right: 24px;
+      width: 32px; height: 32px;
+      background: transparent;
+      border: 1px solid var(--ink-mute);
+      border-radius: 50%;
+      color: var(--ink-soft);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+    }
+    .modal-close:hover { background: var(--ink); color: var(--paper); }
+
+    .modal-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+      margin-bottom: 12px;
+    }
+    .modal-title {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 32px;
+      margin-bottom: 32px;
+      letter-spacing: 1px;
+    }
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 720px) { .dash-grid { grid-template-columns: 1fr; } }
+
+    .dash-col {
+      padding: 24px;
+      background: rgba(184, 146, 74, 0.06);
+      border-radius: 8px;
+    }
+    .dash-col-male { border-left: 4px solid var(--vermillion); }
+    .dash-col-female { border-left: 4px solid var(--gold); }
+
+    .dash-name {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      color: var(--ink-mute);
+      margin-bottom: 4px;
+    }
+    .dash-master {
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .dash-pillars {
+      font-family: var(--serif-cn);
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+      margin-bottom: 18px;
+    }
+
+    .wuxing { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+    .wuxing-row { display: grid; grid-template-columns: 28px 1fr 40px; align-items: center; gap: 12px; font-family: var(--mono); font-size: 12px; }
+    .wuxing-label { font-weight: 600; }
+    .wuxing-bar { height: 8px; background: rgba(26,24,23, 0.08); border-radius: 4px; overflow: hidden; }
+    .wuxing-fill { height: 100%; border-radius: 4px; }
+    .fill-mu { background: #4F6B5C; }
+    .fill-huo { background: #B8362A; }
+    .fill-tu { background: #B8924A; }
+    .fill-jin { background: #92A0A6; }
+    .fill-shui { background: #2A4858; }
+
+    .dashu {
+      margin-top: 32px;
+      padding: 24px;
+      background: rgba(26, 24, 23, 0.04);
+      border-radius: 8px;
+    }
+    .dashu-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--vermillion);
+      margin-bottom: 16px;
+    }
+    .dashu-track {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .dashu-step {
+      flex: 0 0 auto;
+      min-width: 90px;
+      padding: 12px;
+      text-align: center;
+      border-radius: 6px;
+      background: var(--paper-warm);
+      font-size: 12px;
+    }
+    .dashu-step.current { background: var(--gold-soft); color: var(--ink); font-weight: 600; }
+    .dashu-step .step-pillar { font-family: var(--serif-cn); font-weight: 700; font-size: 16px; }
+    .dashu-step .step-age { font-family: var(--mono); font-size: 9px; opacity: 0.7; margin-top: 4px; }
+
+    .footer {
+      padding: 60px 32px 80px;
+      text-align: center;
+      background: var(--ink);
+      color: var(--ink-mute);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+    .footer a { color: var(--gold-soft); text-decoration: none; }
+
+    /* Card content alignment helpers */
+    .card-flex-bottom { margin-top: auto; }
+    .text-center { text-align: center; }
+
+    /* Dashboard scrolltarget */
+    .dashboard-anchor { scroll-margin-top: 60px; }
+
+    /* ============== PRINT (D4: PDF export via Cmd+P) ============== */
+    @media print {
+      .nav, .paywall-banner, .pay-modal, .modal-overlay, .footer, .scroll-hint, .nav-link, .nav-cta, .unlock-cta { display: none !important; }
+      body, html { background: var(--paper) !important; color: var(--ink) !important; }
+      .wrapped-section { background: var(--paper) !important; color: var(--ink) !important; padding: 20px 0 !important; }
+      .wrapped-section::before { display: none !important; }
+      .wrapped-eyebrow, .wrapped-heading, .wrapped-subtitle { color: var(--ink) !important; }
+      .cards-track { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; padding: 12px !important; overflow: visible !important; }
+      .card { flex: 0 0 auto !important; aspect-ratio: auto !important; min-height: 320px !important; page-break-inside: avoid !important; box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important; }
+      .classical { padding: 20px 0 !important; }
+      .section { page-break-inside: avoid !important; }
+      .section .section-body { max-height: none !important; padding: 8px 0 !important; }
+      .section-arrow { display: none !important; }
+      .section-toggle { cursor: default !important; }
+      body.locked .card[data-locked], body.locked .section[data-locked] .section-body { filter: none !important; }
+    }
+
+    /* PDF export button (small, fixed top-right next to nav) */
+    .pdf-btn {
+      position: fixed; top: 14px; right: 14px;
+      z-index: 90;
+      background: var(--paper-warm, #EDE3CB);
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      display: none;
+    }
+    body:not(.locked) .pdf-btn { display: block; }
+    @media print { .pdf-btn { display: none !important; } }
+
+    /* Share buttons (next to PDF) */
+    .share-btn {
+      position: fixed; top: 14px; right: 130px;
+      z-index: 90;
+      background: var(--vermillion);
+      color: var(--paper);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      display: none;
+    }
+    body:not(.locked) .share-btn { display: block; }
+    @media print { .share-btn { display: none !important; } }
+
+    /* ============== PAYWALL ============== */
+    body.locked .card[data-locked] { filter: blur(8px) saturate(0.6); pointer-events: none; user-select: none; }
+    body.locked .section[data-locked] .section-body { filter: blur(6px) saturate(0.6); pointer-events: none; user-select: none; max-height: 200px; }
+
+    .unlock-cta {
+      flex: 0 0 360px;
+      aspect-ratio: 4 / 5;
+      border-radius: 24px;
+      padding: 40px 32px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      scroll-snap-align: center;
+      background: linear-gradient(135deg, #B8362A, #6E1A12);
+      color: var(--paper);
+      box-shadow: 0 12px 40px rgba(184, 54, 42, 0.4);
+    }
+    .unlock-eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 4px; opacity: 0.85; margin-bottom: 12px; }
+    .unlock-title { font-family: var(--serif-cn); font-weight: 700; font-size: 24px; line-height: 1.3; margin-bottom: 18px; }
+    .unlock-price { font-family: var(--serif-cn); font-weight: 700; font-size: 64px; line-height: 1; margin-bottom: 4px; }
+    .unlock-price-prefix { font-size: 24px; vertical-align: top; opacity: 0.85; }
+    .unlock-once { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; opacity: 0.85; margin-bottom: 24px; }
+    .unlock-list { list-style: none; text-align: left; font-size: 12px; line-height: 1.7; margin-bottom: 22px; padding: 0; }
+    .unlock-list li::before { content: '✓ '; opacity: 0.7; }
+    .unlock-btn { background: var(--paper); color: var(--vermillion); padding: 14px 32px; border: none; border-radius: 999px; font-family: var(--serif-cn); font-weight: 700; font-size: 15px; letter-spacing: 3px; cursor: pointer; width: 100%; }
+    .unlock-btn:hover { background: #EDE3CB; }
+
+    .paywall-banner {
+      position: sticky;
+      bottom: 24px;
+      z-index: 80;
+      max-width: 720px;
+      margin: 32px auto;
+      padding: 20px 28px;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(26, 24, 23, 0.3);
+      display: flex; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+    }
+    body:not(.locked) .paywall-banner { display: none; }
+    .paywall-banner-text { flex: 1; min-width: 200px; }
+    .paywall-banner-h { font-family: var(--serif-cn); font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+    .paywall-banner-sub { font-size: 12px; color: rgba(245, 239, 224, 0.65); font-family: var(--mono); letter-spacing: 1px; }
+    .paywall-banner-btn {
+      background: var(--vermillion);
+      color: var(--paper);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-family: var(--serif-cn);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .paywall-banner-btn:hover { background: #C9554A; }
+
+    .pay-modal {
+      position: fixed; inset: 0;
+      background: rgba(26, 24, 23, 0.85);
+      backdrop-filter: blur(16px);
+      z-index: 300;
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .pay-modal.show { display: flex; }
+    .pay-card {
+      background: var(--paper);
+      color: var(--ink);
+      max-width: 460px;
+      width: 100%;
+      padding: 40px 32px;
+      border-radius: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .pay-card-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--ink-mute);
+      background: transparent;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .pay-h { font-family: var(--serif-cn); font-weight: 700; font-size: 22px; margin-bottom: 8px; }
+    .pay-sub { font-size: 13px; color: var(--ink-mute); margin-bottom: 24px; font-family: var(--mono); letter-spacing: 1px; }
+    .pay-tier-row { display: flex; gap: 10px; margin-bottom: 24px; }
+    .pay-tier {
+      flex: 1;
+      padding: 14px 8px;
+      border: 2px solid rgba(26, 24, 23, 0.12);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pay-tier.active { border-color: var(--vermillion); background: rgba(184, 54, 42, 0.04); }
+    .pay-tier-name { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--ink-mute); margin-bottom: 4px; }
+    .pay-tier-amt { font-family: var(--serif-cn); font-weight: 700; font-size: 24px; color: var(--vermillion); }
+    .pay-qr {
+      width: 200px; height: 200px;
+      margin: 0 auto 16px;
+      background:
+        repeating-linear-gradient(0deg, var(--ink) 0 4px, transparent 4px 8px),
+        repeating-linear-gradient(90deg, var(--ink) 0 4px, transparent 4px 8px);
+      background-color: var(--paper-warm);
+      border-radius: 8px;
+      position: relative;
+    }
+    .pay-qr::after {
+      content: 'DEMO';
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(245, 239, 224, 0.8);
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+    }
+    .pay-method { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; }
+    .pay-method-btn {
+      padding: 8px 18px;
+      border: 1px solid rgba(26, 24, 23, 0.12);
+      border-radius: 999px;
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--serif-cn);
+      font-size: 13px;
+    }
+    .pay-method-btn.active { background: var(--ink); color: var(--paper); }
+    .pay-note { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); margin-top: 16px; letter-spacing: 1px; }
+  </style>
+</head>
+<body class="locked">
+
+  <nav class="nav">
+    <div class="nav-mark">合 · 盘</div>
+    <div class="nav-title">You & Her — A Reading</div>
+    <div class="nav-link" onclick="document.querySelector('.classical').scrollIntoView({behavior:'smooth'})">古典详读 →</div>
+  </nav>
+
+  <!-- ============== TOP: WRAPPED ============== -->
+  <section class="wrapped-section">
+    <div class="wrapped-eyebrow">A WRAPPED READING · 2026</div>
+    <h1 class="wrapped-heading">山火贲</h1>
+    <p class="wrapped-subtitle">两个人的命盘，一个故事，十张卡片</p>
+    <div class="scroll-hint">→ 滑动 · 点击进入详情</div>
+
+    <div class="cards-track" id="cards">
+
+      <!-- Card 1: Hero -->
+      <div class="card card-1" data-modal="overview">
+        <div class="card-num">01 / 10</div>
+        <div class="card-eyebrow">Compatibility</div>
+        <div class="card-title">合婚评分</div>
+        <div class="card-big">83</div>
+        <div class="card-quote">/ 100 · 上佳合婚</div>
+        <div class="card-spacer"></div>
+        <div class="card-trigram">☶ ☲</div>
+        <div class="card-foot">山火贲卦 · A Mountain Lit by Fire</div>
+      </div>
+
+      <!-- Card 2: 你 -->
+      <div class="card card-2" data-modal="male">
+        <div class="card-num">02 / 10</div>
+        <div class="card-eyebrow">The Sun</div>
+        <div class="card-title">你 · 丙火日主</div>
+        <div class="card-big" style="font-size: 64px; margin-top: 24px;">辛未 · 乙未</div>
+        <div class="card-big" style="font-size: 64px; margin-top: 0;">丙申 · 甲午</div>
+        <div class="card-quote" style="margin-top: 18px;">「太阳之火，光明磊落」</div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">伤官佩印 · 1991</div>
+      </div>
+
+      <!-- Card 3: 她 -->
+      <div class="card card-3" data-modal="female">
+        <div class="card-num">03 / 10</div>
+        <div class="card-eyebrow">The Mountain</div>
+        <div class="card-title">她 · 戊土日主</div>
+        <div class="card-big" style="font-size: 64px; margin-top: 24px;">壬申 · 辛亥</div>
+        <div class="card-big" style="font-size: 64px; margin-top: 0;">戊申 · 甲寅</div>
+        <div class="card-quote" style="margin-top: 18px;">「大山稳重，万物所依」</div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">伤官生财 · 1992</div>
+      </div>
+
+      <!-- Card 4: 互补 -->
+      <div class="card card-4" data-modal="complement">
+        <div class="card-num">04 / 10</div>
+        <div class="card-eyebrow">Mirror Match</div>
+        <div class="card-title">五行镜像互补</div>
+        <div style="margin: 24px 0;">
+          <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; margin-bottom: 4px; letter-spacing: 2px;">FIRE · 火</div>
+          <div class="compare-row"><span>你 6.4</span><span>她 0.8 ⚠</span></div>
+          <div class="compare-bar" style="display: flex;">
+            <div style="width: 64%; background: var(--vermillion-soft); height: 100%;"></div>
+            <div style="width: 8%; background: var(--gold-soft); height: 100%; opacity: 0.5;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; margin-bottom: 4px; letter-spacing: 2px;">WATER · 水</div>
+          <div class="compare-row"><span>你 0.8 ⚠</span><span>她 7.6</span></div>
+          <div class="compare-bar" style="display: flex;">
+            <div style="width: 8%; background: var(--vermillion-soft); height: 100%; opacity: 0.5;"></div>
+            <div style="width: 76%; background: #6B8A9A; height: 100%;"></div>
+          </div>
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-quote" style="font-size: 16px; margin-top: 16px; color: var(--gold-soft);">互为用神 · 命定的拼图</div>
+        <div class="card-foot" style="color: var(--gold-soft); opacity: 0.7;">She is your missing water. You are her missing fire.</div>
+      </div>
+
+      <!-- Card 5: 丙辛合化水 -->
+      <div class="card card-5" data-modal="hehua">
+        <div class="card-num">05 / 10</div>
+        <div class="card-eyebrow">Heavenly Bond</div>
+        <div class="card-title">丙辛 · 合化水</div>
+        <div style="text-align: center; margin: 32px 0;">
+          <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #FF6B5A;">丙</span>
+          <span style="font-size: 28px; margin: 0 16px; opacity: 0.6;">+</span>
+          <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #DDD;">辛</span>
+        </div>
+        <div style="text-align: center; font-size: 24px; opacity: 0.6;">↓</div>
+        <div style="text-align: center; margin-top: 8px;">
+          <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #6FA0C0;">水</span>
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot text-center">男日干 × 女月干 · 化你最缺的用神</div>
+      </div>
+
+      <!-- Card 6: 寅申冲（隐忧但有救） -->
+      <div class="card card-6" data-modal="chong">
+        <div class="card-num">06 / 10</div>
+        <div class="card-eyebrow">The Tension</div>
+        <div class="card-title">寅申冲 · 但寅中有丙</div>
+        <div class="card-quote" style="margin-top: 24px;">
+          她两申冲一寅<br>
+          表面上夫妻宫动荡<br>
+          但寅中藏丙——
+        </div>
+        <div class="card-quote" style="font-size: 22px; color: #FFB99A; margin-top: 16px;">
+          那个丙，就是你
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">命定化解 · A predestined resolution</div>
+      </div>
+
+      <!-- Card 7: 2026 流年 -->
+      <div class="card card-7" data-modal="year2026">
+        <div class="card-num">07 / 10</div>
+        <div class="card-eyebrow">This Year · 丙午</div>
+        <div class="card-title">2026 流年</div>
+        <div style="margin: 20px 0;">
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 2px; opacity: 0.7;">对她</div>
+          <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 22px; margin: 4px 0;">用神大透 ★★★★★</div>
+          <div style="font-size: 14px; opacity: 0.8;">突破期 · 用神丙火直接到位</div>
+        </div>
+        <div style="margin: 20px 0; padding-top: 16px; border-top: 1px solid rgba(26,24,23, 0.15);">
+          <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 2px; opacity: 0.7;">对你</div>
+          <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 22px; margin: 4px 0;">比劫年 ★★★</div>
+          <div style="font-size: 14px; opacity: 0.8;">守成期 · 财来财去 / 内压加大</div>
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">她在喷发 · 你在守</div>
+      </div>
+
+      <!-- Card 8: 大运对比 -->
+      <div class="card card-8" data-modal="dashu">
+        <div class="card-num">08 / 10</div>
+        <div class="card-eyebrow">Decade Cycles</div>
+        <div class="card-title">大运 · 时间轴</div>
+        <div style="margin-top: 28px;">
+          <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; letter-spacing: 2px;">YOU · 32–42</div>
+          <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 36px; color: var(--gold-soft); margin: 4px 0;">辛卯</div>
+          <div style="font-size: 13px; opacity: 0.7;">正财 + 正印 · 稳固期</div>
+        </div>
+        <div style="margin-top: 24px;">
+          <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; letter-spacing: 2px;">HER · 32–42</div>
+          <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 36px; color: #E5A6A0; margin: 4px 0;">丁未 → 丙午</div>
+          <div style="font-size: 13px; opacity: 0.7;">用神入命 · 上升 → 巅峰</div>
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">2024–2034 · 她的黄金十年</div>
+      </div>
+
+      <!-- Card 9: 高峰预测 -->
+      <div class="card card-9" data-modal="peak">
+        <div class="card-num">09 / 10</div>
+        <div class="card-eyebrow">2033+</div>
+        <div class="card-title">双双绽放</div>
+        <div style="margin-top: 32px;">
+          <div style="font-size: 13px; opacity: 0.7; font-family: var(--mono); letter-spacing: 2px;">YOU · 42–52</div>
+          <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 30px; margin: 6px 0;">庚寅运</div>
+          <div style="font-size: 13px; opacity: 0.7;">偏财 + 偏印 · 财富智慧双高峰</div>
+        </div>
+        <div style="margin-top: 20px;">
+          <div style="font-size: 13px; opacity: 0.7; font-family: var(--mono); letter-spacing: 2px;">HER · 42–52</div>
+          <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 30px; margin: 6px 0;">丙午运</div>
+          <div style="font-size: 13px; opacity: 0.7;">用神全透 · 事业巅峰</div>
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">最美好的十年 · 还在前面</div>
+      </div>
+
+      <!-- Card 10: 经典印证 -->
+      <div class="card card-10" data-modal="classic">
+        <div class="card-num">10 / 14</div>
+        <div class="card-eyebrow" style="color: var(--vermillion);">CLASSICAL ECHO</div>
+        <div class="card-title" style="color: var(--ink);">王一亭命</div>
+        <div class="card-quote" style="font-size: 18px; line-height: 1.7; margin-top: 18px;">
+          《穷通宝鉴》戊土卷 · 同格历史命例：
+        </div>
+        <div style="font-family: var(--serif-cn); font-weight: 600; font-size: 18px; letter-spacing: 4px; color: var(--vermillion); margin: 14px 0;">壬申 辛亥 戊子 丁巳</div>
+        <div class="card-quote" style="font-size: 15px;">
+          「亥宫壬水得禄，财通门户……一派南方印运，斐声社会」
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot" style="color: var(--ink-soft);">与她格局一致 · 历史印证</div>
+        <div class="stamp">天 命</div>
+      </div>
+
+      <!-- Card 11: 2026 强信号 -->
+      <div class="card card-11" data-modal="year2026">
+        <div class="card-num">11 / 14</div>
+        <div class="card-eyebrow">THIS YEAR · STRONG SIGNAL</div>
+        <div class="card-title">2026 · 第一推荐结婚年</div>
+        <div style="margin-top: 18px;">
+          <div style="font-family: var(--mono); font-size: 11px; opacity: 0.7; letter-spacing: 2px;">RECOMMENDATION</div>
+          <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 28px; margin: 4px 0;">★★★★★</div>
+        </div>
+        <div class="card-quote" style="font-size: 15px; margin-top: 12px;">
+          流年丙午 + 大运辛卯 ⇒ <b>丙辛再合水</b>，<br>
+          你们俩的「天作之合」<br>
+          被太岁再度激活
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">来源：合盘原文 · 第一推荐年份</div>
+      </div>
+
+      <!-- Card 12: 申申自刑警示 -->
+      <div class="card card-12" data-modal="warn">
+        <div class="card-num">12 / 14</div>
+        <div class="card-eyebrow" style="color: #FFB99A;">⚠ ATTENTION</div>
+        <div class="card-title" style="color: #FFE7DD;">申申自刑</div>
+        <div class="card-quote" style="font-size: 16px; line-height: 1.7; margin-top: 16px;">
+          两人日支同为申金，<br>
+          按古法属"申申自刑"——<br>
+          配偶宫有"内耗"特征
+        </div>
+        <div class="card-quote" style="font-size: 15px; color: #FFB99A; margin-top: 16px;">
+          解：刻意守住「相处边界」<br>
+          各有各的事要做<br>
+          不互相吞没
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">《三命通会》神煞篇</div>
+      </div>
+
+      <!-- Card 13: 你今年要注意 -->
+      <div class="card card-13" data-modal="advice-male">
+        <div class="card-num">13 / 14</div>
+        <div class="card-eyebrow">FOR YOU · 2026</div>
+        <div class="card-title">三件事</div>
+        <div style="margin-top: 18px; font-size: 14px; line-height: 1.8;">
+          <p style="margin-bottom: 12px;">① 别和她比谁爆发快——<br>她在喷发期，你在守成期</p>
+          <p style="margin-bottom: 12px;">② 财来财去时，<b>把钱花在学习上</b>，<br>平衡「财克印」</p>
+          <p>③ 内压找出口——<br><b>写作 / 创作</b> 是命中印星指定通道</p>
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">辛卯运 + 丙午年 · 三大化解</div>
+      </div>
+
+      <!-- Card 14: 她今年要注意 -->
+      <div class="card card-14" data-modal="advice-female">
+        <div class="card-num">14 / 14</div>
+        <div class="card-eyebrow">FOR HER · 2026</div>
+        <div class="card-title">三件事</div>
+        <div style="margin-top: 18px; font-size: 14px; line-height: 1.8;">
+          <p style="margin-bottom: 12px;">① 这是 <b>用神大透</b> 的关键年——<br>种子年，不要急着收</p>
+          <p style="margin-bottom: 12px;">② <b>事业 / 学习方面 主动出击</b>，<br>丁丙双印 = 智慧与贵人都到位</p>
+          <p>③ 真正的高峰是 <b>2034 后丙午运</b>，<br>现在做的每一步都在攒子弹</p>
+        </div>
+        <div class="card-flex-bottom"></div>
+        <div class="card-foot">丁未运 + 丙午年 · 用神入命</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============== BOTTOM: CLASSICAL LONG-FORM ============== -->
+  <section class="classical">
+    <!-- Left-rail vertical ontology nav (desktop only) -->
+    <nav class="ontology-rail" id="ontologyRail" aria-label="Ziping ontology nav">
+      <div class="ontology-rail-eyebrow">子平本体论</div>
+      <ul class="ontology-rail-list">
+        <li><a class="ontology-rail-item" data-target="sec1"><span class="ontology-rail-num">01</span><span class="ontology-rail-name">排盘</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec3"><span class="ontology-rail-num">02</span><span class="ontology-rail-name">五行</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec3"><span class="ontology-rail-num">03</span><span class="ontology-rail-name">格局</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec4"><span class="ontology-rail-num">04</span><span class="ontology-rail-name">用神</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec5"><span class="ontology-rail-num">05</span><span class="ontology-rail-name">大运</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec6"><span class="ontology-rail-num">06</span><span class="ontology-rail-name">流年</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec7"><span class="ontology-rail-num">07</span><span class="ontology-rail-name">合婚</span></a></li>
+      </ul>
+    </nav>
+    <div class="classical-inner">
+      <div class="classical-eyebrow">CLASSICAL ANNOTATION · 古典详读</div>
+      <h2 class="classical-title">合而后分。<br>分而后明。</h2>
+      <p class="classical-byline">An evidence-based reading drawn from <em>Qiongtong Baojian</em>, <em>Bazi Tiyao</em>, and <em>Sanming Tonghui</em>.</p>
+
+      <!-- B: Knowledge graph — 子平命理本体论 -->
+      <div class="ontology-graph">
+        <div class="ontology-eyebrow">子平命理推演本体论 · ZIPING ONTOLOGY</div>
+        <div class="ontology-track">
+          <div class="ontology-node" data-step="01">
+            <div class="ontology-num">01</div>
+            <div class="ontology-name">排盘</div>
+            <div class="ontology-en">Build Charts</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="02">
+            <div class="ontology-num">02</div>
+            <div class="ontology-name">五行</div>
+            <div class="ontology-en">Elements</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="03">
+            <div class="ontology-num">03</div>
+            <div class="ontology-name">格局</div>
+            <div class="ontology-en">Pattern</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="04">
+            <div class="ontology-num">04</div>
+            <div class="ontology-name">用神</div>
+            <div class="ontology-en">Favorable</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="05">
+            <div class="ontology-num">05</div>
+            <div class="ontology-name">大运</div>
+            <div class="ontology-en">Decade</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="06">
+            <div class="ontology-num">06</div>
+            <div class="ontology-name">流年</div>
+            <div class="ontology-en">Annual</div>
+          </div>
+          <div class="ontology-arrow">→</div>
+          <div class="ontology-node" data-step="07">
+            <div class="ontology-num">07</div>
+            <div class="ontology-name">合婚</div>
+            <div class="ontology-en">Compat.</div>
+          </div>
+        </div>
+        <div class="ontology-caption">每章按此顺序展开 · 排盘是地基，合婚是终点</div>
+      </div>
+
+      <p class="lede">
+        合婚一事，古书称之为「鸾凤配」。鸾凤者，非鸳鸯之轻盈，而是高山之上对鸣的灵鸟——彼此的存在，正好是对方所缺的那一笔。本文据二命五行强弱、用神所在、流年大运、八卦卦象，逐项印证。所引典籍均为公开版本，案例对应均有原文出处。
+      </p>
+
+      <!-- Section 1 -->
+      <article class="section open" id="sec1">
+        <div class="section-toggle" onclick="toggleSection('sec1')">
+          <span class="section-num">01</span>
+          <h3 class="section-h">排盘 · 男方四柱</h3>
+          <span class="section-arrow">+</span>
+        </div>
+        <div class="section-body">
+          <p>男方生于一九九一年辛未，月柱乙未，日柱丙申，时柱甲午。</p>
+
+          <div class="pillar-row">
+            <div class="pillar"><div class="pillar-label">时</div><div class="pillar-tian">甲</div><div class="pillar-di">午</div><div class="pillar-shi">偏印 · 劫财</div></div>
+            <div class="pillar"><div class="pillar-label">日</div><div class="pillar-tian">丙</div><div class="pillar-di">申</div><div class="pillar-shi">★ 日主</div></div>
+            <div class="pillar"><div class="pillar-label">月</div><div class="pillar-tian">乙</div><div class="pillar-di">未</div><div class="pillar-shi">正印 · 伤官</div></div>
+            <div class="pillar"><div class="pillar-label">年</div><div class="pillar-tian">辛</div><div class="pillar-di">未</div><div class="pillar-shi">正财 · 伤官</div></div>
+          </div>
+
+          <p>日主丙火，《滴天髓》所谓「丙火猛烈，欺霜侮雪」是也。然此命月令未土秉政，土旺泄火，是格局成立的关键。</p>
+
+          <blockquote>
+            「六月丙火，火气渐退，三伏生寒，己土泄气，取壬为用，庚金为佐。庚壬两透，贴身相生，可云科甲名宦。若无庚贴，有壬不见戊出，秀才小富。」
+            <cite>— 《穷通宝鉴》月令篇 · 丙火卷</cite>
+          </blockquote>
+
+          <h4>用神判断</h4>
+          <p>本命壬水（七杀）藏于申中，未透天干，按《穷通宝鉴》对照：「有壬不见戊出，秀才小富」一类——格局有，秀气在，但未透不显，需大运送水。</p>
+
+          <h4>当前大运</h4>
+          <p>三十二至四十二岁行辛卯运（2023–2033）。辛金正财透干，卯木正印生身。表面财来印旺，内里却暗藏「财克印」之冲——也就是，钱多了反而扰心。这十年宜「在赚钱的同时坚持读书写作」，否则财来印散，得不偿失。</p>
+        </div>
+      </article>
+
+      <!-- Section 2 -->
+      <article class="section" id="sec2">
+        <div class="section-toggle" onclick="toggleSection('sec2')">
+          <span class="section-num">02</span>
+          <h3 class="section-h">排盘 · 女方四柱</h3>
+          <span class="section-arrow">+</span>
+        </div>
+        <div class="section-body">
+          <p>女方生于一九九二年壬申，月柱辛亥，日柱戊申，时柱甲寅。</p>
+
+          <div class="pillar-row">
+            <div class="pillar"><div class="pillar-label">时</div><div class="pillar-tian">甲</div><div class="pillar-di">寅</div><div class="pillar-shi">七杀</div></div>
+            <div class="pillar"><div class="pillar-label">日</div><div class="pillar-tian">戊</div><div class="pillar-di">申</div><div class="pillar-shi">★ 日主</div></div>
+            <div class="pillar"><div class="pillar-label">月</div><div class="pillar-tian">辛</div><div class="pillar-di">亥</div><div class="pillar-shi">伤官 · 偏财</div></div>
+            <div class="pillar"><div class="pillar-label">年</div><div class="pillar-tian">壬</div><div class="pillar-di">申</div><div class="pillar-shi">偏财</div></div>
+          </div>
+
+          <p>戊为大山，亥月寒水秉令，金水极旺（各 7.6 分）。最大缺口在火（仅 0.8 分），《穷通宝鉴》言：</p>
+
+          <blockquote>
+            「十月戊土，气薄力微，时值小阳，先用甲木疏土，次取丙火暖土。非甲土不灵，非丙土不暖，安能发生万物。」
+            <cite>— 《穷通宝鉴》月令篇 · 戊土卷</cite>
+          </blockquote>
+
+          <h4>同格历史案例</h4>
+          <p>《穷通宝鉴》戊土卷收录有近代上海实业家王一亭命，其年月日柱与女方完全相同：</p>
+          <blockquote>
+            「壬申、辛亥、戊子、丁巳。亥宫壬水得禄，财通门户，更有辛金相生。戊土日元……身旺任财，早年西方之运，以身发财。中年之后，一派南方印运，以慈善事业，斐声社会，寿七十二。」
+          </blockquote>
+          <p>王一亭中年后行南方印运（丙午运）方成大业。女方四十二至五十二岁正进入丙午运——这是历史上同格人最高光的十年。</p>
+        </div>
+      </article>
+
+      <!-- Section 3 -->
+      <article class="section" id="sec3">
+        <div class="section-toggle" onclick="toggleSection('sec3')">
+          <span class="section-num">03</span>
+          <h3 class="section-h">五行 + 用神 · 互补与缺口</h3>
+          <span class="section-arrow">+</span>
+        </div>
+        <div class="section-body">
+          <p>合盘看的是两人五行的协奏，不是单方面分数。本案核心机制有三层：</p>
+
+          <h4>一层 · 五行镜像</h4>
+          <p>男方五行强弱排序为：土十 / 木 8.6 / 火 6.4 / 金 6.1 / 水 0.8。<br>女方五行强弱排序为：金 7.6 / 水 7.6 / 土 5.4 / 木 3.6 / 火 0.8。</p>
+          <p>男最缺水，女水极旺；女最缺火，男火透干——彼此的最大缺口正好是对方的最大供给。这种镜像关系在合婚里被称作「互为用神」，是诸多组合中最理想的一种。</p>
+
+          <h4>二层 · 天干六合</h4>
+          <p>男方日干丙火 × 女方月干辛金 →「丙辛合化水」。化合的产物正好是男方命中最缺的壬水用神。古书称这种合为「天作之合」。</p>
+
+          <h4>三层 · 卦象相生</h4>
+          <p>男方丙火日主对应离卦（☲），女方戊土日主对应艮卦（☶）。上艮下离合成「山火贲」卦：</p>
+          <blockquote>
+            「贲，亨，小利有攸往。」
+            <cite>— 《周易》贲卦</cite>
+          </blockquote>
+          <p>贲者，文饰也。男方丙火照耀女方戊土的山峦，女方艮土稳稳承载男方的火光，相互装饰，相互成就。这是合婚中难得的相生卦。</p>
+        </div>
+      </article>
+
+      <!-- Section 4 -->
+      <article class="section" id="sec4">
+        <div class="section-toggle" onclick="toggleSection('sec4')">
+          <span class="section-num">04</span>
+          <h3 class="section-h">合冲刑害 · 隐忧与化解</h3>
+          <span class="section-arrow">+</span>
+        </div>
+        <div class="section-body">
+          <p>女方两个申金（年支、日支）同时冲击时支寅木。寅是七杀，对女命而言即夫星。冲克之象，按古书原话，主「夫妻宫动荡」「感情多波折」「夫君易受外力干扰」。</p>
+
+          <p>但本命有救：</p>
+
+          <p><strong>救法一 · 寅中藏丙：</strong>寅木的本气虽是甲木，藏干却含丙火、戊土。寅中之丙，正是女方最缺的用神，也正是男方的日主——也就是说，那个化解她「夫妻宫冲」的丙火，恰恰是男方本人。</p>
+
+          <p><strong>救法二 · 大运补火：</strong>女方丁未运（2024–2034）丁火是丙之偶，开始暖土；丙午运（2034 后）丙火透干，彻底化解。</p>
+
+          <p><strong>救法三 · 男方扶持：</strong>男方丙火常年照耀，相当于把寅中之丙引到天干，作用力放大数倍。两人在一起，时间越长越稳。</p>
+        </div>
+      </article>
+
+      <!-- Section 5 -->
+      <article class="section" id="sec5">
+        <div class="section-toggle" onclick="toggleSection('sec5')">
+          <span class="section-num">05</span>
+          <h3 class="section-h">大运 · 节律对接</h3>
+          <span class="section-arrow">+</span>
+        </div>
+        <div class="section-body">
+          <p>「朋友，我把你们俩的命盘看了一遍，有意思。」</p>
+          <p>「你是太阳，她是大山。太阳本来就是为了照山的——山没有阳光就是荒地，太阳没有山就是空照。这话不是我编的，《周易》里写得明明白白。」</p>
+          <p>「她现在最重要的十年才刚开始。你别拿你 22–32 岁那段壬辰运的爆发感来对照她现在——她的爆发期还在 2034 后。这十年她种种子，2034 之后开花。」</p>
+          <p>「你呢，2026 年这一年是个挺难受的年——火气浮，财来财去，想做的事很多但落地慢。这是命格自身的问题，不是你做错了什么。出口在『写下来』『记下来』『讲出来』——你印星旺，靠创作释放。」</p>
+          <p>「最关键的一句话：你们不是在比谁爆发得快，是在配合一种节奏。她快的时候，你稳。你慢的时候，她在身后给你水。这是古书里『鸾凤合鸣』的真意。」</p>
+        </div>
+      </article>
+
+      <!-- Section 6: 2026 流年深读 -->
+      <article class="section open" id="sec6">
+        <div class="section-toggle" onclick="toggleSection('sec6')">
+          <span class="section-num">06</span>
+          <h3 class="section-h">流年 · 当下交互（2026 丙午）</h3>
+          <span class="section-arrow">+</span>
+        </div>
+        <div class="section-body">
+          <p>这一年值得专门拆——因为太岁丙午对你们俩的作用截然相反，但又彼此咬合。</p>
+
+          <h4>对她 · 用神大透 ★★★★★</h4>
+          <p>她戊土日主最缺的就是丙火。流年丙午直接把这个最大缺口补上。叠加大运丁未——丁是丙的兄弟（同为火），未是比肩助身。整个 2026 年，她的命局结构在「土生金、金生水、水克火、火生土」的环上每一处都通了。</p>
+
+          <blockquote>
+            「十月戊土，气薄力微，时值小阳，先用甲木疏土，次取丙火暖土。非丙土不暖，安能发生万物。」
+            <cite>— 《穷通宝鉴》月令篇 · 戊土卷</cite>
+          </blockquote>
+
+          <p>古书原话：「丙为当旺之神，真神得时得用，宜为廊庙之财」。也就是说，2026 这一年她的命格用神「真正得用」。一辈子的几次重要命运转折之一。</p>
+
+          <h4>对你 · 比劫年 ★★★（守成 + 内压）</h4>
+          <p>你的丙火日主，碰到流年丙午——同性比肩 + 劫财。表面看似帮身，实质是「火上加火、土更燥、水更难透」。古书称这种结构为「火炎土燥」：</p>
+
+          <blockquote>
+            「一派丙丁无壬癸，为火炎土燥，不得壬癸为救，僧道孤贫之命……火土燥烈，水不能存。」
+            <cite>— 《穷通宝鉴》月令篇 · 戊土卷（同理论）</cite>
+          </blockquote>
+
+          <p>你不会真的「孤贫」——你大运辛卯有金生水的暗补。但「内火浮、外财乱、想做的事落不下来」是真实的体感。原因在于：</p>
+          <ul style="padding-left: 24px; margin: 12px 0;">
+            <li>大运辛卯 + 流年丙午 → 辛丙合化（你的财被合走，看似收入增加，实质是被劫）</li>
+            <li>卯（你正印）与午（流年支）是「卯午破」 → 你的学习状态、专注力被打散</li>
+            <li>用神壬水继续藏在申中没透 → 内在压力释放不出去</li>
+          </ul>
+
+          <h4>对你们俩 · 丙辛再合，命运感强</h4>
+          <p>命盘原文（合盘报告）写：</p>
+          <blockquote>
+            「大运辛卯 × 流年丙午 → 丙辛再合水。两人「丙辛合」在此年被流年再度激活，用神水的化合力量最强。午年与命局时支午相应，婚约此年有强烈的「命运感」。」
+          </blockquote>
+
+          <p>翻译成大白话：你们俩 2026 不论结婚、订婚、合作、共同投资，都比平常年份多一份「天意」感——因为你们俩之间最神奇的"丙辛合化水"被太岁这年再次激活。</p>
+        </div>
+      </article>
+
+      <!-- Section 7: 注意事项 -->
+      <article class="section open" id="sec7">
+        <div class="section-toggle" onclick="toggleSection('sec7')">
+          <span class="section-num">07</span>
+          <h3 class="section-h">合婚 · 注意事项 + 化解之道</h3>
+          <span class="section-arrow">+</span>
+        </div>
+        <div class="section-body">
+          <p>命理上"注意"不等于"避免"——是「主动配合命格的运行逻辑」。下面 5 条都有古典依据。</p>
+
+          <h4>① 申申自刑 · 守住「各做各的」边界</h4>
+          <p>你日支申、她日支申。两个申放一起，按古法属「三刑」之一——"自刑"。古书原话：</p>
+          <blockquote>
+            「申申自刑，主配偶宫有内耗。」
+            <cite>— 《三命通会》神煞篇 · 自刑章</cite>
+          </blockquote>
+          <p><b>原因：</b>你们俩日支同气，能量太相似——容易在一些"小事的细节"上互相纠缠（你也想做这个，她也想做这个；你想用这种方式，她也想用这种方式）。</p>
+          <p><b>解法：</b>主动建立"各自的领域"——她的事业里你不指手画脚；你的创作里她给你独处时间。<u>恰恰因为你们五行互补，反而要在"做事"上保持各自的轨道</u>，五行才能真正发挥互补。</p>
+
+          <h4>② 你的"财克印" · 钱进来时同步买书</h4>
+          <p>你大运辛卯 + 流年丙午，财（辛）来助也来劫，印（卯）被破。古书：「辛金克乙木，财克印」——财多了，思考力反而下降。</p>
+          <p><b>原因：</b>命局里你的"印星"（学习、创作、思考）和"财星"（事业、收入）天然对立。今年财动得猛，印就被压。</p>
+          <p><b>解法：</b>每次有较大收入到账（无论 OpenAI 拨款 / 知识星球分红 / 项目结算），<u>同步设一个"印星预算"</u>——拿出 5%-10% 强制用在书、课程、创作工具、写作时间块。这是给印星"喂粮"。</p>
+
+          <h4>③ 她的"种子期"心态 · 不要用你的尺子量她</h4>
+          <p>古书原话（合盘原文）：「丁未运是种子期，丙午运是收获期。」她现在做的所有事，按命理是为 2034 后存子弹，不是当下变现。</p>
+          <p><b>原因：</b>她大运丁未"印星入命"——是智慧、贵人、精神成长的时期。这种成长在外人看不出来。</p>
+          <p><b>解法：</b>当她说"我在学这个 / 想转方向 / 慢一点"——你不要用你 22-32 岁壬辰运的爆发节奏来衡量她。她的爆发在 42-52 岁。<u>你的角色是"那个稳定照射的丙火"</u>，而不是"催她快跑的人"。</p>
+
+          <h4>④ 共同决策窗口 · 婚 / 创业 / 大投资</h4>
+          <p>合盘原文标注 <b>2026 是第一推荐结婚年份</b>（★★★★★），原因：</p>
+          <ul style="padding-left: 24px; margin: 8px 0;">
+            <li>对你：流年丙 + 命局时支午相应 → 强烈的命运感</li>
+            <li>对她：流年丙 = 第一用神直接透干 → 一辈子级的关键年</li>
+            <li>双方：丙辛合化水 + 大运辛卯 + 流年丙午 → 三重激活</li>
+          </ul>
+          <p>但合盘也警告：避开 <b>申月（农历七月，约 8月）</b>办大事——叠加申申自刑加重。<b>推荐月份：甲午月（农历五月，约 6 月初-7 月初）或壬辰月（农历三月，约 4 月）</b>。</p>
+
+          <h4>⑤ 你的健康 · 留意"水"系</h4>
+          <p>你五行水极弱（0.8 分），这一年丙午让水更难透。古书《穷通宝鉴》对此类格局后期有警示：</p>
+          <blockquote>
+            「己丑运（52-62 岁）须注意健康（土克水，肾/泌尿系统）、防范财务风险。」
+            <cite>— 你的命盘原文</cite>
+          </blockquote>
+          <p><b>原因：</b>不是说今年就要出问题，是命局长期"水弱"已经是一个内在配置。今年丙午加剧。</p>
+          <p><b>解法：</b>多喝水（字面意义）、注意肾和泌尿系统的小信号、<u>不要长期熬夜（夜属水，熬夜消耗你最缺的能量）</u>。</p>
+
+          <h4>底层一句话</h4>
+          <p style="font-size: 18px; font-style: italic; color: var(--vermillion); margin-top: 24px; padding: 16px; background: rgba(184, 54, 42, 0.06); border-radius: 4px;">
+            她在能量爆发期，你在能量守成期。你们配合的方式不是"同频共振"，而是"轮替供能"——这一年她负责光，你负责土。
+          </p>
+        </div>
+      </article>
+
+      <p style="text-align: center; margin-top: 60px; font-family: var(--mono); font-size: 11px; letter-spacing: 4px; color: var(--ink-mute);">
+        — END —
+      </p>
+    </div>
+  </section>
+
+  <!-- ============== MODAL: DASHBOARD ============== -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div class="modal-eyebrow">DUAL DASHBOARD · 双人详对比</div>
+      <h2 class="modal-title">五行 · 大运 · 互补</h2>
+
+      <div class="dash-grid">
+        <div class="dash-col dash-col-male">
+          <div class="dash-name">MALE · 1991</div>
+          <div class="dash-master">丙 · 太阳之火</div>
+          <div class="dash-pillars">辛未 · 乙未 · 丙申 · 甲午</div>
+          <div style="font-size: 13px; color: var(--ink-mute);">伤官佩印 · 用神 壬水（藏申）</div>
+          <div class="wuxing">
+            <div class="wuxing-row"><span class="wuxing-label">木</span><div class="wuxing-bar"><div class="wuxing-fill fill-mu" style="width: 86%"></div></div><span>8.6</span></div>
+            <div class="wuxing-row"><span class="wuxing-label">火</span><div class="wuxing-bar"><div class="wuxing-fill fill-huo" style="width: 64%"></div></div><span>6.4</span></div>
+            <div class="wuxing-row"><span class="wuxing-label">土</span><div class="wuxing-bar"><div class="wuxing-fill fill-tu" style="width: 100%"></div></div><span>10.0</span></div>
+            <div class="wuxing-row"><span class="wuxing-label">金</span><div class="wuxing-bar"><div class="wuxing-fill fill-jin" style="width: 61%"></div></div><span>6.1</span></div>
+            <div class="wuxing-row"><span class="wuxing-label">水</span><div class="wuxing-bar"><div class="wuxing-fill fill-shui" style="width: 8%"></div></div><span>0.8</span></div>
+          </div>
+        </div>
+        <div class="dash-col dash-col-female">
+          <div class="dash-name">FEMALE · 1992</div>
+          <div class="dash-master">戊 · 大山稳重</div>
+          <div class="dash-pillars">壬申 · 辛亥 · 戊申 · 甲寅</div>
+          <div style="font-size: 13px; color: var(--ink-mute);">伤官生财 · 用神 丙火 + 甲木</div>
+          <div class="wuxing">
+            <div class="wuxing-row"><span class="wuxing-label">木</span><div class="wuxing-bar"><div class="wuxing-fill fill-mu" style="width: 36%"></div></div><span>3.6</span></div>
+            <div class="wuxing-row"><span class="wuxing-label">火</span><div class="wuxing-bar"><div class="wuxing-fill fill-huo" style="width: 8%"></div></div><span>0.8</span></div>
+            <div class="wuxing-row"><span class="wuxing-label">土</span><div class="wuxing-bar"><div class="wuxing-fill fill-tu" style="width: 54%"></div></div><span>5.4</span></div>
+            <div class="wuxing-row"><span class="wuxing-label">金</span><div class="wuxing-bar"><div class="wuxing-fill fill-jin" style="width: 76%"></div></div><span>7.6</span></div>
+            <div class="wuxing-row"><span class="wuxing-label">水</span><div class="wuxing-bar"><div class="wuxing-fill fill-shui" style="width: 76%"></div></div><span>7.6</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashu">
+        <div class="dashu-title">男方大运 · DECADE TIMELINE</div>
+        <div class="dashu-track">
+          <div class="dashu-step"><div class="step-pillar">甲午</div><div class="step-age">3–12</div></div>
+          <div class="dashu-step"><div class="step-pillar">癸巳</div><div class="step-age">12–22</div></div>
+          <div class="dashu-step"><div class="step-pillar">壬辰</div><div class="step-age">22–32</div></div>
+          <div class="dashu-step current"><div class="step-pillar">辛卯 ◀</div><div class="step-age">32–42 · 当前</div></div>
+          <div class="dashu-step"><div class="step-pillar">庚寅</div><div class="step-age">42–52 ★</div></div>
+          <div class="dashu-step"><div class="step-pillar">己丑</div><div class="step-age">52–62</div></div>
+          <div class="dashu-step"><div class="step-pillar">戊子</div><div class="step-age">62+</div></div>
+        </div>
+      </div>
+
+      <div class="dashu">
+        <div class="dashu-title">女方大运 · DECADE TIMELINE</div>
+        <div class="dashu-track">
+          <div class="dashu-step"><div class="step-pillar">庚戌</div><div class="step-age">2–12</div></div>
+          <div class="dashu-step"><div class="step-pillar">己酉</div><div class="step-age">12–22</div></div>
+          <div class="dashu-step"><div class="step-pillar">戊申</div><div class="step-age">22–32</div></div>
+          <div class="dashu-step current"><div class="step-pillar">丁未 ◀</div><div class="step-age">32–42 · 当前</div></div>
+          <div class="dashu-step"><div class="step-pillar">丙午 ★★</div><div class="step-age">42–52 · 巅峰</div></div>
+          <div class="dashu-step"><div class="step-pillar">乙巳</div><div class="step-age">52–62</div></div>
+          <div class="dashu-step"><div class="step-pillar">甲辰</div><div class="step-age">62+</div></div>
+        </div>
+      </div>
+
+      <p style="margin-top: 32px; font-size: 14px; color: var(--ink-mute); font-style: italic; text-align: center;">
+        点击空白处或 ESC 关闭 · click outside or ESC to close
+      </p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    DEMO · IVAN'S WORLD · SOULPRINT ZONE PREVIEW · <a href="https://github.com/flychicken067/ivan-3d-world">github</a>
+  </footer>
+
+  <script>
+    // Section toggles
+    function toggleSection(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('open');
+    }
+
+    // Ontology rail · click + scroll-spy
+    (function () {
+      const rail = document.getElementById('ontologyRail');
+      if (!rail) return;
+      const items = rail.querySelectorAll('.ontology-rail-item');
+      items.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = item.dataset.target;
+          const target = document.getElementById(id);
+          if (!target) return;
+          if (!target.classList.contains('open')) target.classList.add('open');
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+      // Scroll-spy: highlight the closest visible section
+      const sectionIds = ['sec1', 'sec2', 'sec3', 'sec4', 'sec5', 'sec6', 'sec7'];
+      window.addEventListener('scroll', () => {
+        const offset = window.scrollY + 200;
+        let active = null;
+        for (const id of sectionIds) {
+          const el = document.getElementById(id);
+          if (el && el.offsetTop <= offset) active = id;
+        }
+        items.forEach(it => {
+          it.classList.toggle('active', it.dataset.target === active);
+        });
+      }, { passive: true });
+    })();
+
+    // Card click → modal
+    const modal = document.getElementById('modal');
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    function closeModal() {
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Smooth horizontal scroll with mouse wheel on cards (desktop)
+    const track = document.getElementById('cards');
+    track.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        track.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    // ========= D2: PERSONALIZE FROM URL PARAMS =========
+    const urlParamsForBazi = new URLSearchParams(window.location.search);
+    const maleDate = urlParamsForBazi.get('male-date');
+    const maleTime = urlParamsForBazi.get('male-time');
+    const femaleDate = urlParamsForBazi.get('female-date');
+    const femaleTime = urlParamsForBazi.get('female-time');
+
+    if (maleDate && femaleDate && window.Hepan) {
+      try {
+        const malePillars = window.Hepan.buildPillars(maleDate, maleTime || '12:00');
+        const femalePillars = window.Hepan.buildPillars(femaleDate, femaleTime || '12:00');
+        const maleChart = window.Hepan.interpretChart(malePillars, 'male');
+        const femaleChart = window.Hepan.interpretChart(femalePillars, 'female');
+        const compat = window.Hepan.computeCompatibility(maleChart, femaleChart);
+
+        // Update Card 1 (score)
+        const card1Big = document.querySelector('.card-1 .card-big');
+        if (card1Big) card1Big.textContent = compat.score;
+        const card1Quote = document.querySelector('.card-1 .card-quote');
+        if (card1Quote) card1Quote.textContent = `/ 100 · ${compat.tier}`;
+
+        // Update Card 2 (male)
+        const card2Bigs = document.querySelectorAll('.card-2 .card-big');
+        if (card2Bigs.length >= 2) {
+          card2Bigs[0].textContent = `${malePillars.year.stem}${malePillars.year.branch} · ${malePillars.month.stem}${malePillars.month.branch}`;
+          card2Bigs[1].textContent = `${malePillars.day.stem}${malePillars.day.branch} · ${malePillars.hour.stem}${malePillars.hour.branch}`;
+        }
+        const card2Title = document.querySelector('.card-2 .card-title');
+        if (card2Title) card2Title.textContent = `他 · ${maleChart.dayMaster}${window.Hepan.STEM_FIVE[maleChart.dayMaster]}日主`;
+        const card2Quote = document.querySelector('.card-2 .card-quote');
+        if (card2Quote) card2Quote.textContent = `「${maleChart.persona.metaphor}」`;
+        const card2Foot = document.querySelector('.card-2 .card-foot');
+        if (card2Foot) card2Foot.textContent = `${maleChart.persona.trait} · ${malePillars.solar.y}`;
+        const card2Eyebrow = document.querySelector('.card-2 .card-eyebrow');
+        if (card2Eyebrow) card2Eyebrow.textContent = maleChart.persona.en;
+
+        // Update Card 3 (female)
+        const card3Bigs = document.querySelectorAll('.card-3 .card-big');
+        if (card3Bigs.length >= 2) {
+          card3Bigs[0].textContent = `${femalePillars.year.stem}${femalePillars.year.branch} · ${femalePillars.month.stem}${femalePillars.month.branch}`;
+          card3Bigs[1].textContent = `${femalePillars.day.stem}${femalePillars.day.branch} · ${femalePillars.hour.stem}${femalePillars.hour.branch}`;
+        }
+        const card3Title = document.querySelector('.card-3 .card-title');
+        if (card3Title) card3Title.textContent = `她 · ${femaleChart.dayMaster}${window.Hepan.STEM_FIVE[femaleChart.dayMaster]}日主`;
+        const card3Quote = document.querySelector('.card-3 .card-quote');
+        if (card3Quote) card3Quote.textContent = `「${femaleChart.persona.metaphor}」`;
+        const card3Foot = document.querySelector('.card-3 .card-foot');
+        if (card3Foot) card3Foot.textContent = `${femaleChart.persona.trait} · ${femalePillars.solar.y}`;
+        const card3Eyebrow = document.querySelector('.card-3 .card-eyebrow');
+        if (card3Eyebrow) card3Eyebrow.textContent = femaleChart.persona.en;
+
+        // ====== ENRICHED COMPATIBILITY ======
+        const fullCompat = window.Hepan.fullCompatibility(maleChart, malePillars, femaleChart, femalePillars);
+
+        // Update Card 1 with proper trigram + score
+        if (card1Big) card1Big.textContent = fullCompat.score;
+        if (card1Quote) card1Quote.textContent = `/ 100 · ${fullCompat.tier}`;
+        const card1Trigram = document.querySelector('.card-1 .card-trigram');
+        if (card1Trigram) card1Trigram.textContent = fullCompat.heGuaSymbol;
+        const card1Foot = document.querySelector('.card-1 .card-foot');
+        if (card1Foot) card1Foot.textContent = `${fullCompat.trigrams[0]}${fullCompat.trigrams[1]}卦 · 男 ${maleChart.dayMaster}火/${maleChart.dayMaster === '甲' || maleChart.dayMaster === '乙' ? '木' : window.Hepan.STEM_FIVE[maleChart.dayMaster]} 女 ${femaleChart.dayMaster}${window.Hepan.STEM_FIVE[femaleChart.dayMaster]}`;
+
+        // ====== Card 4: 五行镜像互补 ======
+        const card4 = document.querySelector('.card-4');
+        if (card4) {
+          const maleW = maleChart.weakest;
+          const femaleW = femaleChart.weakest;
+          const maleS = maleChart.strongest;
+          const femaleS = femaleChart.strongest;
+          // Find the most dramatic complementary pair
+          const allFives = ['木','火','土','金','水'];
+          let bestPair = null, bestDelta = 0;
+          allFives.forEach(f => {
+            const m = maleChart.wuxing[f] || 0;
+            const fe = femaleChart.wuxing[f] || 0;
+            const delta = Math.abs(m - fe);
+            if (delta > bestDelta) { bestDelta = delta; bestPair = { five: f, male: m, female: fe }; }
+          });
+          if (bestPair) {
+            const card4Compare = card4.querySelectorAll('div[style*="margin"]');
+            // Replace text content of the bars
+            card4.innerHTML = `
+              <div class="card-num">04 / 14</div>
+              <div class="card-eyebrow">Mirror Match</div>
+              <div class="card-title">五行镜像互补</div>
+              <div style="margin: 18px 0;">
+                <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; margin-bottom: 4px; letter-spacing: 2px;">${bestPair.five.toUpperCase()} · ${bestPair.five}</div>
+                <div class="compare-row"><span>他 ${bestPair.male.toFixed(1)}${bestPair.male > bestPair.female ? '' : ' ⚠'}</span><span>她 ${bestPair.female.toFixed(1)}${bestPair.female > bestPair.male ? '' : ' ⚠'}</span></div>
+                <div class="compare-bar" style="display: flex;">
+                  <div style="width: ${Math.min(bestPair.male * 8, 100)}%; background: var(--vermillion-soft); height: 100%;"></div>
+                </div>
+                <div class="compare-bar" style="display: flex; margin-top: 6px;">
+                  <div style="width: ${Math.min(bestPair.female * 8, 100)}%; background: var(--gold-soft); height: 100%;"></div>
+                </div>
+              </div>
+              <div style="margin-top: 16px;">
+                <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; margin-bottom: 4px; letter-spacing: 2px;">最弱缺口</div>
+                <div style="font-size: 14px;">他缺 <b style="color: var(--gold-soft);">${maleChart.weakest.five}</b> · 她缺 <b style="color: var(--gold-soft);">${femaleChart.weakest.five}</b></div>
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-quote" style="font-size: 16px; margin-top: 16px; color: var(--gold-soft);">${bestDelta >= 5 ? '互为用神 · 命定的拼图' : '差异适中 · 平衡共生'}</div>
+              <div class="card-foot" style="color: var(--gold-soft); opacity: 0.7;">delta ${bestDelta.toFixed(1)} · score ${fullCompat.mirrorScore}/40</div>
+            `;
+          }
+        }
+
+        // ====== Card 5: 天干六合 ======
+        const card5 = document.querySelector('.card-5');
+        if (card5) {
+          if (fullCompat.liuhe.length > 0) {
+            const h = fullCompat.liuhe[0];
+            card5.innerHTML = `
+              <div class="card-num">05 / 14</div>
+              <div class="card-eyebrow">Heavenly Bond</div>
+              <div class="card-title">${h.label}</div>
+              <div style="text-align: center; margin: 32px 0;">
+                <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #FF6B5A;">${h.stems[0]}</span>
+                <span style="font-size: 28px; margin: 0 16px; opacity: 0.6;">+</span>
+                <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #DDD;">${h.stems[1]}</span>
+              </div>
+              <div style="text-align: center; font-size: 24px; opacity: 0.6;">↓</div>
+              <div style="text-align: center; margin-top: 8px;">
+                <span style="font-family: var(--serif-cn); font-weight: 700; font-size: 56px; color: #6FA0C0;">${h.product}</span>
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-foot text-center">${h.product === maleChart.weakest.five ? '化他最缺的用神' : h.product === femaleChart.weakest.five ? '化她最缺的用神' : '六合化神 · 命运感强'}</div>
+            `;
+          } else {
+            card5.innerHTML = `
+              <div class="card-num">05 / 14</div>
+              <div class="card-eyebrow">No Direct Bond</div>
+              <div class="card-title">无天干六合</div>
+              <div class="card-quote" style="font-size: 16px; margin-top: 24px;">
+                此命没有「丙辛 / 甲己 / 乙庚 / 丁壬 / 戊癸」<br>
+                这五对天作之合
+              </div>
+              <div class="card-quote" style="font-size: 14px; color: rgba(255,255,255,0.65); margin-top: 16px;">
+                但日主 ${fullCompat.dayMasterRelation}<br>
+                仍有相互滋养之象
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-foot text-center">无六合不必焦虑 · 看用神互补</div>
+            `;
+          }
+        }
+
+        // ====== Card 6: 地支冲/刑 ======
+        const card6 = document.querySelector('.card-6');
+        if (card6) {
+          if (fullCompat.conflicts.length > 0) {
+            const c = fullCompat.conflicts[0];
+            const isZixing = c.type === 'zixing';
+            card6.innerHTML = `
+              <div class="card-num">06 / 14</div>
+              <div class="card-eyebrow">${isZixing ? '⚠ ATTENTION' : 'The Tension'}</div>
+              <div class="card-title">${c.label}</div>
+              <div class="card-quote" style="margin-top: 24px;">
+                ${isZixing
+                  ? '两人地支同为 ' + c.branches[0] + '<br>古法称「自刑」<br>配偶宫有"内耗"特征'
+                  : '地支' + c.branches[0] + '冲' + c.branches[1] + '<br>夫妻宫有动荡<br>但寅中藏丙、午中藏己——'}
+              </div>
+              <div class="card-quote" style="font-size: 16px; color: #FFB99A; margin-top: 16px;">
+                ${isZixing ? '解：守住"各做各的"边界' : '总有可化解之处'}
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-foot">${isZixing ? '《三命通会》神煞篇' : '动而不破 · A predestined resolution'}</div>
+            `;
+          } else {
+            card6.innerHTML = `
+              <div class="card-num">06 / 14</div>
+              <div class="card-eyebrow">No Tension</div>
+              <div class="card-title">无地支冲刑</div>
+              <div class="card-quote" style="margin-top: 32px; font-size: 17px;">
+                八个地支无相冲<br>
+                无相刑<br>
+                也无自刑
+              </div>
+              <div class="card-quote" style="font-size: 16px; color: #FFB99A; margin-top: 16px;">
+                这是少见的「无大碍」之合<br>
+                关系少波折
+              </div>
+              <div class="card-flex-bottom"></div>
+              <div class="card-foot">天作 · A clean alignment</div>
+            `;
+          }
+        }
+
+        // ====== Card 7: 2026 流年 ======
+        const card7 = document.querySelector('.card-7');
+        if (card7) {
+          const yearStem = window.Hepan.getYearGanZhi(2026); // 丙午
+          const yearStemChar = yearStem[0]; // 丙
+          const maleSS = window.Hepan.getShiShen(maleChart.dayMaster, yearStemChar);
+          const femaleSS = window.Hepan.getShiShen(femaleChart.dayMaster, yearStemChar);
+          const goodLabels = { '正印':'★★★★★ 用神入命','偏印':'★★★★ 助力之年','正官':'★★★★ 担当之年','正财':'★★★ 财运稳定','偏财':'★★★★ 财运动','食神':'★★★ 才华显','伤官':'★★ 才情外露','比肩':'★★ 同道','劫财':'★★ 竞争年','七杀':'★★ 压力之年' };
+          card7.innerHTML = `
+            <div class="card-num">07 / 14</div>
+            <div class="card-eyebrow">This Year · ${yearStem}</div>
+            <div class="card-title">2026 流年</div>
+            <div style="margin: 20px 0;">
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 2px; opacity: 0.7;">对他</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 22px; margin: 4px 0;">${maleSS}</div>
+              <div style="font-size: 14px; opacity: 0.8;">${goodLabels[maleSS] || ''}</div>
+            </div>
+            <div style="margin: 20px 0; padding-top: 16px; border-top: 1px solid rgba(26,24,23, 0.15);">
+              <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 2px; opacity: 0.7;">对她</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 22px; margin: 4px 0;">${femaleSS}</div>
+              <div style="font-size: 14px; opacity: 0.8;">${goodLabels[femaleSS] || ''}</div>
+            </div>
+            <div class="card-flex-bottom"></div>
+            <div class="card-foot">${yearStem}年 · 太岁与命局互动</div>
+          `;
+        }
+
+        // ====== Card 8: 大运对比 ======
+        const card8 = document.querySelector('.card-8');
+        if (card8) {
+          const currentYear = new Date().getFullYear();
+          const maleAge = currentYear - malePillars.solar.y;
+          const femaleAge = currentYear - femalePillars.solar.y;
+          const maleDashu = window.Hepan.getDashu(malePillars, 'male');
+          const femaleDashu = window.Hepan.getDashu(femalePillars, 'female');
+          const maleCurrent = window.Hepan.getCurrentDashu(maleDashu, maleAge);
+          const femaleCurrent = window.Hepan.getCurrentDashu(femaleDashu, femaleAge);
+          card8.innerHTML = `
+            <div class="card-num">08 / 14</div>
+            <div class="card-eyebrow">Decade Cycles</div>
+            <div class="card-title">大运 · 时间轴</div>
+            <div style="margin-top: 28px;">
+              <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; letter-spacing: 2px;">他 · ${maleAge}岁</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 36px; color: var(--gold-soft); margin: 4px 0;">${maleCurrent ? maleCurrent.stem + maleCurrent.branch : '—'}</div>
+              <div style="font-size: 13px; opacity: 0.7;">当前大运 · ${maleCurrent ? maleCurrent.ageStart : '—'}–${maleCurrent ? maleCurrent.ageEnd : '—'}</div>
+            </div>
+            <div style="margin-top: 24px;">
+              <div style="font-family: var(--mono); font-size: 11px; opacity: 0.6; letter-spacing: 2px;">她 · ${femaleAge}岁</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 36px; color: #E5A6A0; margin: 4px 0;">${femaleCurrent ? femaleCurrent.stem + femaleCurrent.branch : '—'}</div>
+              <div style="font-size: 13px; opacity: 0.7;">当前大运 · ${femaleCurrent ? femaleCurrent.ageStart : '—'}–${femaleCurrent ? femaleCurrent.ageEnd : '—'}</div>
+            </div>
+            <div class="card-flex-bottom"></div>
+            <div class="card-foot">十年一运 · 解码节律</div>
+          `;
+        }
+
+        // ====== Card 9: 未来高峰 ======
+        const card9 = document.querySelector('.card-9');
+        if (card9) {
+          const maleDashu = window.Hepan.getDashu(malePillars, 'male');
+          const femaleDashu = window.Hepan.getDashu(femalePillars, 'female');
+          const maleNext = maleDashu[3] || maleDashu[2];
+          const femaleNext = femaleDashu[3] || femaleDashu[2];
+          card9.innerHTML = `
+            <div class="card-num">09 / 14</div>
+            <div class="card-eyebrow">Decades Ahead</div>
+            <div class="card-title">未来大运</div>
+            <div style="margin-top: 32px;">
+              <div style="font-size: 13px; opacity: 0.7; font-family: var(--mono); letter-spacing: 2px;">他 · ${maleNext.ageStart}–${maleNext.ageEnd}</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 30px; margin: 6px 0;">${maleNext.stem}${maleNext.branch}</div>
+              <div style="font-size: 13px; opacity: 0.7;">${window.Hepan.getShiShen(maleChart.dayMaster, maleNext.stem)} · 节律切换</div>
+            </div>
+            <div style="margin-top: 20px;">
+              <div style="font-size: 13px; opacity: 0.7; font-family: var(--mono); letter-spacing: 2px;">她 · ${femaleNext.ageStart}–${femaleNext.ageEnd}</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 30px; margin: 6px 0;">${femaleNext.stem}${femaleNext.branch}</div>
+              <div style="font-size: 13px; opacity: 0.7;">${window.Hepan.getShiShen(femaleChart.dayMaster, femaleNext.stem)} · 节律切换</div>
+            </div>
+            <div class="card-flex-bottom"></div>
+            <div class="card-foot">下一个十年 · 一起向哪去</div>
+          `;
+        }
+
+        // ====== Card 11: 2026 推荐 ======
+        const card11 = document.querySelector('.card-11');
+        if (card11) {
+          const yearStem = window.Hepan.getYearGanZhi(2026);
+          const maleSS = window.Hepan.getShiShen(maleChart.dayMaster, yearStem[0]);
+          const femaleSS = window.Hepan.getShiShen(femaleChart.dayMaster, yearStem[0]);
+          const recommended = (maleSS === '正印' || maleSS === '偏印' || femaleSS === '正印' || femaleSS === '偏印');
+          card11.innerHTML = `
+            <div class="card-num">11 / 14</div>
+            <div class="card-eyebrow">2026 · ${yearStem}年</div>
+            <div class="card-title">${recommended ? '★★★★★ 推荐年份' : '★★★ 中等年份'}</div>
+            <div style="margin-top: 18px;">
+              <div style="font-family: var(--mono); font-size: 11px; opacity: 0.7; letter-spacing: 2px;">流年对他</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 20px; margin: 4px 0;">${maleSS}</div>
+            </div>
+            <div style="margin-top: 12px;">
+              <div style="font-family: var(--mono); font-size: 11px; opacity: 0.7; letter-spacing: 2px;">流年对她</div>
+              <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 20px; margin: 4px 0;">${femaleSS}</div>
+            </div>
+            <div class="card-flex-bottom"></div>
+            <div class="card-foot">${recommended ? '用神 / 印星之年' : '稳健推进之年'}</div>
+          `;
+        }
+
+        // ====== Card 13/14: 注意事项（personalized headings）======
+        const card13 = document.querySelector('.card-13');
+        if (card13) {
+          const card13Title = card13.querySelector('.card-title');
+          if (card13Title) card13Title.textContent = `他的三件事`;
+          const card13Eyebrow = card13.querySelector('.card-eyebrow');
+          if (card13Eyebrow) card13Eyebrow.textContent = `For Him · ${maleChart.dayMaster}日主`;
+        }
+        const card14 = document.querySelector('.card-14');
+        if (card14) {
+          const card14Title = card14.querySelector('.card-title');
+          if (card14Title) card14Title.textContent = `她的三件事`;
+          const card14Eyebrow = card14.querySelector('.card-eyebrow');
+          if (card14Eyebrow) card14Eyebrow.textContent = `For Her · ${femaleChart.dayMaster}日主`;
+        }
+
+        // ====== LONG-FORM SECTIONS PERSONALIZATION ======
+        // Section 1 male pillars
+        const sec1Pillars = document.querySelectorAll('#sec1 .pillar-row .pillar');
+        if (sec1Pillars.length === 4) {
+          const order = [malePillars.hour, malePillars.day, malePillars.month, malePillars.year]; // 时日月年
+          const labels = ['时','日','月','年'];
+          sec1Pillars.forEach((p, i) => {
+            const tian = p.querySelector('.pillar-tian');
+            const di = p.querySelector('.pillar-di');
+            if (tian) tian.textContent = order[i].stem;
+            if (di) di.textContent = order[i].branch;
+          });
+        }
+        // Section 1 first paragraph: "男方生于一九九一年辛未..."
+        const sec1Body = document.getElementById('sec1');
+        if (sec1Body) {
+          const firstP = sec1Body.querySelector('.section-body p');
+          if (firstP) firstP.textContent = `男方生于公历 ${malePillars.solar.y} 年（${malePillars.year.stem}${malePillars.year.branch}），月柱 ${malePillars.month.stem}${malePillars.month.branch}，日柱 ${malePillars.day.stem}${malePillars.day.branch}，时柱 ${malePillars.hour.stem}${malePillars.hour.branch}。日主 ${maleChart.dayMaster} —— ${maleChart.persona.metaphor}。`;
+        }
+        // Section 2 same for female
+        const sec2Pillars = document.querySelectorAll('#sec2 .pillar-row .pillar');
+        if (sec2Pillars.length === 4) {
+          const order = [femalePillars.hour, femalePillars.day, femalePillars.month, femalePillars.year];
+          sec2Pillars.forEach((p, i) => {
+            const tian = p.querySelector('.pillar-tian');
+            const di = p.querySelector('.pillar-di');
+            if (tian) tian.textContent = order[i].stem;
+            if (di) di.textContent = order[i].branch;
+          });
+        }
+        const sec2Body = document.getElementById('sec2');
+        if (sec2Body) {
+          const firstP = sec2Body.querySelector('.section-body p');
+          if (firstP) firstP.textContent = `女方生于公历 ${femalePillars.solar.y} 年（${femalePillars.year.stem}${femalePillars.year.branch}），月柱 ${femalePillars.month.stem}${femalePillars.month.branch}，日柱 ${femalePillars.day.stem}${femalePillars.day.branch}，时柱 ${femalePillars.hour.stem}${femalePillars.hour.branch}。日主 ${femaleChart.dayMaster} —— ${femaleChart.persona.metaphor}。`;
+        }
+
+        // ====== DASHBOARD MODAL: real wuxing bars + dashu ======
+        const dashCols = document.querySelectorAll('.dash-col');
+        if (dashCols.length === 2) {
+          const setDashCol = (col, pillars, chart, label, year) => {
+            const name = col.querySelector('.dash-name');
+            const master = col.querySelector('.dash-master');
+            const pillarsEl = col.querySelector('.dash-pillars');
+            if (name) name.textContent = `${label} · ${year}`;
+            if (master) master.textContent = `${chart.dayMaster} · ${chart.persona.metaphor}`;
+            if (pillarsEl) pillarsEl.textContent = `${pillars.year.stem}${pillars.year.branch} · ${pillars.month.stem}${pillars.month.branch} · ${pillars.day.stem}${pillars.day.branch} · ${pillars.hour.stem}${pillars.hour.branch}`;
+            // wuxing rows
+            const rows = col.querySelectorAll('.wuxing-row');
+            const fives = ['木','火','土','金','水'];
+            const max = Math.max(...Object.values(chart.wuxing));
+            fives.forEach((f, i) => {
+              const row = rows[i];
+              if (!row) return;
+              const fill = row.querySelector('.wuxing-fill');
+              const score = chart.wuxing[f] || 0;
+              if (fill) fill.style.width = `${Math.min(score / 12 * 100, 100)}%`;
+              const lastSpan = row.querySelector('span:last-child');
+              if (lastSpan) lastSpan.textContent = score.toFixed(1);
+            });
+          };
+          setDashCol(dashCols[0], malePillars, maleChart, 'MALE', malePillars.solar.y);
+          setDashCol(dashCols[1], femalePillars, femaleChart, 'FEMALE', femalePillars.solar.y);
+        }
+
+        // Save for unlock-side reuse
+        window.__hepan = { malePillars, femalePillars, maleChart, femaleChart, compat: fullCompat };
+
+        // ====== INJECT SVG CHARTS into each chapter ======
+        try {
+          if (window.HepanCharts) {
+            const HC = window.HepanCharts;
+            const inject = (id, svg) => {
+              const sec = document.getElementById(id);
+              if (!sec) return;
+              if (sec.querySelector(':scope > .section-svg')) return;
+              const body = sec.querySelector('.section-body');
+              const wrap = document.createElement('div');
+              wrap.className = 'section-svg';
+              wrap.innerHTML = svg;
+              // Insert as sibling BEFORE .section-body so it's always visible (not gated by collapse)
+              if (body) sec.insertBefore(wrap, body); else sec.appendChild(wrap);
+            };
+            const maleAge = (new Date().getFullYear()) - malePillars.solar.y;
+            const femaleAge = (new Date().getFullYear()) - femalePillars.solar.y;
+            const maleDashu = window.Hepan.getDashu(malePillars, 'male');
+            const femaleDashu = window.Hepan.getDashu(femalePillars, 'female');
+            const yearGZ = window.Hepan.getYearGanZhi(new Date().getFullYear());
+            const yStem = yearGZ[0], yBranch = yearGZ[1];
+            const maleSS = window.Hepan.getShiShen(maleChart.dayMaster, yStem);
+            const femaleSS = window.Hepan.getShiShen(femaleChart.dayMaster, yStem);
+
+            inject('sec1', HC.chartPillars(malePillars, femalePillars));
+            inject('sec2', HC.chartPillars(malePillars, femalePillars));
+            inject('sec3', HC.chartWuxing(maleChart.wuxing, femaleChart.wuxing));
+            inject('sec4', HC.chartGeju(fullCompat.trigrams.male, fullCompat.trigrams.female, maleChart.dayMaster, femaleChart.dayMaster));
+            inject('sec5', HC.chartDashu(maleDashu, femaleDashu, maleAge, femaleAge));
+            inject('sec6', HC.chartLiunian(yStem, yBranch, maleSS, femaleSS));
+            inject('sec7', HC.chartHehun(fullCompat.score, fullCompat.tier, fullCompat.heGuaSymbol, fullCompat.trigrams.male, fullCompat.trigrams.female));
+
+            // Also inject yongshen chart inline within sec3 after the first H4 if exists
+            // (chart3 already shows wuxing comparison; yongshen shown via sec3 secondary)
+          }
+        } catch (chartErr) {
+          console.warn('SVG chart injection failed:', chartErr);
+        }
+      } catch (e) {
+        console.warn('Bazi calc failed; showing default sample chart:', e);
+        window.__lastErr = e.message;
+      }
+    }
+
+    // ========= PAYWALL =========
+    // Check unlock token
+    const urlParams = new URLSearchParams(window.location.search);
+    const isUnlocked = urlParams.get('token') === 'unlocked' || localStorage.getItem('hepan-unlocked') === '1';
+
+    if (isUnlocked) {
+      document.body.classList.remove('locked');
+    } else {
+      // Lock cards 4-14 (and unlock cards 1-3 free trial)
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i >= 3) card.dataset.locked = '1';
+      });
+      // Lock sections 2-7 (free: section 1 only)
+      document.querySelectorAll('.section').forEach((sec, i) => {
+        if (i >= 1) sec.dataset.locked = '1';
+      });
+
+      // Inject unlock CTA after card 3 (index 2)
+      const cards = document.querySelectorAll('.card');
+      if (cards[3]) {
+        const cta = document.createElement('div');
+        cta.className = 'unlock-cta';
+        cta.innerHTML = `
+          <div style="font-size: 48px; margin-bottom: 12px;">🔓</div>
+          <div class="unlock-eyebrow">UNLOCK FULL READING</div>
+          <div class="unlock-title">解锁完整<br>11 张卡 + 6 章长读</div>
+          <div class="unlock-price"><span class="unlock-price-prefix">¥</span>29</div>
+          <div class="unlock-once">一次性买断 · 不订阅</div>
+          <ul class="unlock-list">
+            <li>14 张完整 Wrapped 卡</li>
+            <li>7 章古籍长读（含原文）</li>
+            <li>双人 Dashboard 详对比</li>
+            <li>2026 流年深读</li>
+            <li>5 条注意事项</li>
+            <li>PDF 永久下载</li>
+          </ul>
+          <button class="unlock-btn" onclick="openPay()">¥29 解锁完整 →</button>
+        `;
+        cards[3].parentNode.insertBefore(cta, cards[3]);
+      }
+
+      // Inject sticky paywall banner after section 1
+      const sec1 = document.getElementById('sec1');
+      if (sec1) {
+        const banner = document.createElement('div');
+        banner.className = 'paywall-banner';
+        banner.innerHTML = `
+          <div class="paywall-banner-text">
+            <div class="paywall-banner-h">还有 6 章古籍长读待解锁</div>
+            <div class="paywall-banner-sub">¥29 一次买断 · 含 PDF 永久下载</div>
+          </div>
+          <button class="paywall-banner-btn" onclick="openPay()">解锁完整 →</button>
+        `;
+        sec1.parentNode.insertBefore(banner, sec1.nextSibling);
+      }
+    }
+
+    // Pay modal
+    let selectedTier = '29';
+    let selectedMethod = 'wechat';
+    function openPay() {
+      const m = document.getElementById('pay-modal');
+      m.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+    function closePay() {
+      document.getElementById('pay-modal').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+    function selectTier(t) {
+      selectedTier = t;
+      document.querySelectorAll('.pay-tier').forEach(el => el.classList.toggle('active', el.dataset.tier === t));
+      document.getElementById('pay-amount-display').textContent = `¥${t}`;
+    }
+    function selectMethod(m) {
+      selectedMethod = m;
+      document.querySelectorAll('.pay-method-btn').forEach(el => el.classList.toggle('active', el.dataset.method === m));
+      const label = document.getElementById('pay-method-label');
+      if (label) label.textContent = m === 'wechat' ? 'WECHAT PAY' : 'ALIPAY';
+    }
+  </script>
+
+  <!-- D4: PDF export + Share buttons (only when unlocked) -->
+  <button class="pdf-btn" onclick="window.print()" title="导出为 PDF（Cmd+P）">📄 PDF</button>
+  <button class="share-btn" onclick="shareReport()" title="分享给对方">↗ 分享</button>
+
+  <!-- Pay Modal (D3: manual QR + email unlock) -->
+  <div class="pay-modal" id="pay-modal">
+    <div class="pay-card">
+      <button class="pay-card-close" onclick="closePay()">×</button>
+
+      <div id="pay-step-1">
+        <div class="pay-h">解锁完整合盘</div>
+        <div class="pay-sub">一次性付费 · 永久查看 · 无订阅</div>
+
+        <div class="pay-tier-row">
+          <div class="pay-tier active" data-tier="29" onclick="selectTier('29')">
+            <div class="pay-tier-name">完整报告</div>
+            <div class="pay-tier-amt">¥29</div>
+          </div>
+          <div class="pay-tier" data-tier="99" onclick="selectTier('99')">
+            <div class="pay-tier-name">+ 择吉日</div>
+            <div class="pay-tier-amt">¥99</div>
+          </div>
+        </div>
+
+        <div class="pay-method">
+          <button class="pay-method-btn active" data-method="wechat" onclick="selectMethod('wechat')">微信支付</button>
+          <button class="pay-method-btn" data-method="alipay" onclick="selectMethod('alipay')">支付宝</button>
+        </div>
+
+        <div class="pay-qr" id="pay-qr-img">
+          <div style="text-align: center;">
+            <div style="font-family: var(--mono); font-size: 13px; color: var(--ink-soft); margin-bottom: 12px;">扫码支付</div>
+            <div style="font-family: var(--serif-cn); font-weight: 700; font-size: 32px; color: var(--vermillion);" id="pay-amount-display">¥29</div>
+            <div style="font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 8px; letter-spacing: 2px;" id="pay-method-label">WECHAT PAY</div>
+          </div>
+        </div>
+
+        <div class="pay-note" style="margin-top: 16px; line-height: 1.7;">
+          <div style="font-family: var(--serif-cn); font-size: 13px; color: var(--ink-soft); margin-bottom: 12px;">
+            <b>三步完成：</b>付款 → 截图 → 发送给我
+          </div>
+          <button onclick="goToStep2()" style="padding: 12px 28px; background: var(--vermillion); color: var(--paper); border: none; border-radius: 999px; font-family: var(--serif-cn); font-weight: 700; cursor: pointer; letter-spacing: 2px; font-size: 14px;">已付款 · 下一步 →</button>
+        </div>
+      </div>
+
+      <div id="pay-step-2" style="display: none;">
+        <div class="pay-h">最后一步 · 发送付款截图</div>
+        <div class="pay-sub">我会在 30 分钟内回复解锁链接（北京时间 8:00–24:00）</div>
+
+        <div style="background: var(--paper-warm); border-radius: 8px; padding: 16px; margin: 20px 0; text-align: left;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--vermillion); letter-spacing: 2px; margin-bottom: 8px;">📧 EMAIL（推荐）</div>
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--ink); user-select: all;">liufan067@gmail.com</div>
+        </div>
+
+        <div style="background: var(--paper-warm); border-radius: 8px; padding: 16px; margin: 12px 0; text-align: left;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--vermillion); letter-spacing: 2px; margin-bottom: 8px;">💬 微信</div>
+          <div style="font-family: var(--mono); font-size: 13px; color: var(--ink); user-select: all;">公众号「一万刘」后台留言</div>
+        </div>
+
+        <div style="background: var(--paper-warm); border-radius: 8px; padding: 16px; margin: 12px 0 24px; text-align: left;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--vermillion); letter-spacing: 2px; margin-bottom: 8px;">📋 请附以下三项</div>
+          <div style="font-family: var(--serif-cn); font-size: 13px; color: var(--ink-soft); line-height: 1.8;">
+            1. 付款截图（含金额 + 时间）<br>
+            2. 你的男方 / 女方生辰（用于核对）<br>
+            3. 接收解锁链接的邮箱
+          </div>
+        </div>
+
+        <button onclick="copyEmailToClipboard()" style="padding: 12px 24px; background: var(--ink); color: var(--paper); border: none; border-radius: 999px; font-family: var(--serif-cn); font-weight: 600; cursor: pointer; letter-spacing: 2px; font-size: 13px; margin-right: 8px;">复制邮箱地址</button>
+        <button onclick="goToStep1()" style="padding: 12px 24px; background: transparent; color: var(--ink); border: 1px solid var(--ink); border-radius: 999px; font-family: var(--serif-cn); font-weight: 600; cursor: pointer; letter-spacing: 2px; font-size: 13px;">← 返回</button>
+
+        <div class="pay-note" style="margin-top: 24px;">
+          收到付款 30 分钟内（北京时间 8:00-24:00）<br>
+          解锁链接发到你邮箱 · 永久可访问
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function goToStep1() { document.getElementById('pay-step-1').style.display = ''; document.getElementById('pay-step-2').style.display = 'none'; }
+    function goToStep2() { document.getElementById('pay-step-1').style.display = 'none'; document.getElementById('pay-step-2').style.display = ''; }
+    function copyEmailToClipboard() {
+      navigator.clipboard?.writeText('liufan067@gmail.com').then(() => alert('邮箱已复制'));
+    }
+
+    // B: Ontology scroll-spy — highlight current step
+    (function () {
+      const nodes = document.querySelectorAll('.ontology-node');
+      const sections = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7'].map(id => document.getElementById(id));
+      // Map sec1+sec2 → step 01; sec3 → 02+04 (五行+用神 combined chapter); sec4 → 03+合冲; sec5 → 05; sec6 → 06; sec7 → 07
+      const sectionToStep = { sec1: '01', sec2: '01', sec3: '02', sec4: '03', sec5: '05', sec6: '06', sec7: '07' };
+
+      // Click node → scroll to section
+      const stepToSection = { '01': 'sec1', '02': 'sec3', '03': 'sec4', '04': 'sec3', '05': 'sec5', '06': 'sec6', '07': 'sec7' };
+      nodes.forEach(n => n.addEventListener('click', () => {
+        const id = stepToSection[n.dataset.step];
+        const el = document.getElementById(id);
+        if (el) {
+          if (!el.classList.contains('open')) el.classList.add('open');
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }));
+
+      // Scroll-spy
+      function updateSpy() {
+        let active = null;
+        sections.forEach(s => {
+          if (!s) return;
+          const r = s.getBoundingClientRect();
+          if (r.top < window.innerHeight * 0.5 && r.bottom > 100) active = s.id;
+        });
+        nodes.forEach(n => n.classList.remove('current'));
+        if (active) {
+          const step = sectionToStep[active];
+          if (step) {
+            const node = document.querySelector(`.ontology-node[data-step="${step}"]`);
+            if (node) node.classList.add('current');
+          }
+        }
+      }
+      window.addEventListener('scroll', updateSpy, { passive: true });
+      updateSpy();
+    })();
+
+    // D4: Share — Web Share API + clipboard fallback
+    function shareReport() {
+      const url = window.location.href;
+      const score = document.querySelector('.card-1 .card-big')?.textContent || '';
+      const title = `我们的合盘评分 ${score} / 100`;
+      const text = `古籍合婚 · 基于《穷通宝鉴》的合盘报告`;
+      if (navigator.share) {
+        navigator.share({ title, text, url }).catch(() => {});
+      } else {
+        navigator.clipboard?.writeText(url).then(() => alert('链接已复制 · 发给对方让 ta 也看看')).catch(() => prompt('复制链接：', url));
+      }
+    }
+  </script>
+
+</body>
+</html>
