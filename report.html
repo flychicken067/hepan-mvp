@@ -56,9 +56,7 @@
     }
     .cover-3d canvas { display: block; width: 100%; height: 100%; }
     .cover > *:not(.cover-3d) { position: relative; z-index: 1; }
-    .cover-score, .cover-tier, .cover-of, .cover-pair {
-      mix-blend-mode: multiply;
-    }
+    /* 3D is now sparse enough that text needs no blend trick */
     @media print { .cover-3d { display: none; } }
     .cover-eyebrow {
       font-family: var(--mono);
@@ -203,44 +201,88 @@
       .chapter-body p.lead { font-size: 19px; }
     }
 
-    /* ============== AMBIENT NAV (single character floating) ============== */
+    /* ============== EDGE INDEX (wayofcode-style chapter rail) ============== */
     .nav-rail {
       position: fixed;
-      right: 28px;
-      top: 50%;
-      transform: translateY(-50%);
+      right: 14px;
+      top: 60px;
+      bottom: 60px;
       z-index: 50;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-rail-list {
+      display: flex; flex-direction: column;
       gap: 4px;
     }
     .nav-rail a {
       display: block;
-      width: 28px;
-      height: 28px;
+      width: 22px;
       font-family: var(--mono);
-      font-size: 10px;
+      font-size: 11px;
       color: var(--ink-mute);
       text-decoration: none;
       text-align: center;
-      line-height: 28px;
       letter-spacing: 0;
-      transition: all 0.2s;
-      border-radius: 50%;
-      opacity: 0.5;
+      transition: all 0.18s;
+      opacity: 0.45;
+      padding: 1px 0;
     }
     .nav-rail a:hover { opacity: 1; color: var(--vermillion); }
     .nav-rail a.active {
       color: var(--vermillion);
       opacity: 1;
-      font-weight: 600;
+      font-weight: 700;
     }
-    @media (max-width: 880px) {
-      .nav-rail { display: none; }
+    .nav-rail-tools {
+      margin-top: auto;
+      display: flex; flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      padding-top: 16px;
     }
-    @media print {
-      .nav-rail { display: none; }
+    .nav-rail-tools button, .nav-rail-tools a {
+      width: 22px; height: 22px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ink-mute);
+      opacity: 0.5;
+      font-family: var(--mono);
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.18s;
     }
+    .nav-rail-tools button:hover, .nav-rail-tools a:hover { opacity: 1; color: var(--vermillion); }
+    @media (max-width: 880px) { .nav-rail { display: none; } }
+    @media print { .nav-rail { display: none; } }
+
+    /* ============== COVER · 白贲 mark ============== */
+    .cover-baibi {
+      position: absolute;
+      bottom: 24px;
+      right: 28px;
+      font-family: var(--serif);
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: var(--ink-mute);
+      opacity: 0.55;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      z-index: 2;
+    }
+    .cover-baibi small {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      margin-top: 12px;
+      opacity: 0.6;
+    }
+    @media (max-width: 720px) { .cover-baibi { display: none; } }
 
     /* ============== AMBIENT FOOTER (chapter counter) ============== */
     .counter {
@@ -441,15 +483,21 @@
 </head>
 <body class="locked">
 
-  <!-- Single-character floating nav -->
+  <!-- Edge chapter index (wayofcode-style) -->
   <nav class="nav-rail" aria-label="章节">
-    <a href="#ch1" data-target="ch1">一</a>
-    <a href="#ch2" data-target="ch2">二</a>
-    <a href="#ch3" data-target="ch3">三</a>
-    <a href="#ch4" data-target="ch4">四</a>
-    <a href="#ch5" data-target="ch5">五</a>
-    <a href="#ch6" data-target="ch6">六</a>
-    <a href="#ch7" data-target="ch7">七</a>
+    <div class="nav-rail-list">
+      <a href="#ch1" data-target="ch1">01</a>
+      <a href="#ch2" data-target="ch2">02</a>
+      <a href="#ch3" data-target="ch3">03</a>
+      <a href="#ch4" data-target="ch4">04</a>
+      <a href="#ch5" data-target="ch5">05</a>
+      <a href="#ch6" data-target="ch6">06</a>
+      <a href="#ch7" data-target="ch7">07</a>
+    </div>
+    <div class="nav-rail-tools">
+      <button title="随机一份名人合盘" onclick="randomCase()">⇌</button>
+      <a href="/" title="返回首页">○</a>
+    </div>
   </nav>
 
   <div class="counter" id="counter">00 / 07</div>
@@ -465,6 +513,10 @@
     <div class="cover-trigram" data-h="trigram">☲ ☶</div>
     <div class="cover-pair" data-h="pair">男 · 女</div>
     <div class="cover-scroll">向 下 滚 · SCROLL</div>
+    <aside class="cover-baibi" aria-label="设计哲学">
+      白 贲 无 咎
+      <small>《周易》贲卦 · 上九</small>
+    </aside>
   </section>
 
   <!-- ====== 一 · 排盘 ====== -->
@@ -633,25 +685,22 @@
       const VERMILLION = 0xB8362A;
       const INK = 0x14110E;
 
-      // TorusKnot(p=3, q=7) — one closed curve that never self-intersects but
-      // visually reads as two interlocking forms. 3+7 = 十天干. One thing that is
-      // also two things — the literal meaning of 合.
-      // Rendered as edge-only line segments (wayofcode aesthetic: lines, not shaded mesh)
-      const knotGeo = new THREE.TorusKnotGeometry(1.9, 0.42, 96, 12, 3, 7);
-      const knotEdges = new THREE.EdgesGeometry(knotGeo, 8);
-      const matLine = new THREE.LineBasicMaterial({
-        color: VERMILLION, transparent: true, opacity: 0.55,
+      // 两仪相含 — Stella Octangula (compound of two tetrahedra).
+      // 《周易·系辞》「太极生两仪」. 12 lines total, ~99% sparser than the previous knot.
+      // Two interlocked tetrahedra: yang (vermillion) + yin (ink).
+      const tetGeo = new THREE.TetrahedronGeometry(2.0);
+      const tetEdges = new THREE.EdgesGeometry(tetGeo);
+      const matYang = new THREE.LineBasicMaterial({
+        color: VERMILLION, transparent: true, opacity: 0.32,
       });
-      const knot = new THREE.LineSegments(knotEdges, matLine);
+      const matYin = new THREE.LineBasicMaterial({
+        color: INK, transparent: true, opacity: 0.20,
+      });
+      const knot = new THREE.LineSegments(tetEdges.clone(), matYang);
+      const ghost = new THREE.LineSegments(tetEdges.clone(), matYin);
+      ghost.rotation.y = Math.PI;
+      ghost.rotation.z = Math.PI;
       scene.add(knot);
-
-      // A faint ink ghost — slightly larger and counter-rotating, suggests yin
-      const ghostGeo = new THREE.TorusKnotGeometry(2.05, 0.46, 64, 8, 3, 7);
-      const ghostEdges = new THREE.EdgesGeometry(ghostGeo, 12);
-      const matGhost = new THREE.LineBasicMaterial({
-        color: INK, transparent: true, opacity: 0.13,
-      });
-      const ghost = new THREE.LineSegments(ghostEdges, matGhost);
       scene.add(ghost);
 
       // Resize
