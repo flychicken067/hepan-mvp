@@ -1160,8 +1160,9 @@
       if (!mount) return;
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-      const VERMILLION = 0xB8362A, INK = 0x14110E;
-      const matLine = new THREE.LineBasicMaterial({ color: VERMILLION, transparent: true, opacity: 0.55 });
+      // wayofcode aesthetic: single thin ink line, no color
+      const INK = 0x14110E;
+      const matLine = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.42 });
       const matLineSoft = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.18 });
 
       const scene = new THREE.Scene();
@@ -1173,19 +1174,56 @@
       renderer.setClearColor(0x000000, 0);
       mount.appendChild(renderer.domElement);
 
-      // ----- factory: returns a single TorusKnot per chapter, micro-variations
-      // 9 章共用一族（torus knot），只调 (p, q) 参数 → wayofcode 的克制：
-      // 同一种视觉语言，章节之间变化是 micro 而非 literal。
-      const KNOT_PARAMS = {
-        ch1: [2, 3], ch2: [3, 5], ch3: [4, 3], ch4: [2, 5],
-        ch5: [5, 2], ch6: [3, 7], ch7: [3, 2], ch8: [5, 3], ch9: [4, 5],
-      };
+      // ----- factory: each chapter gets its own wayofcode-style line form
+      // All forms are LineSegments only (no fills), single ink color, low-poly.
+      // Each form is chosen to *evoke* the chapter content without being literal.
       function makeFor (id) {
         const g = new THREE.Group();
-        const [p, q] = KNOT_PARAMS[id] || [3, 2];
-        const knotGeo = new THREE.TorusKnotGeometry(1.4, 0.32, 64, 6, p, q);
-        const knotEdges = new THREE.EdgesGeometry(knotGeo, 14);
-        g.add(new THREE.LineSegments(knotEdges, matLine));
+        const lineEdges = (geo, thr = 12) => new THREE.LineSegments(new THREE.EdgesGeometry(geo, thr), matLine);
+
+        switch (id) {
+          case 'ch1': { // 排盘 — Tetrahedron (foundation, 3 sides → 4 pillars)
+            g.add(lineEdges(new THREE.TetrahedronGeometry(1.9)));
+            break;
+          }
+          case 'ch2': { // 五行 — TorusKnot (3,2) — five-element circulation
+            g.add(lineEdges(new THREE.TorusKnotGeometry(1.3, 0.4, 60, 6, 3, 2), 14));
+            break;
+          }
+          case 'ch3': { // 格局 — Octahedron (8 trigrams, central pattern)
+            g.add(lineEdges(new THREE.OctahedronGeometry(1.9, 0)));
+            break;
+          }
+          case 'ch4': { // 用神 — Icosahedron (12 vertices, refined balance)
+            g.add(lineEdges(new THREE.IcosahedronGeometry(1.7, 0)));
+            break;
+          }
+          case 'ch5': { // 大运 — TorusKnot (5,2) — flowing decade rhythm
+            g.add(lineEdges(new THREE.TorusKnotGeometry(1.3, 0.36, 80, 6, 5, 2), 18));
+            break;
+          }
+          case 'ch6': { // 流年 — Dodecahedron (12 faces = 12 branches)
+            g.add(lineEdges(new THREE.DodecahedronGeometry(1.7, 0)));
+            break;
+          }
+          case 'ch7': { // 合婚 — Stella Octangula (compound of 2 tetrahedra)
+            const tet = new THREE.TetrahedronGeometry(1.7);
+            g.add(new THREE.LineSegments(new THREE.EdgesGeometry(tet), matLine));
+            const m2 = new THREE.LineSegments(new THREE.EdgesGeometry(tet), matLineSoft);
+            m2.rotation.y = Math.PI; m2.rotation.z = Math.PI;
+            g.add(m2);
+            break;
+          }
+          case 'ch8': { // 十二问 — TorusKnot (3,7) — interwoven questions
+            g.add(lineEdges(new THREE.TorusKnotGeometry(1.3, 0.3, 100, 6, 3, 7), 18));
+            break;
+          }
+          case 'ch9': { // 十二月 — Truncated Icosahedron via Sphere subdivision (more spheres = months)
+            const ico = new THREE.IcosahedronGeometry(1.8, 1); // 1 subdivision
+            g.add(lineEdges(ico, 25));
+            break;
+          }
+        }
         return g;
       }
 
@@ -1296,28 +1334,28 @@
         if (window.HepanCharts) {
           document.getElementById('svg-pillars').innerHTML = window.HepanCharts.chartPillars(malePillars, femalePillars);
         }
-        setText('ch1-male', `男方生于 ${mp.solar.y} 年 ${mp.solar.m} 月 ${mp.solar.d} 日，四柱为 ${malePillarsStr}。日主${maleChart.dayMaster}${maleChart.persona.metaphor}，${maleChart.persona.trait}。`);
-        setText('ch1-female', `女方生于 ${fp.solar.y} 年 ${fp.solar.m} 月 ${fp.solar.d} 日，四柱为 ${femalePillarsStr}。日主${femaleChart.dayMaster}${femaleChart.persona.metaphor}，${femaleChart.persona.trait}。`);
+        setText('ch1-male', `男命，${mp.solar.y} 年生。四柱：${malePillarsStr}。日干 ${maleChart.dayMaster}，象 ${maleChart.persona.metaphor}。`);
+        setText('ch1-female', `女命，${fp.solar.y} 年生。四柱：${femalePillarsStr}。日干 ${femaleChart.dayMaster}，象 ${femaleChart.persona.metaphor}。`);
 
         // 二 · 五行
         const wxStr = (chart) => {
           const sorted = Object.entries(chart.wuxing).sort((a,b) => b[1]-a[1]);
           return sorted.map(([k,v]) => `${k} ${v.toFixed(1)}`).join(' / ');
         };
-        setText('ch2-male', `男方五行强弱：${wxStr(maleChart)}。最弱在 ${maleChart.weakest.five}（${maleChart.weakest.score.toFixed(1)} 分），最强在 ${maleChart.strongest.five}（${maleChart.strongest.score.toFixed(1)} 分）。`);
-        setText('ch2-female', `女方五行强弱：${wxStr(femaleChart)}。最弱在 ${femaleChart.weakest.five}（${femaleChart.weakest.score.toFixed(1)} 分），最强在 ${femaleChart.strongest.five}（${femaleChart.strongest.score.toFixed(1)} 分）。`);
+        setText('ch2-male', `男命五行：${wxStr(maleChart)}。${maleChart.strongest.five} 旺而 ${maleChart.weakest.five} 弱，气有偏盛。`);
+        setText('ch2-female', `女命五行：${wxStr(femaleChart)}。${femaleChart.strongest.five} 旺而 ${femaleChart.weakest.five} 弱，气有偏盛。`);
         // mirror
         const mirrorMatch = (maleChart.weakest.five !== femaleChart.weakest.five)
           && (maleChart.wuxing[maleChart.weakest.five] < femaleChart.wuxing[maleChart.weakest.five])
           && (femaleChart.wuxing[femaleChart.weakest.five] < maleChart.wuxing[femaleChart.weakest.five]);
         const mirrorTxt = mirrorMatch
-          ? `他最缺 ${maleChart.weakest.five}，她那里 ${maleChart.weakest.five} 充沛；她最缺 ${femaleChart.weakest.five}，他那里 ${femaleChart.weakest.five} 透干。彼此最大的缺口正好是对方最大的供给——古书所谓「互为用神」。`
-          : `两人五行各有侧重，需进一步看用神所在。`;
+          ? `男缺 ${maleChart.weakest.five}，女命 ${maleChart.weakest.five} 盛；女缺 ${femaleChart.weakest.five}，男命 ${femaleChart.weakest.five} 透。所缺正得所盈，名「互为用神」，命书谓天作之合。`
+          : `二命所求各异，须以用神别之。`;
         setText('ch2-mirror', mirrorTxt);
 
         // 三 · 格局
-        setText('ch3-male', `男方日主${maleChart.dayMaster}——${maleChart.persona.metaphor}。性格${maleChart.persona.trait}。`);
-        setText('ch3-female', `女方日主${femaleChart.dayMaster}——${femaleChart.persona.metaphor}。性格${femaleChart.persona.trait}。`);
+        setText('ch3-male', `男命日干 ${maleChart.dayMaster}，象 ${maleChart.persona.metaphor}。其性 ${maleChart.persona.trait}。`);
+        setText('ch3-female', `女命日干 ${femaleChart.dayMaster}，象 ${femaleChart.persona.metaphor}。其性 ${femaleChart.persona.trait}。`);
         // ch3-quote stays as the static quote in HTML; only update if we have a real classical line
         const classicByStem = {
           '甲': '甲木参天，脱胎要火。', '乙': '乙木虽柔，刲羊解牛。',
@@ -1330,13 +1368,13 @@
         if (cq) setHTML('ch3-quote', `「${cq}」<cite>— 《滴天髓》论${maleChart.dayMaster}</cite>`);
 
         // 四 · 用神
-        setText('ch4-yongshen', `男方日主${maleChart.dayMaster}——${maleChart.persona.metaphor}，最缺 ${maleChart.weakest.five}。女方日主${femaleChart.dayMaster}——${femaleChart.persona.metaphor}，最缺 ${femaleChart.weakest.five}。`);
+        setText('ch4-yongshen', `男命 ${maleChart.dayMaster} 日，所求在 ${maleChart.weakest.five}。女命 ${femaleChart.dayMaster} 日，所求在 ${femaleChart.weakest.five}。`);
         const liuhe = compat.liuhe || [];
         if (liuhe.length) {
           const h = liuhe[0];
-          setText('ch4-liuhe', `天干六合：${h.male}${h.female} 合化 ${h.product}。这一笔合化的产物，正是命局所求的关键能量。古书称这种关系为「天作之合」。`);
+          setText('ch4-liuhe', `${h.male}${h.female} 相合，化 ${h.product}。所化之物即命局所求，命书谓「天作之合」。`);
         } else {
-          setText('ch4-liuhe', `两人天干无直接六合关系，互补主要在五行多寡的对照上。`);
+          setText('ch4-liuhe', `二干无直合，所求在五行盈缺之间相补。`);
         }
 
         // 五 · 大运
@@ -1348,11 +1386,11 @@
           const femaleAge = nowYear - fp.solar.y;
           const mCur = maleDashu.find(d => maleAge >= d.ageStart && maleAge < d.ageEnd) || maleDashu[2];
           const fCur = femaleDashu.find(d => femaleAge >= d.ageStart && femaleAge < d.ageEnd) || femaleDashu[2];
-          setText('ch5-male', `男方现行 ${mCur.stem}${mCur.branch} 大运（${mCur.ageStart}–${mCur.ageEnd} 岁）。`);
-          setText('ch5-female', `女方现行 ${fCur.stem}${fCur.branch} 大运（${fCur.ageStart}–${fCur.ageEnd} 岁）。`);
-          setText('ch5-meta', `两人此十年节律既不重合也不冲突——你快的时候她在沉，她爆发的时候你在守。这是合盘里少见的「轮替供能」格局。`);
+          setText('ch5-male', `男命行 ${mCur.stem}${mCur.branch} 运，自 ${mCur.ageStart} 至 ${mCur.ageEnd} 岁。`);
+          setText('ch5-female', `女命行 ${fCur.stem}${fCur.branch} 运，自 ${fCur.ageStart} 至 ${fCur.ageEnd} 岁。`);
+          setText('ch5-meta', `二命此十年节律不同步，男进则女守，女发则男沉，命书谓「轮替供能」之格。`);
         } catch (e) {
-          setText('ch5-meta', `大运推演需要更精确的出生时辰，请于设置中补充。`);
+          setText('ch5-meta', `大运须有时辰乃成。`);
         }
 
         // 六 · 流年
@@ -1361,9 +1399,9 @@
           const yStem = yGZ[0], yBranch = yGZ[1];
           const maleSS = H.getShiShen(maleChart.dayMaster, yStem);
           const femaleSS = H.getShiShen(femaleChart.dayMaster, yStem);
-          setText('ch6-male', `${new Date().getFullYear()} 年太岁 ${yStem}${yBranch}，对男方为「${maleSS}」。`);
-          setText('ch6-female', `同年太岁对女方为「${femaleSS}」。`);
-          setText('ch6-couple', `两人若此年同行大事——结婚、订婚、合作、共同投资——比平常年份多一份命运感。`);
+          setText('ch6-male', `${new Date().getFullYear()} 太岁 ${yStem}${yBranch}，于男为「${maleSS}」。`);
+          setText('ch6-female', `同岁于女为「${femaleSS}」。`);
+          setText('ch6-couple', `二命此年同行大事——婚、订、合、投——较常年多一分命会之兆。`);
           setText('ch6-cite', `${new Date().getFullYear()} 流年 · ${yStem}${yBranch} 推演`);
         } catch (e) {}
 
@@ -1374,12 +1412,12 @@
             compat.trigrams.male, compat.trigrams.female
           );
         }
-        const lvl = compat.score >= 80 ? '上佳合婚，可成大业' : compat.score >= 65 ? '良缘可期，需用心维系' : '中等之合，重在配合';
-        setText('ch7-summary', `综合男女命局，本盘评分 ${compat.score}，定为「${compat.tier}」——${lvl}。卦象 ${compat.trigrams.male}${compat.trigrams.female}（${compat.heGuaSymbol}）。`);
+        const lvl = compat.score >= 80 ? '上佳之配，可成大事' : compat.score >= 65 ? '良缘可期，须用心维之' : '中等之合，重在配合';
+        setText('ch7-summary', `合二命而观，得 ${compat.score} 分，谓「${compat.tier}」——${lvl}。卦象 ${compat.trigrams.male}${compat.trigrams.female}（${compat.heGuaSymbol}）。`);
         const conflicts = compat.conflicts || [];
         const careTxt = conflicts.length
-          ? `命局尚有 ${conflicts.length} 处冲刑需主动化解：建立各自的领域、不在小事上互相纠缠。命书云：「五行互补者，更需在做事上守界。」`
-          : `命局清通，无显著冲刑。两人按各自节奏行进即可。`;
+          ? `命有冲刑 ${conflicts.length} 处，须主动化之：各立其域、不争琐碎。命书云：「五行相补者，更须于事上守界。」`
+          : `命局清通，无显著冲刑。各依其节，自然偕行。`;
         setText('ch7-care', careTxt);
 
         window.__hepan = { malePillars, femalePillars, maleChart, femaleChart, compat };
@@ -1389,22 +1427,18 @@
         const mPersona = maleChart.persona, fPersona = femaleChart.persona;
 
         // 一 · 排盘
-        setHTML('v1-line', `你 <em>${mDM}</em>—— ${mPersona.metaphor}<br>她 <em>${fDM}</em>—— ${fPersona.metaphor}`);
+        setHTML('v1-line', `男命日干 <em>${mDM}</em> · 象 ${mPersona.metaphor}<br>女命日干 <em>${fDM}</em> · 象 ${fPersona.metaphor}`);
 
         // 二 · 五行 (mirror complementarity) — fix tautology: when 男女最缺 same element
         const mW = maleChart.weakest.five, fW = femaleChart.weakest.five;
         const mWonF = (femaleChart.wuxing[mW] || 0).toFixed(1);
         const fWonM = (maleChart.wuxing[fW] || 0).toFixed(1);
         if (mW === fW) {
-          // 同缺一行——根本不是「各有所求」，是「同病相怜」
-          const sharedLack = mW;
-          const allFives = ['木','火','土','金','水'];
-          const mStrong = maleChart.strongest.five, fStrong = femaleChart.strongest.five;
-          setHTML('v2-line', `你和她 · 都缺 <em>${sharedLack}</em><br>同 病 · 须 共 补`);
+          setHTML('v2-line', `二命同缺 <em>${mW}</em> 气<br>同 病 · 须 共 补 之`);
         } else if (mirrorMatch) {
-          setHTML('v2-line', `你最缺 <em>${mW}</em> · 她那里 ${mWonF} 分<br>她最缺 <em>${fW}</em> · 你那里 ${fWonM} 分<br><span style="color:var(--ink);">互 为 用 神</span>`);
+          setHTML('v2-line', `男缺 <em>${mW}</em>，女命 ${mWonF} 分有之<br>女缺 <em>${fW}</em>，男命 ${fWonM} 分有之<br><span style="color:var(--ink);">互 为 用 神</span>`);
         } else {
-          setHTML('v2-line', `你最缺 <em>${mW}</em> · 她最缺 <em>${fW}</em><br>各 求 各 的 · 重 在 配 合`);
+          setHTML('v2-line', `男缺 <em>${mW}</em> · 女缺 <em>${fW}</em><br>所 求 各 异 · 重 在 配 合`);
         }
 
         // 三 · 格局 — RAG-backed: pull real 命书 passage for 男 day-master + month branch
@@ -1573,68 +1607,44 @@
       else if (mFive === fFive) needTxt = '同气相投——彼此映照';
       else needTxt = '互为用神——彼此填补缺口';
 
-      // Build cards
+      // Build cards · 命书腔
       const cards = [
-        {
-          q: `我们应不应该 ${ny} 年结婚？`,
-          a: compat.score >= 75 && goodYear ? `应 该。\n命书说今年是上等。` : compat.score >= 65 ? `可 以。\n但避开 ${recMonth} 申月。` : `再 等 一 等。\n${ny+1} 年更稳。`,
-          cite: `太岁 ${ys}${yb} · 流年篇`,
-        },
-        {
-          q: `我们最大的优势是什么？`,
-          a: liuhe.length ? `${liuhe[0].male}${liuhe[0].female} 合化 ${liuhe[0].product}。\n这是天作之合。` : compat.score >= 70 ? `${compat.trigrams.male}${compat.trigrams.female} 卦相生。\n你们是配的。` : `性格互补。\n求同存异。`,
-          cite: `穷通宝鉴 · 用神篇`,
-        },
-        {
-          q: `我们最大的隐忧是什么？`,
-          a: conflicts.length ? `日支 ${conflicts[0].b1 || '相'}${conflicts[0].b2 || '冲'}${conflicts[0].kind || ''}。\n小事易纠缠。` : `没有显著冲刑。\n按各自节奏即可。`,
-          cite: `三命通会 · 神煞篇`,
-        },
-        {
-          q: `谁更适合掌财？`,
-          a: `${moneyHolder}。\n命局财星更稳。`,
-          cite: `三命通会 · 财官篇`,
-        },
-        {
-          q: `我们会因为钱吵架吗？`,
-          a: earnYear ? `${ny} 年容易。\n财来印散，慎做投资。` : `不会因钱本身。\n会因「怎么花」。`,
-          cite: `穷通宝鉴 · 财印相战`,
-        },
-        {
-          q: `谁更需要谁？`,
+        { q: `${ny} 年宜婚否？`,
+          a: compat.score >= 75 && goodYear ? `宜 · 太岁与命局相合，今年是吉年。` : compat.score >= 65 ? `可 · 然须避 申月，余月皆顺。` : `缓 · 候 ${ny+1} 年，运势更顺。`,
+          cite: `太岁 ${ys}${yb} · 流年`, },
+        { q: `二命所长在何处？`,
+          a: liuhe.length ? `${liuhe[0].male}${liuhe[0].female} 合化 ${liuhe[0].product} · 命局所求得之。` : compat.score >= 70 ? `${compat.trigrams.male}${compat.trigrams.female} 卦象相生 · 二命相辅。` : `性情相补 · 异中求和。`,
+          cite: `子平推演 · 用神`, },
+        { q: `二命隐忧何在？`,
+          a: conflicts.length ? `日支 ${conflicts[0].b1 || ''}${conflicts[0].b2 || ''} 相${conflicts[0].kind || '冲'} · 易于细处生隙。` : `命局清通 · 无显著冲刑。`,
+          cite: `子平推演 · 神煞`, },
+        { q: `财权宜归谁掌？`,
+          a: `${moneyHolder} · 命局财星更稳。`,
+          cite: `子平推演 · 财官`, },
+        { q: `会因钱起争否？`,
+          a: earnYear ? `${ny} 年慎之 · 财来印散，忌大投资。` : `非因钱 · 在「如何用」之异。`,
+          cite: `子平推演 · 财印相战`, },
+        { q: `孰更需要孰？`,
           a: needTxt + `。`,
-          cite: `滴天髓 · 论生克`,
-        },
-        {
-          q: `哪个月份办婚礼最好？`,
-          a: `${recMonth} 月。\n避开七月（申月）。`,
-          cite: `三命通会 · 择吉篇`,
-        },
-        {
-          q: `几个孩子？什么时候？`,
-          a: `时支看子女。\n2028 年戊申最显。`,
-          cite: `三命通会 · 子女宫`,
-        },
-        {
-          q: `三十年后我们还在一起吗？`,
-          a: compat.score >= 75 ? `在。\n大运越走越合。` : compat.score >= 60 ? `在，但要努力。\n四十后渐入佳境。` : `不一定。\n看 50 岁那一运。`,
-          cite: `三命通会 · 大运篇`,
-        },
-        {
-          q: `我们的事业方向冲突吗？`,
-          a: mFive === fFive ? `同气，易竞争。\n各自做各自的。` : generates[mFive] === fFive || generates[fFive] === mFive ? `相生，可以合作。\n但分工要清。` : `不冲，各干各的更好。`,
-          cite: `滴天髓 · 论日主`,
-        },
-        {
-          q: `${ny} 年这一年的关键词？`,
-          a: stressYear ? `内 压。\n你想做的事多，落地慢。` : goodYear ? `用 神 入 命。\n敢做就成。` : `平 流。\n守得住就赚到。`,
-          cite: `太岁 ${ys}${yb}`,
-        },
-        {
-          q: `给 ta 的一句话？`,
-          a: `${mC.persona.metaphor}对${fC.persona.metaphor}：\n「我守你的山，你照我的火。」`,
-          cite: `《周易》贲卦·相饰`,
-        },
+          cite: `子平推演 · 生克`, },
+        { q: `何月嫁娶为佳？`,
+          a: `${recMonth} 月 · 避七月申冲。`,
+          cite: `子平推演 · 择吉`, },
+        { q: `子女何时何数？`,
+          a: `时支主子女 · 2028 戊申年应。`,
+          cite: `子平推演 · 子女宫`, },
+        { q: `三十年后犹偕老否？`,
+          a: compat.score >= 75 ? `偕 · 大运渐合。` : compat.score >= 60 ? `偕而须勉 · 四十后入佳境。` : `未定 · 候五十之运乃见。`,
+          cite: `子平推演 · 大运`, },
+        { q: `事业方向相冲否？`,
+          a: mFive === fFive ? `同气 · 易于竞 · 宜各立其业。` : generates[mFive] === fFive || generates[fFive] === mFive ? `相生 · 可合作 · 然须分工明。` : `不冲 · 各行其道更佳。`,
+          cite: `子平推演 · 日主`, },
+        { q: `${ny} 一年之机要为何？`,
+          a: stressYear ? `内 压 · 所欲多而落地缓。` : goodYear ? `用神入命 · 敢为即成。` : `平 流 · 守之即得。`,
+          cite: `太岁 ${ys}${yb}`, },
+        { q: `欲赠 ta 一语，何如？`,
+          a: `${mC.persona.metaphor}与${fC.persona.metaphor}：「我守你的山，你照我的火。」`,
+          cite: `子平推演 · 相饰`, },
       ];
 
       track.innerHTML = cards.map((c, i) => `

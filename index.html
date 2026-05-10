@@ -308,7 +308,9 @@
       grid-template-columns: 1.5fr 1fr 1fr;
       gap: 12px;
     }
-    .form-field select {
+    .form-field input[type="date"],
+    .form-field input[type="time"],
+    .form-field input[type="text"] {
       width: 100%;
       padding: 12px 0;
       background: transparent;
@@ -318,17 +320,9 @@
       font-family: var(--serif);
       font-size: 18px;
       letter-spacing: 1px;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%238B8275' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
-      background-repeat: no-repeat;
-      background-position: right 4px center;
-      padding-right: 18px;
       transition: border-color 0.18s;
     }
-    .form-field select:focus {
+    .form-field input:focus {
       outline: none;
       border-bottom-color: var(--vermillion);
     }
@@ -556,48 +550,28 @@
         <!-- 男 -->
         <div>
           <div class="form-col-eyebrow">男 · MALE</div>
-
           <div class="form-field">
-            <label>出 生 年 月 日</label>
-            <div class="form-row">
-              <select id="m-year" required></select>
-              <select id="m-month" required></select>
-              <select id="m-day" required></select>
-            </div>
+            <label>公 历 出 生 日 期</label>
+            <input type="date" id="male-date" name="male-date" required>
           </div>
-
           <div class="form-field">
             <label>出 生 时 辰</label>
-            <select id="m-hour" required>
-              <!-- populated by JS -->
-            </select>
-            <div class="form-hint">
-              不确定？<a onclick="setUnknownHour('m')">用「不知时」推演</a>
-            </div>
+            <input type="time" id="male-time" name="male-time" value="12:00" required>
+            <div class="form-hint">不知时辰？保留 12:00 即可（按午时推）</div>
           </div>
         </div>
 
         <!-- 女 -->
         <div>
           <div class="form-col-eyebrow">女 · FEMALE</div>
-
           <div class="form-field">
-            <label>出 生 年 月 日</label>
-            <div class="form-row">
-              <select id="f-year" required></select>
-              <select id="f-month" required></select>
-              <select id="f-day" required></select>
-            </div>
+            <label>公 历 出 生 日 期</label>
+            <input type="date" id="female-date" name="female-date" required>
           </div>
-
           <div class="form-field">
             <label>出 生 时 辰</label>
-            <select id="f-hour" required>
-              <!-- populated by JS -->
-            </select>
-            <div class="form-hint">
-              不确定？<a onclick="setUnknownHour('f')">用「不知时」推演</a>
-            </div>
+            <input type="time" id="female-time" name="female-time" value="12:00" required>
+            <div class="form-hint">不知时辰？保留 12:00 即可（按午时推）</div>
           </div>
         </div>
       </div>
@@ -692,8 +666,32 @@
   </script>
 
   <script>
-    // ====== FORM POPULATION ======
-    // 12 时辰: traditional names + 24h equivalent. "不知时" maps to noon (午时).
+    // ====== FORM ====== (native HTML5 inputs · 起源风格)
+    function fillSample () {
+      // 邓超 × 孙俪 — 公开婚姻状态的真人样例
+      document.getElementById('male-date').value = '1979-02-08';
+      document.getElementById('male-time').value = '08:00';
+      document.getElementById('female-date').value = '1982-08-26';
+      document.getElementById('female-time').value = '14:00';
+      document.querySelector('.form-submit').scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+    window.fillSample = fillSample;
+
+    function submitForm (e) {
+      e.preventDefault();
+      const md = document.getElementById('male-date').value;
+      const mt = document.getElementById('male-time').value || '12:00';
+      const fd = document.getElementById('female-date').value;
+      const ft = document.getElementById('female-time').value || '12:00';
+      if (!md || !fd) { alert('请填写两个生日'); return false; }
+      const params = new URLSearchParams({ 'male-date': md, 'male-time': mt, 'female-date': fd, 'female-time': ft });
+      const btn = document.querySelector('.form-submit');
+      if (btn) { btn.textContent = '推 演 中 …'; btn.disabled = true; }
+      window.location.href = `report.html?${params.toString()}`;
+      return false;
+    }
+
+    // ====== (DEPRECATED — kept for legacy listeners that still reference these) ======
     const SHICHEN = [
       { name: '子时', range: '23:00 – 01:00', hh: '00:30' },
       { name: '丑时', range: '01:00 – 03:00', hh: '02:00' },
