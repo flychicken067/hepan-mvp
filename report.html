@@ -519,6 +519,23 @@
     }
     @media (max-width: 720px), print { .counter { display: none; } }
 
+    /* Per-chapter corner 3D — single shared canvas, morphs by active chapter */
+    .chapter-art {
+      position: fixed;
+      top: 80px;
+      right: 60px;
+      width: 160px;
+      height: 160px;
+      z-index: 30;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .chapter-art.active { opacity: 0.85; }
+    .chapter-art canvas { width: 100%; height: 100%; display: block; }
+    @media (max-width: 880px) { .chapter-art { display: none; } }
+    @media print { .chapter-art { display: none; } }
+
     /* Bottom hairline progress bar — silent, wayofcode-style */
     .progress {
       position: fixed;
@@ -538,19 +555,24 @@
     @media print { .progress { display: none; } }
 
     /* ============== PAYWALL ============== */
-    body.locked .ch-paid {
-      filter: blur(7px) saturate(0.4);
-      pointer-events: none;
+    /* Locked chapters: keep verdict and chapter title CRISP, blur only body prose */
+    body.locked .ch-paid .chapter-body > p,
+    body.locked .ch-paid .chapter-body > blockquote:not(.verdict),
+    body.locked .ch-paid .chapter-body > cite,
+    body.locked .ch-paid .chapter-body > .chapter-svg,
+    body.locked .ch-paid .chapter-body > h4,
+    body.locked .ch-paid .chapter-body > ul,
+    body.locked .ch-paid .qcard-q,
+    body.locked .ch-paid .qcard-cite,
+    body.locked .ch-paid .qcard-num,
+    body.locked .ch-paid .month-text {
+      filter: blur(6px) saturate(0.5);
       user-select: none;
-      max-height: 320px;
-      overflow: hidden;
-      position: relative;
+      pointer-events: none;
     }
-    body.locked .ch-paid::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 30%, var(--paper) 95%);
+    body.locked .ch-paid .verdict {
+      /* Verdicts stay sharp — they are the conversion trigger */
+      filter: none;
     }
     .gate {
       max-width: 480px;
@@ -796,6 +818,7 @@
   </nav>
 
   <div class="counter" id="counter">00 / 09</div>
+  <div class="chapter-art" id="chapterArt" aria-hidden="true"></div>
   <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
 
   <!-- ====== COVER ====== -->
@@ -1121,6 +1144,164 @@
       }
       animate();
     })();
+
+    // ============== PER-CHAPTER CORNER 3D ==============
+    // Single shared canvas, geometry swaps by active chapter — wayofcode style.
+    // Each form is justified by chapter content, not decoration.
+    (function initChapterArt () {
+      const mount = document.getElementById('chapterArt');
+      if (!mount) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const VERMILLION = 0xB8362A, INK = 0x14110E;
+      const matLine = new THREE.LineBasicMaterial({ color: VERMILLION, transparent: true, opacity: 0.55 });
+      const matLineSoft = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.18 });
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+      camera.position.set(0, 0, 9);
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(160, 160);
+      renderer.setClearColor(0x000000, 0);
+      mount.appendChild(renderer.domElement);
+
+      // ----- factory: returns a Group for each chapter -----
+      function makeFor (id) {
+        const g = new THREE.Group();
+        const edges = (geo) => new THREE.LineSegments(new THREE.EdgesGeometry(geo), matLine);
+        switch (id) {
+          case 'ch1': { // 排盘 · 4 stacked cubes (4 pillars)
+            for (let i = 0; i < 4; i++) {
+              const c = edges(new THREE.BoxGeometry(1.2, 0.7, 1.2));
+              c.position.y = (i - 1.5) * 0.85;
+              g.add(c);
+            }
+            break;
+          }
+          case 'ch2': { // 五行 · pentagonal ring of 5 small spheres
+            for (let i = 0; i < 5; i++) {
+              const angle = (Math.PI * 2 * i / 5) - Math.PI / 2;
+              const s = edges(new THREE.IcosahedronGeometry(0.45, 0));
+              s.position.x = Math.cos(angle) * 1.7;
+              s.position.y = Math.sin(angle) * 1.7;
+              g.add(s);
+            }
+            // connecting pentagon
+            const pts = [];
+            for (let i = 0; i <= 5; i++) {
+              const a = (Math.PI * 2 * i / 5) - Math.PI / 2;
+              pts.push(new THREE.Vector3(Math.cos(a) * 1.7, Math.sin(a) * 1.7, 0));
+            }
+            const lg = new THREE.BufferGeometry().setFromPoints(pts);
+            g.add(new THREE.Line(lg, matLineSoft));
+            break;
+          }
+          case 'ch3': { // 格局 · octahedron (8 trigrams ≈ 8 faces)
+            g.add(edges(new THREE.OctahedronGeometry(2.0, 0)));
+            break;
+          }
+          case 'ch4': { // 用神 · torus (circulation, returning)
+            g.add(edges(new THREE.TorusGeometry(1.6, 0.5, 6, 16)));
+            break;
+          }
+          case 'ch5': { // 大运 · line of 8 small cubes
+            for (let i = 0; i < 8; i++) {
+              const c = edges(new THREE.BoxGeometry(0.4, 0.4, 0.4));
+              c.position.x = (i - 3.5) * 0.55;
+              g.add(c);
+            }
+            break;
+          }
+          case 'ch6': { // 流年 · 12-spoke wheel
+            const ring = edges(new THREE.TorusGeometry(1.8, 0.04, 4, 48));
+            g.add(ring);
+            for (let i = 0; i < 12; i++) {
+              const a = (Math.PI * 2 * i / 12) - Math.PI / 2;
+              const pts = [
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(Math.cos(a) * 1.8, Math.sin(a) * 1.8, 0),
+              ];
+              const lg = new THREE.BufferGeometry().setFromPoints(pts);
+              g.add(new THREE.Line(lg, matLineSoft));
+            }
+            break;
+          }
+          case 'ch7': { // 合婚 · Stella Octangula (reprise of cover)
+            const tetGeo = new THREE.TetrahedronGeometry(1.7);
+            const yangM = edges(tetGeo);
+            const yinM = new THREE.LineSegments(new THREE.EdgesGeometry(tetGeo), matLineSoft);
+            yinM.rotation.y = Math.PI; yinM.rotation.z = Math.PI;
+            g.add(yangM); g.add(yinM);
+            break;
+          }
+          case 'ch8': { // 十二问 · icosahedron (12 vertices)
+            g.add(edges(new THREE.IcosahedronGeometry(1.8, 0)));
+            break;
+          }
+          case 'ch9': { // 十二月 · 3×4 cube grid
+            for (let i = 0; i < 12; i++) {
+              const r = Math.floor(i / 4), c = i % 4;
+              const cube = edges(new THREE.BoxGeometry(0.55, 0.55, 0.55));
+              cube.position.x = (c - 1.5) * 0.7;
+              cube.position.y = (1 - r) * 0.7;
+              g.add(cube);
+            }
+            break;
+          }
+        }
+        return g;
+      }
+
+      let current = null, currentId = null, dirty = true;
+      function setChapter (id) {
+        if (id === currentId) return;
+        currentId = id;
+        if (current) scene.remove(current);
+        if (id) {
+          current = makeFor(id);
+          if (current) {
+            scene.add(current);
+            mount.classList.add('active');
+          }
+        } else {
+          mount.classList.remove('active');
+        }
+        dirty = true;
+      }
+
+      // Watch which chapter is active by scroll position
+      const chapterIds = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'];
+      window.addEventListener('scroll', () => {
+        const offset = window.scrollY + 240;
+        // Hide on cover (before ch1)
+        const ch1 = document.getElementById('ch1');
+        if (!ch1 || ch1.offsetTop > window.scrollY + window.innerHeight * 0.7) {
+          setChapter(null); return;
+        }
+        let active = null;
+        for (const id of chapterIds) {
+          const el = document.getElementById(id);
+          if (el && el.offsetTop <= offset) active = id;
+        }
+        setChapter(active);
+      }, { passive: true });
+
+      const clock = new THREE.Clock();
+      function animate () {
+        const t = clock.getElapsedTime();
+        if (current) {
+          current.rotation.y = t * 0.18;
+          current.rotation.x = Math.sin(t * 0.12) * 0.25;
+          renderer.render(scene, camera);
+        } else if (dirty) {
+          renderer.clear();
+          dirty = false;
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
   </script>
 
   <script>
@@ -1182,14 +1363,21 @@
         setText('ch2-mirror', mirrorTxt);
 
         // 三 · 格局
-        setText('ch3-male', `男方日主${maleChart.dayMaster}，${maleChart.persona.full}。${maleChart.persona.style}`);
-        setText('ch3-female', `女方日主${femaleChart.dayMaster}，${femaleChart.persona.full}。${femaleChart.persona.style}`);
-        if (maleChart.persona.classic) {
-          setHTML('ch3-quote', `「${maleChart.persona.classic}」<cite>— 《滴天髓》论${maleChart.dayMaster}</cite>`);
-        }
+        setText('ch3-male', `男方日主${maleChart.dayMaster}——${maleChart.persona.metaphor}。性格${maleChart.persona.trait}。`);
+        setText('ch3-female', `女方日主${femaleChart.dayMaster}——${femaleChart.persona.metaphor}。性格${femaleChart.persona.trait}。`);
+        // ch3-quote stays as the static quote in HTML; only update if we have a real classical line
+        const classicByStem = {
+          '甲': '甲木参天，脱胎要火。', '乙': '乙木虽柔，刲羊解牛。',
+          '丙': '丙火猛烈，欺霜侮雪。', '丁': '丁火柔中，内性昭融。',
+          '戊': '戊土固重，既中且正。', '己': '己土卑湿，中正蓄藏。',
+          '庚': '庚金带煞，刚健为最。', '辛': '辛金软弱，温润而清。',
+          '壬': '壬水通河，能泄金气。', '癸': '癸水至弱，达于天津。',
+        };
+        const cq = classicByStem[maleChart.dayMaster];
+        if (cq) setHTML('ch3-quote', `「${cq}」<cite>— 《滴天髓》论${maleChart.dayMaster}</cite>`);
 
         // 四 · 用神
-        setText('ch4-yongshen', `男方${maleChart.persona.yongshen || '所需用神见命局'}。女方${femaleChart.persona.yongshen || '所需用神见命局'}。`);
+        setText('ch4-yongshen', `男方日主${maleChart.dayMaster}——${maleChart.persona.metaphor}，最缺 ${maleChart.weakest.five}。女方日主${femaleChart.dayMaster}——${femaleChart.persona.metaphor}，最缺 ${femaleChart.weakest.five}。`);
         const liuhe = compat.liuhe || [];
         if (liuhe.length) {
           const h = liuhe[0];
