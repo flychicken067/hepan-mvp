@@ -22,6 +22,18 @@
     fetch('assets/yongshen-cache.json').then(r => r.json()).then(d => {
       window.__yongshenCache = d.entries || {};
     }).catch(() => {});
+    window.__liunianCache = null;
+    window.__dayunCache = null;
+    window.__hehunCache = null;
+    fetch('assets/liunian-cache.json').then(r => r.json()).then(d => {
+      window.__liunianCache = d.entries || {};
+    }).catch(() => {});
+    fetch('assets/dayun-cache.json').then(r => r.json()).then(d => {
+      window.__dayunCache = d.entries || {};
+    }).catch(() => {});
+    fetch('assets/hehun-cache.json').then(r => r.json()).then(d => {
+      window.__hehunCache = d.entries || {};
+    }).catch(() => {});
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
   <style>
@@ -1628,6 +1640,59 @@
         // 七 · 合婚 (THE verdict — most screenshot-worthy)
         setHTML('v7-line', `<em>${compat.score}</em> 分 · <em>${compat.tier}</em><br>${compat.trigrams.male}${compat.trigrams.female} 卦`);
         setText('v7-meta', `子 平 推 演 · 合 婚`);
+
+        // ===== B · RAG injection for ch5/ch6/ch7 =====
+        const injectRAG = (chId, cache, key) => {
+          if (!cache || !cache[key]) return false;
+          const e = cache[key];
+          const sec = document.getElementById(chId);
+          if (!sec) return false;
+          const body = sec.querySelector('.chapter-body');
+          if (!body || body.querySelector('.rag-quote')) return false;
+          const bq = document.createElement('blockquote');
+          bq.className = 'rag-quote';
+          bq.innerHTML = `「${e.quote}」<cite>— ${e.book || '命书'} · 检 索「${e.q}」</cite>`;
+          const lead = body.querySelector('p.lead');
+          if (lead && lead.nextSibling) body.insertBefore(bq, lead.nextSibling);
+          else body.insertBefore(bq, body.firstChild);
+          // Update meta tag
+          const metaSel = chId === 'ch5' ? 'v5-meta' : chId === 'ch6' ? 'v6-meta' : 'v7-meta';
+          if (e.book) setText(metaSel, `${e.book} · 检 索「${e.q}」`);
+          return true;
+        };
+
+        const applyAllRAG = () => {
+          // ch5 大运 — keyed by 男 day-master + 男 current dashu stem
+          try {
+            const md5 = H.getDashu(malePillars, 'male');
+            const ny5 = new Date().getFullYear();
+            const ma5 = ny5 - mp.solar.y;
+            const cur5 = md5.find(d => ma5 >= d.ageStart && ma5 < d.ageEnd) || md5[2];
+            if (cur5) injectRAG('ch5', window.__dayunCache, `${mDM}_${cur5.stem}`);
+          } catch (e) {}
+          // ch6 流年 — keyed by 男 day-master + current year stem
+          try {
+            const yGZ6 = H.getYearGanZhi(new Date().getFullYear());
+            injectRAG('ch6', window.__liunianCache, `${mDM}_${yGZ6[0]}`);
+          } catch (e) {}
+          // ch7 合婚 — keyed by 男 trigram + 女 trigram
+          try {
+            injectRAG('ch7', window.__hehunCache, `${compat.trigrams.male}_${compat.trigrams.female}`);
+          } catch (e) {}
+        };
+
+        // Wait for caches to load (they fetch async)
+        const allLoaded = () => window.__dayunCache && window.__liunianCache && window.__hehunCache;
+        if (allLoaded()) applyAllRAG();
+        else {
+          let tries = 0;
+          const wait = setInterval(() => {
+            if (allLoaded() || ++tries > 40) {
+              clearInterval(wait);
+              if (allLoaded()) applyAllRAG();
+            }
+          }, 100);
+        }
 
       } catch (e) {
         console.warn('hydration failed', e);
