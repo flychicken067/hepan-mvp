@@ -635,13 +635,81 @@
     .modal-box .qr-placeholder.has-qr { border-color: transparent; }
     .modal-box .qr-placeholder.has-qr .qr-fallback { display: none; }
     .modal-box .modal-close {
-      margin-top: 20px;
+      margin-top: 24px;
       font-family: var(--mono);
       font-size: 11px;
       letter-spacing: 3px;
       color: var(--ink-mute);
       cursor: pointer;
-      text-decoration: underline;
+      text-decoration: none;
+      border-bottom: 1px solid var(--hair);
+      display: inline-block;
+      padding-bottom: 2px;
+    }
+    .modal-box h3 {
+      font-family: var(--serif);
+      font-weight: 600;
+      letter-spacing: 6px;
+      color: var(--ink);
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--hair);
+    }
+    .modal-box {
+      max-width: 440px;
+      padding: 36px 28px 28px;
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    .pay-step {
+      padding: 18px 0 14px;
+      border-bottom: 1px solid var(--hair);
+      text-align: center;
+    }
+    .pay-step:last-of-type { border-bottom: none; }
+    .pay-step-num {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--vermillion);
+      letter-spacing: 4px;
+      margin-bottom: 6px;
+    }
+    .pay-step-text {
+      font-family: var(--serif);
+      font-size: 16px;
+      letter-spacing: 4px;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .pay-step-meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+    .pay-email {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 1px;
+      color: var(--vermillion);
+      text-decoration: none;
+      border-bottom: 1px solid var(--vermillion);
+      padding: 4px 0;
+      margin: 6px 0;
+    }
+    .pay-promise {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--hair);
     }
 
     /* ============== FINAL ============== */
@@ -820,10 +888,23 @@
   <!-- Paywall gate after ch3 -->
   <div class="gate" id="gate">
     <div class="gate-eyebrow">CONTINUE READING</div>
-    <div class="gate-title">解锁后四章</div>
+    <div class="gate-title">解 锁 后 六 章</div>
+    <ul style="list-style:none;padding:0;margin:24px auto 32px;max-width:300px;text-align:left;font-size:14px;line-height:2.0;color:var(--ink-soft);">
+      <li>· 用 神 互 补 与 化 解</li>
+      <li>· 大 运 节 律 对 接</li>
+      <li>· 当 下 流 年 深 读</li>
+      <li>· 合 婚 评 分 与 卦 象</li>
+      <li>· 七 章 verdict 截 图</li>
+      <li>· 十 二 问 横 滑 卡</li>
+      <li>· 十 二 月 流 月 推 演</li>
+      <li>· PDF 永 久 下 载</li>
+    </ul>
     <div class="gate-price">¥29</div>
-    <div class="gate-once">一次买断 · 不订阅</div>
-    <a href="javascript:openPay()" class="gate-btn">解 锁 全 文</a>
+    <div class="gate-once">一 次 买 断 · 不 订 阅</div>
+    <a href="javascript:openPay()" class="gate-btn">解 锁 全 文 →</a>
+    <p style="font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--ink-mute);margin-top:24px;text-transform:uppercase;">
+      看 完 不 喜 欢 · 原 路 退 款
+    </p>
   </div>
 
   <!-- ====== 五 · 大运（PAID） ====== -->
@@ -930,13 +1011,35 @@
   <!-- ====== PAY MODAL ====== -->
   <div class="modal-bg" id="modal" onclick="if(event.target===this)closePay()">
     <div class="modal-box">
-      <h3>¥ 29 · 解锁全文</h3>
-      <p>微信扫描二维码付款，付款后将截图发到 <strong>liufan067@gmail.com</strong>，1 小时内回复解锁链接。</p>
-      <div class="qr-placeholder">
-        <img src="qr.png" alt="WeChat QR" style="width:100%;height:100%;object-fit:contain;display:none;" onload="this.style.display='block';this.parentElement.classList.add('has-qr');" onerror="this.remove();">
-        <span class="qr-fallback">微信收款码<br>（qr.png 待替换）</span>
+      <h3>¥ 29 · 解 锁 全 文</h3>
+
+      <!-- Step 1 -->
+      <div class="pay-step">
+        <div class="pay-step-num">壹</div>
+        <div class="pay-step-text">微 信 扫 码 付 款 ¥29</div>
+        <div class="qr-placeholder">
+          <img src="qr.png" alt="WeChat QR" style="width:100%;height:100%;object-fit:contain;display:none;" onload="this.style.display='block';this.parentElement.classList.add('has-qr');" onerror="this.remove();">
+          <span class="qr-fallback">微信收款码<br>（qr.png 待替换）</span>
+        </div>
+        <div class="pay-step-meta">收 款 人 · Ivan 刘 凡</div>
       </div>
-      <p style="font-size:12px; color: var(--ink-mute);">付款备注：邮箱地址</p>
+
+      <!-- Step 2 -->
+      <div class="pay-step">
+        <div class="pay-step-num">贰</div>
+        <div class="pay-step-text">截 图 + 邮 箱 发 到</div>
+        <a href="mailto:liufan067@gmail.com?subject=合盘付款&body=微信付款截图见附件，请回复解锁链接。" class="pay-email">liufan067@gmail.com</a>
+        <div class="pay-step-meta">备 注 · 你 的 收 件 邮 箱</div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="pay-step">
+        <div class="pay-step-num">叁</div>
+        <div class="pay-step-text">1 小 时 内 收 到 解 锁 链 接</div>
+        <div class="pay-step-meta">人 工 回 复 · 全 天 在 线</div>
+      </div>
+
+      <p class="pay-promise">看 完 不 喜 欢 · 原 路 退 款</p>
       <div class="modal-close" onclick="closePay()">关 闭</div>
     </div>
   </div>

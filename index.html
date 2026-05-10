@@ -292,7 +292,7 @@
       text-transform: uppercase;
     }
     .form-field {
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
     .form-field label {
       display: block;
@@ -300,10 +300,15 @@
       font-size: 10px;
       letter-spacing: 3px;
       color: var(--ink-mute);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       text-transform: uppercase;
     }
-    .form-field input {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 12px;
+    }
+    .form-field select {
       width: 100%;
       padding: 12px 0;
       background: transparent;
@@ -313,11 +318,32 @@
       font-family: var(--serif);
       font-size: 18px;
       letter-spacing: 1px;
-      transition: border-color 0.2s;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%238B8275' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 4px center;
+      padding-right: 18px;
+      transition: border-color 0.18s;
     }
-    .form-field input:focus {
+    .form-field select:focus {
       outline: none;
       border-bottom-color: var(--vermillion);
+    }
+    .form-hint {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--ink-mute);
+      margin-top: 8px;
+      line-height: 1.7;
+    }
+    .form-hint a {
+      color: var(--vermillion);
+      text-decoration: none;
+      cursor: pointer;
+      border-bottom: 1px dashed var(--vermillion);
     }
     .form-submit {
       width: 100%;
@@ -524,34 +550,67 @@
   <section class="form-section" id="form">
     <div class="form-num">贰</div>
     <div class="form-title">推 演</div>
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:4px;color:var(--ink-mute);text-transform:uppercase;text-align:center;margin-bottom:60px;">
+      30 秒 填 完 · 60 秒 读 完 前 三 章
+    </p>
 
     <form id="hepan-form" onsubmit="return submitForm(event)">
       <div class="form-grid">
+        <!-- 男 -->
         <div>
           <div class="form-col-eyebrow">男 · MALE</div>
+
           <div class="form-field">
-            <label for="male-date">出生日期</label>
-            <input type="date" id="male-date" name="male-date" required>
+            <label>出 生 年 月 日</label>
+            <div class="form-row">
+              <select id="m-year" required></select>
+              <select id="m-month" required></select>
+              <select id="m-day" required></select>
+            </div>
           </div>
+
           <div class="form-field">
-            <label for="male-time">出生时辰</label>
-            <input type="time" id="male-time" name="male-time" value="12:00" required>
+            <label>出 生 时 辰</label>
+            <select id="m-hour" required>
+              <!-- populated by JS -->
+            </select>
+            <div class="form-hint">
+              不确定？<a onclick="setUnknownHour('m')">用「不知时」推演</a>
+            </div>
           </div>
         </div>
+
+        <!-- 女 -->
         <div>
           <div class="form-col-eyebrow">女 · FEMALE</div>
+
           <div class="form-field">
-            <label for="female-date">出生日期</label>
-            <input type="date" id="female-date" name="female-date" required>
+            <label>出 生 年 月 日</label>
+            <div class="form-row">
+              <select id="f-year" required></select>
+              <select id="f-month" required></select>
+              <select id="f-day" required></select>
+            </div>
           </div>
+
           <div class="form-field">
-            <label for="female-time">出生时辰</label>
-            <input type="time" id="female-time" name="female-time" value="12:00" required>
+            <label>出 生 时 辰</label>
+            <select id="f-hour" required>
+              <!-- populated by JS -->
+            </select>
+            <div class="form-hint">
+              不确定？<a onclick="setUnknownHour('f')">用「不知时」推演</a>
+            </div>
           </div>
         </div>
       </div>
+
       <button type="submit" class="form-submit">推 演 合 盘 →</button>
-      <div class="form-foot">免费看前三章 · 解锁全文 ¥29</div>
+
+      <div class="form-foot">
+        免 费 三 章 · 解 锁 全 文 ¥29 · &nbsp;
+        <a onclick="fillSample()" style="color:var(--vermillion);cursor:pointer;border-bottom:1px dashed currentColor;text-decoration:none;">先 用 样 例 试 试</a>
+      </div>
     </form>
   </section>
 
@@ -642,13 +701,108 @@
   </script>
 
   <script>
+    // ====== FORM POPULATION ======
+    // 12 时辰: traditional names + 24h equivalent. "不知时" maps to noon (午时).
+    const SHICHEN = [
+      { name: '子时', range: '23:00 – 01:00', hh: '00:30' },
+      { name: '丑时', range: '01:00 – 03:00', hh: '02:00' },
+      { name: '寅时', range: '03:00 – 05:00', hh: '04:00' },
+      { name: '卯时', range: '05:00 – 07:00', hh: '06:00' },
+      { name: '辰时', range: '07:00 – 09:00', hh: '08:00' },
+      { name: '巳时', range: '09:00 – 11:00', hh: '10:00' },
+      { name: '午时', range: '11:00 – 13:00', hh: '12:00' },
+      { name: '未时', range: '13:00 – 15:00', hh: '14:00' },
+      { name: '申时', range: '15:00 – 17:00', hh: '16:00' },
+      { name: '酉时', range: '17:00 – 19:00', hh: '18:00' },
+      { name: '戌时', range: '19:00 – 21:00', hh: '20:00' },
+      { name: '亥时', range: '21:00 – 23:00', hh: '22:00' },
+    ];
+
+    function pad (n) { return String(n).padStart(2, '0'); }
+
+    function populateSelects (prefix) {
+      const ySel = document.getElementById(prefix + '-year');
+      const mSel = document.getElementById(prefix + '-month');
+      const dSel = document.getElementById(prefix + '-day');
+      const hSel = document.getElementById(prefix + '-hour');
+
+      // Year: 1950 → current year
+      const ny = new Date().getFullYear();
+      ySel.innerHTML = '<option value="">年</option>' +
+        Array.from({length: ny - 1950 + 1}, (_, i) => ny - i)
+          .map(y => `<option value="${y}">${y} 年</option>`).join('');
+
+      // Month
+      mSel.innerHTML = '<option value="">月</option>' +
+        Array.from({length: 12}, (_, i) => i + 1)
+          .map(m => `<option value="${pad(m)}">${m} 月</option>`).join('');
+
+      // Days — populated dynamically based on year+month
+      const updateDays = () => {
+        const y = parseInt(ySel.value), m = parseInt(mSel.value);
+        const cur = dSel.value;
+        const days = (y && m) ? new Date(y, m, 0).getDate() : 31;
+        dSel.innerHTML = '<option value="">日</option>' +
+          Array.from({length: days}, (_, i) => i + 1)
+            .map(d => `<option value="${pad(d)}"${pad(d) === cur ? ' selected' : ''}>${d} 日</option>`).join('');
+      };
+      ySel.addEventListener('change', updateDays);
+      mSel.addEventListener('change', updateDays);
+      updateDays();
+
+      // 时辰
+      hSel.innerHTML = '<option value="">选 一 个 时 辰</option>' +
+        SHICHEN.map(s => `<option value="${s.hh}">${s.name} · ${s.range}</option>`).join('') +
+        '<option value="12:00">不 知 道 时 辰（按 午 时 推）</option>';
+    }
+
+    populateSelects('m');
+    populateSelects('f');
+
+    function setUnknownHour (prefix) {
+      const sel = document.getElementById(prefix + '-hour');
+      sel.value = '12:00';
+      sel.focus();
+    }
+    window.setUnknownHour = setUnknownHour;
+
+    function fillSample () {
+      // 邓超 × 孙俪 — well-known stable real couple
+      const setVal = (id, v) => {
+        const el = document.getElementById(id);
+        if (el) { el.value = v; el.dispatchEvent(new Event('change')); }
+      };
+      setVal('m-year', '1979'); setVal('m-month', '02'); setVal('m-day', '08');
+      setVal('m-hour', '08:00');
+      setVal('f-year', '1982'); setVal('f-month', '08'); setVal('f-day', '26');
+      setVal('f-hour', '14:00');
+      // gentle scroll to submit
+      document.querySelector('.form-submit').scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+    window.fillSample = fillSample;
+
     function submitForm (e) {
       e.preventDefault();
+      const my = document.getElementById('m-year').value;
+      const mm = document.getElementById('m-month').value;
+      const md = document.getElementById('m-day').value;
+      const mh = document.getElementById('m-hour').value;
+      const fy = document.getElementById('f-year').value;
+      const fm = document.getElementById('f-month').value;
+      const fd = document.getElementById('f-day').value;
+      const fh = document.getElementById('f-hour').value;
+      if (!my || !mm || !md || !mh || !fy || !fm || !fd || !fh) {
+        alert('请把男女各四项填齐 · 不知道时辰可点「用不知时推演」');
+        return false;
+      }
       const params = new URLSearchParams();
-      params.set('male-date', document.getElementById('male-date').value);
-      params.set('male-time', document.getElementById('male-time').value);
-      params.set('female-date', document.getElementById('female-date').value);
-      params.set('female-time', document.getElementById('female-time').value);
+      params.set('male-date', `${my}-${mm}-${md}`);
+      params.set('male-time', mh);
+      params.set('female-date', `${fy}-${fm}-${fd}`);
+      params.set('female-time', fh);
+      // micro loading state
+      const btn = document.querySelector('.form-submit');
+      if (btn) { btn.textContent = '推 演 中 …'; btn.disabled = true; }
       window.location.href = `report.html?${params.toString()}`;
       return false;
     }
