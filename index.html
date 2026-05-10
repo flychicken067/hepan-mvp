@@ -14,6 +14,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://hepan-mvp.vercel.app/og-image.png">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="assets/lunar.min.js"></script>
+  <script src="assets/bazi.js"></script>
   <script defer src="/_vercel/insights/script.js"></script>
   <style>
     :root {
@@ -339,6 +341,29 @@
       cursor: pointer;
       border-bottom: 1px dashed var(--vermillion);
     }
+    .form-bazi {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--hair);
+      border-bottom: 1px solid var(--hair);
+      font-family: var(--serif);
+      font-size: 17px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+      text-align: center;
+      min-height: 22px;
+      transition: opacity 0.18s;
+    }
+    .form-bazi:empty { opacity: 0; padding: 0; border: none; }
+    .form-bazi small {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
     .form-submit {
       width: 100%;
       padding: 22px;
@@ -552,13 +577,14 @@
           <div class="form-col-eyebrow">男 · MALE</div>
           <div class="form-field">
             <label>公 历 出 生 日 期</label>
-            <input type="date" id="male-date" name="male-date" required>
+            <input type="date" id="male-date" name="male-date" value="1991-06-22" required>
           </div>
           <div class="form-field">
             <label>出 生 时 辰</label>
-            <input type="time" id="male-time" name="male-time" value="12:00" required>
+            <input type="time" id="male-time" name="male-time" value="14:00" required>
             <div class="form-hint">不知时辰？保留 12:00 即可（按午时推）</div>
           </div>
+          <div class="form-bazi" id="male-bazi" aria-live="polite"></div>
         </div>
 
         <!-- 女 -->
@@ -566,13 +592,14 @@
           <div class="form-col-eyebrow">女 · FEMALE</div>
           <div class="form-field">
             <label>公 历 出 生 日 期</label>
-            <input type="date" id="female-date" name="female-date" required>
+            <input type="date" id="female-date" name="female-date" value="1992-11-08" required>
           </div>
           <div class="form-field">
             <label>出 生 时 辰</label>
-            <input type="time" id="female-time" name="female-time" value="12:00" required>
+            <input type="time" id="female-time" name="female-time" value="02:00" required>
             <div class="form-hint">不知时辰？保留 12:00 即可（按午时推）</div>
           </div>
+          <div class="form-bazi" id="female-bazi" aria-live="polite"></div>
         </div>
       </div>
 
@@ -583,6 +610,46 @@
         <a onclick="fillSample()" style="color:var(--vermillion);cursor:pointer;border-bottom:1px dashed currentColor;text-decoration:none;">先 用 邓 超 孙 俪 试 试</a>
       </div>
     </form>
+  </section>
+
+  <!-- ============== 三 问 · CANDOR ON LIMITS ============== -->
+  <section class="why" id="three-questions" style="padding-top:60px;">
+    <div class="why-num">叁</div>
+    <div class="why-title">三 问</div>
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:4px;color:var(--ink-mute);text-transform:uppercase;margin-bottom:60px;">
+      QUESTIONS WORTH ASKING BEFORE YOU PAY
+    </p>
+
+    <div class="why-row">
+      <div class="why-row-label">壹</div>
+      <div class="why-row-text">
+        <b>同样的两个生日，每次推演结果一样吗？</b><br>
+        <em style="color:var(--vermillion);font-style:normal;">一样。</em>本网站完全确定性——同输入永远同输出。不掷骰子，不"千人千面"包装。<br>
+        <span style="color:var(--ink-mute);font-size:14px;">同一份 PDF 你十年后再算一次还是这一份。</span>
+      </div>
+    </div>
+
+    <div class="why-row">
+      <div class="why-row-label">贰</div>
+      <div class="why-row-text">
+        <b>我和我朋友生日完全一样，合盘结果就一样吗？</b><br>
+        <em style="color:var(--vermillion);font-style:normal;">本网站给的同一份。但你们的"运"不会一样。</em><br>
+        复旦王德峰先生当年问过命理大家洪丕谟同样的问题，洪先生答：<br>
+        <span style="color:var(--ink);font-style:italic;">「我看过那么多八字，没看到过完全相同的。」</span><br>
+        <span style="color:var(--ink-mute);font-size:14px;">同八字的人极其罕见——双胞胎也差分秒。我们给「命的设计」，不给「运的展开」。</span>
+      </div>
+    </div>
+
+    <div class="why-row">
+      <div class="why-row-label">叁</div>
+      <div class="why-row-text">
+        <b>这东西到底准不准？</b><br>
+        <em style="color:var(--vermillion);font-style:normal;">十之六七。</em><br>
+        王德峰先生学了三十年命理，亲口说：<br>
+        <span style="color:var(--ink);font-style:italic;">「我最后算的时候，只能看到十之六七，30%-40% 是看不到的。」</span><br>
+        <span style="color:var(--ink-mute);font-size:14px;">你的性格底色、五行配置、合婚等级、大运方向——这些能看到。具体哪天发生什么——看不到。任何说能精确到日的，都另有神通，不是命理学。</span>
+      </div>
+    </div>
   </section>
 
   <!-- ============== TESTIMONIAL · ONE LINE OF CUSTOMER VOICE ============== -->
@@ -666,6 +733,35 @@
   </script>
 
   <script>
+    // ====== LIVE 八字 PREVIEW ====== (renders as user types — turns the form itself into a 命理 demo)
+    function previewBazi (prefix) {
+      const dateEl = document.getElementById(prefix + '-date');
+      const timeEl = document.getElementById(prefix + '-time');
+      const out = document.getElementById(prefix + '-bazi');
+      if (!dateEl || !timeEl || !out) return;
+      const d = dateEl.value, t = timeEl.value || '12:00';
+      if (!d || !window.Hepan) { out.innerHTML = ''; return; }
+      try {
+        const p = window.Hepan.buildPillars(d, t);
+        const four = `${p.year.stem}${p.year.branch} · ${p.month.stem}${p.month.branch} · ${p.day.stem}${p.day.branch} · ${p.hour.stem}${p.hour.branch}`;
+        out.innerHTML = `${four}<small>YEAR · MONTH · DAY · HOUR</small>`;
+      } catch (e) { out.innerHTML = ''; }
+    }
+    function bindPreview (prefix) {
+      ['date', 'time'].forEach(k => {
+        const el = document.getElementById(`${prefix}-${k}`);
+        if (el) el.addEventListener('input', () => previewBazi(prefix));
+      });
+    }
+    function initPreviews () {
+      if (!window.Hepan || !window.Solar) {
+        setTimeout(initPreviews, 80); return;
+      }
+      bindPreview('male'); bindPreview('female');
+      previewBazi('male'); previewBazi('female');
+    }
+    initPreviews();
+
     // ====== FORM ====== (native HTML5 inputs · 起源风格)
     function fillSample () {
       // 邓超 × 孙俪 — 公开婚姻状态的真人样例
