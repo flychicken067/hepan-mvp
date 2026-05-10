@@ -587,6 +587,7 @@
     (function init3D () {
       const mount = document.getElementById('hero3d');
       if (!mount) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       const w = () => mount.clientWidth;
       const h = () => mount.clientHeight;
