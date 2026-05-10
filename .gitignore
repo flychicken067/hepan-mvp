@@ -5,3 +5,7 @@ node_modules/
 .env
 .env.local
 *.png
+# Whitelist runtime assets
+!qr.png
+!og-image.png
+!assets/*.png
