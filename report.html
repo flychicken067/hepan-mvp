@@ -66,64 +66,96 @@
     .cover > *:not(.cover-3d) { position: relative; z-index: 1; }
     /* 3D is now sparse enough that text needs no blend trick */
     @media print { .cover-3d { display: none; } }
+    /* Cover · wayofcode-style restraint: title-first, score-second */
     .cover-eyebrow {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 6px;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 22px;
+      letter-spacing: 4px;
       color: var(--ink-mute);
-      text-transform: uppercase;
-      margin-bottom: 80px;
+      margin-bottom: 100px;
+    }
+    .cover-mark {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 200px;
+      line-height: 1;
+      letter-spacing: 24px;
+      color: var(--ink);
+      margin-bottom: 28px;
+      padding-left: 24px;
+    }
+    .cover-tag {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 26px;
+      letter-spacing: 1px;
+      color: var(--ink-soft);
+      margin-bottom: 100px;
+    }
+    .cover-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--vermillion);
+      opacity: 0.4;
+      margin: 0 auto 80px;
     }
     .cover-score {
       font-family: var(--serif);
       font-weight: 900;
-      font-size: 240px;
-      line-height: 0.9;
+      font-size: 96px;
+      line-height: 1;
       color: var(--vermillion);
-      letter-spacing: -8px;
-      margin-bottom: 24px;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
     }
     .cover-tier {
       font-family: var(--serif);
-      font-weight: 600;
-      font-size: 32px;
+      font-weight: 500;
+      font-size: 22px;
       letter-spacing: 12px;
+      color: var(--ink);
       margin-bottom: 8px;
     }
     .cover-of {
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 4px;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      letter-spacing: 1px;
       color: var(--ink-mute);
-      margin-bottom: 80px;
+      margin-bottom: 60px;
     }
     .cover-pair {
       font-family: var(--serif);
-      font-size: 17px;
-      color: var(--ink-soft);
-      letter-spacing: 2px;
-      margin-bottom: 12px;
+      font-size: 14px;
+      color: var(--ink-mute);
+      letter-spacing: 6px;
+      margin-bottom: 8px;
     }
     .cover-trigram {
-      font-size: 36px;
+      font-size: 28px;
       color: var(--ink);
-      letter-spacing: 6px;
-      margin: 32px 0;
+      letter-spacing: 8px;
+      margin: 12px 0 0;
+      opacity: 0.5;
     }
     .cover-scroll {
       position: absolute;
       bottom: 32px;
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 4px;
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 14px;
+      letter-spacing: 2px;
       color: var(--ink-mute);
       animation: pulse 2.5s infinite;
     }
     @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
     @media (max-width: 720px) {
-      .cover-score { font-size: 160px; }
-      .cover-tier { font-size: 24px; letter-spacing: 8px; }
+      .cover-mark { font-size: 140px; letter-spacing: 16px; padding-left: 16px; }
+      .cover-tag { font-size: 19px; }
+      .cover-score { font-size: 72px; }
+      .cover-tier { font-size: 18px; letter-spacing: 8px; }
     }
 
     /* ============== CHAPTER ============== */
@@ -829,16 +861,19 @@
   <div class="chapter-art" id="chapterArt" aria-hidden="true"></div>
   <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
 
-  <!-- ====== COVER ====== -->
+  <!-- ====== COVER · title first, score second (wayofcode restraint) ====== -->
   <section class="cover">
     <div class="cover-3d" id="cover3d" aria-hidden="true"></div>
-    <div class="cover-eyebrow">合 盘 · MARRIAGE COMPATIBILITY</div>
+    <div class="cover-eyebrow">Marriage · Compatibility</div>
+    <div class="cover-mark">合</div>
+    <div class="cover-tag">Two charts · One reading</div>
+    <div class="cover-divider"></div>
     <div class="cover-score" data-h="score">—</div>
     <div class="cover-tier" data-h="tier">推 演 中</div>
-    <div class="cover-of">/ 100 · CLASSICAL READING</div>
+    <div class="cover-of">/ 100 · classical reading</div>
+    <div class="cover-pair" data-h="pair">M · F</div>
     <div class="cover-trigram" data-h="trigram">☲ ☶</div>
-    <div class="cover-pair" data-h="pair">男 · 女</div>
-    <div class="cover-scroll">向 下 滚 · SCROLL</div>
+    <div class="cover-scroll">scroll</div>
     <aside class="cover-baibi" aria-label="设计哲学">
       白 贲 无 咎
       <small>《周易》贲卦 · 上九</small>
