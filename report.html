@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.13/lunar.min.js"></script>
   <script src="assets/bazi.js"></script>
+  <script src="assets/svg-charts.js"></script>
   <script defer src="/_vercel/insights/script.js"></script>
   <style>
     :root {
@@ -438,6 +439,57 @@
       margin-top: 16px;
     }
 
+    /* Left-rail vertical ontology nav (>= 1100px) */
+    .ontology-rail {
+      display: none;
+      position: fixed;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      padding: 16px 14px;
+      background: rgba(245, 239, 224, 0.92);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(184, 146, 74, 0.25);
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(26, 24, 23, 0.06);
+    }
+    .ontology-rail-eyebrow {
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--vermillion);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .ontology-rail-list { list-style: none; padding: 0; margin: 0; }
+    .ontology-rail-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.18s;
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+    .ontology-rail-item:hover { background: rgba(184, 54, 42, 0.06); color: var(--vermillion); }
+    .ontology-rail-item.active { background: var(--vermillion); color: var(--paper); }
+    .ontology-rail-item.active .ontology-rail-num { color: var(--gold-soft); }
+    .ontology-rail-num {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: var(--vermillion);
+      font-weight: 600; min-width: 18px;
+    }
+    .ontology-rail-name {
+      font-family: var(--serif-cn); font-weight: 600; font-size: 14px; letter-spacing: 1px;
+    }
+    @media (min-width: 1180px) {
+      .ontology-rail { display: block; }
+      .ontology-graph { display: none; }
+    }
+    @media print {
+      .ontology-rail { display: none !important; }
+    }
+
     .classical-byline {
       font-family: var(--serif-en);
       font-style: italic;
@@ -506,6 +558,22 @@
       font-size: 17px;
       line-height: 1.9;
       color: var(--ink-soft);
+    }
+    /* SVG chart strip injected at top of each chapter */
+    .section-svg {
+      margin: 6px 0 22px;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(184, 146, 74, 0.05), rgba(184, 146, 74, 0.01));
+      border: 1px solid rgba(184, 146, 74, 0.18);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+    }
+    .section-svg svg { max-width: 100%; height: auto; }
+    @media print {
+      .section-svg { background: none; border-color: rgba(0,0,0,0.15); page-break-inside: avoid; }
     }
     .section.open .section-body { max-height: 4000px; padding-top: 12px; padding-bottom: 24px; }
     .section-body p { margin: 14px 0; }
@@ -1178,6 +1246,19 @@
 
   <!-- ============== BOTTOM: CLASSICAL LONG-FORM ============== -->
   <section class="classical">
+    <!-- Left-rail vertical ontology nav (desktop only) -->
+    <nav class="ontology-rail" id="ontologyRail" aria-label="Ziping ontology nav">
+      <div class="ontology-rail-eyebrow">子平本体论</div>
+      <ul class="ontology-rail-list">
+        <li><a class="ontology-rail-item" data-target="sec1"><span class="ontology-rail-num">01</span><span class="ontology-rail-name">排盘</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec3"><span class="ontology-rail-num">02</span><span class="ontology-rail-name">五行</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec3"><span class="ontology-rail-num">03</span><span class="ontology-rail-name">格局</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec4"><span class="ontology-rail-num">04</span><span class="ontology-rail-name">用神</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec5"><span class="ontology-rail-num">05</span><span class="ontology-rail-name">大运</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec6"><span class="ontology-rail-num">06</span><span class="ontology-rail-name">流年</span></a></li>
+        <li><a class="ontology-rail-item" data-target="sec7"><span class="ontology-rail-num">07</span><span class="ontology-rail-name">合婚</span></a></li>
+      </ul>
+    </nav>
     <div class="classical-inner">
       <div class="classical-eyebrow">CLASSICAL ANNOTATION · 古典详读</div>
       <h2 class="classical-title">合而后分。<br>分而后明。</h2>
@@ -1547,6 +1628,36 @@
       const el = document.getElementById(id);
       el.classList.toggle('open');
     }
+
+    // Ontology rail · click + scroll-spy
+    (function () {
+      const rail = document.getElementById('ontologyRail');
+      if (!rail) return;
+      const items = rail.querySelectorAll('.ontology-rail-item');
+      items.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = item.dataset.target;
+          const target = document.getElementById(id);
+          if (!target) return;
+          if (!target.classList.contains('open')) target.classList.add('open');
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+      // Scroll-spy: highlight the closest visible section
+      const sectionIds = ['sec1', 'sec2', 'sec3', 'sec4', 'sec5', 'sec6', 'sec7'];
+      window.addEventListener('scroll', () => {
+        const offset = window.scrollY + 200;
+        let active = null;
+        for (const id of sectionIds) {
+          const el = document.getElementById(id);
+          if (el && el.offsetTop <= offset) active = id;
+        }
+        items.forEach(it => {
+          it.classList.toggle('active', it.dataset.target === active);
+        });
+      }, { passive: true });
+    })();
 
     // Card click → modal
     const modal = document.getElementById('modal');
@@ -1952,6 +2063,44 @@
 
         // Save for unlock-side reuse
         window.__hepan = { malePillars, femalePillars, maleChart, femaleChart, compat: fullCompat };
+
+        // ====== INJECT SVG CHARTS into each chapter ======
+        try {
+          if (window.HepanCharts) {
+            const HC = window.HepanCharts;
+            const inject = (id, svg) => {
+              const sec = document.getElementById(id);
+              if (!sec) return;
+              const body = sec.querySelector('.section-body');
+              if (!body || body.querySelector('.section-svg')) return;
+              const wrap = document.createElement('div');
+              wrap.className = 'section-svg';
+              wrap.innerHTML = svg;
+              body.insertBefore(wrap, body.firstChild);
+            };
+            const maleAge = (new Date().getFullYear()) - malePillars.solar.y;
+            const femaleAge = (new Date().getFullYear()) - femalePillars.solar.y;
+            const maleDashu = window.Hepan.getDashu(malePillars, 'male');
+            const femaleDashu = window.Hepan.getDashu(femalePillars, 'female');
+            const yearGZ = window.Hepan.getYearGanZhi(new Date().getFullYear());
+            const yStem = yearGZ[0], yBranch = yearGZ[1];
+            const maleSS = window.Hepan.getShiShen(maleChart.dayMaster, yStem);
+            const femaleSS = window.Hepan.getShiShen(femaleChart.dayMaster, yStem);
+
+            inject('sec1', HC.chartPillars(malePillars, femalePillars));
+            inject('sec2', HC.chartPillars(malePillars, femalePillars));
+            inject('sec3', HC.chartWuxing(maleChart.wuxing, femaleChart.wuxing));
+            inject('sec4', HC.chartGeju(fullCompat.trigrams.male, fullCompat.trigrams.female, maleChart.dayMaster, femaleChart.dayMaster));
+            inject('sec5', HC.chartDashu(maleDashu, femaleDashu, maleAge, femaleAge));
+            inject('sec6', HC.chartLiunian(yStem, yBranch, maleSS, femaleSS));
+            inject('sec7', HC.chartHehun(fullCompat.score, fullCompat.tier, fullCompat.heGuaSymbol, fullCompat.trigrams.male, fullCompat.trigrams.female));
+
+            // Also inject yongshen chart inline within sec3 after the first H4 if exists
+            // (chart3 already shows wuxing comparison; yongshen shown via sec3 secondary)
+          }
+        } catch (chartErr) {
+          console.warn('SVG chart injection failed:', chartErr);
+        }
       } catch (e) {
         console.warn('Bazi calc failed; showing default sample chart:', e);
         window.__lastErr = e.message;
