@@ -42,6 +42,10 @@
     fetch('assets/shensha-cache.json').then(r => r.json()).then(d => {
       window.__shenshaCache = d.entries || {};
     }).catch(() => {});
+    window.__conflictCache = null;
+    fetch('assets/conflict-cache.json').then(r => r.json()).then(d => {
+      window.__conflictCache = d.entries || {};
+    }).catch(() => {});
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
   <style>
@@ -1672,6 +1676,48 @@
           ? `命有冲刑 ${conflicts.length} 处，须主动化之：各立其域、不争琐碎。命书云：「五行相补者，更须于事上守界。」`
           : `命局清通，无显著冲刑。各依其节，自然偕行。`;
         setText('ch7-care', careTxt);
+
+        // ===== 冲刑害化解 RAG injection — for ch7 合婚 章 =====
+        const applyConflictRAG = () => {
+          const cc = window.__conflictCache;
+          if (!cc || !conflicts.length) return;
+          const ch7Body = document.querySelector('#ch7 .chapter-body');
+          if (!ch7Body || ch7Body.querySelector('.conflict-block')) return;
+          // Resolve up to 2 conflict types into RAG quotes
+          const resolved = [];
+          for (const conf of conflicts.slice(0, 2)) {
+            const [a, b] = conf.branches;
+            const kind = conf.type === 'chong' ? '冲' : conf.type === 'xing' ? '刑' : conf.type === 'zixing' ? '自刑' : '害';
+            const tryKeys = [`${a}_${b}_${kind}`, `${b}_${a}_${kind}`];
+            for (const k of tryKeys) {
+              if (cc[k]) { resolved.push({ ...cc[k], label: conf.label }); break; }
+            }
+          }
+          if (resolved.length === 0) return;
+          const block = document.createElement('div');
+          block.className = 'conflict-block mingli-match';
+          let html = '<div class="mingli-eyebrow">化 解 之 道</div>';
+          resolved.forEach(r => {
+            html += `<p>命有 <em>${r.label}</em>。</p>`;
+            html += `<p class="mingli-summary">${r.quote}</p>`;
+            html += `<cite>— ${r.book} · 检 索「${r.q}」</cite>`;
+          });
+          block.innerHTML = html;
+          // Insert before verdict
+          const verdict = ch7Body.querySelector('.verdict');
+          if (verdict) ch7Body.insertBefore(block, verdict);
+          else ch7Body.appendChild(block);
+        };
+        if (window.__conflictCache) applyConflictRAG();
+        else {
+          let tries = 0;
+          const wait = setInterval(() => {
+            if (window.__conflictCache || ++tries > 30) {
+              clearInterval(wait);
+              if (window.__conflictCache) applyConflictRAG();
+            }
+          }, 100);
+        }
 
         window.__hepan = { malePillars, femalePillars, maleChart, femaleChart, compat };
 
