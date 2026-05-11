@@ -74,26 +74,26 @@
     a { color: inherit; }
     em, i { font-style: normal; color: var(--vermillion); }
 
-    /* ============== COVER ============== */
+    /* ============== COVER · wayofcode-proportions ============== */
     .cover {
       min-height: 100vh;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      padding: 60px 24px;
+      padding: 80px 24px 60px;
       text-align: center;
       position: relative;
-      overflow: hidden;
     }
+    /* CONTAINED 3D art frame — not background. Like wayofcode's small centered orb. */
     .cover-3d {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
+      width: 220px;
+      height: 220px;
+      margin: 60px auto 80px;
+      background: rgba(20, 17, 14, 0.025);
       pointer-events: none;
     }
     .cover-3d canvas { display: block; width: 100%; height: 100%; }
-    .cover > *:not(.cover-3d) { position: relative; z-index: 1; }
-    /* 3D is now sparse enough that text needs no blend trick */
     @media print { .cover-3d { display: none; } }
+    @media (max-width: 720px) { .cover-3d { width: 160px; height: 160px; margin: 36px auto 50px; } }
     /* Cover · wayofcode-style restraint: title-first, score-second */
     .cover-eyebrow {
       font-family: var(--serif-en);
@@ -127,6 +127,15 @@
       background: var(--vermillion);
       opacity: 0.4;
       margin: 0 auto 80px;
+    }
+    .cover-attribution {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.9;
+      letter-spacing: 1px;
+      color: var(--ink-mute);
+      margin-top: 80px;
     }
     .cover-score {
       font-family: var(--serif);
@@ -948,18 +957,21 @@
   <div class="chapter-art" id="chapterArt" aria-hidden="true"></div>
   <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
 
-  <!-- ====== COVER · title first, score second (wayofcode restraint) ====== -->
+  <!-- ====== COVER · wayofcode landing proportions ====== -->
   <section class="cover">
-    <div class="cover-3d" id="cover3d" aria-hidden="true"></div>
     <div class="cover-eyebrow">Marriage · Compatibility</div>
     <div class="cover-mark">合</div>
     <div class="cover-tag">Two charts · One reading</div>
-    <div class="cover-divider"></div>
+    <div class="cover-3d" id="cover3d" aria-hidden="true"></div>
     <div class="cover-score" data-h="score">—</div>
     <div class="cover-tier" data-h="tier">推 演 中</div>
     <div class="cover-of">/ 100 · classical reading</div>
     <div class="cover-pair" data-h="pair">M · F</div>
     <div class="cover-trigram" data-h="trigram">☲ ☶</div>
+    <div class="cover-attribution">
+      编 自《穷通宝鉴》《三命通会》<br>
+      推 演 · 一 万 刘
+    </div>
     <div class="cover-scroll">scroll</div>
     <aside class="cover-baibi" aria-label="设计哲学">
       白 贲 无 咎
@@ -1220,7 +1232,8 @@
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(40, w() / h(), 0.1, 100);
-      camera.position.set(0, 0, 9);
+      // Closer camera + larger form fills the 220px frame like wayofcode
+      camera.position.set(0, 0, 6);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -1234,9 +1247,8 @@
       const INK = 0x14110E;
 
       // 两仪相含 — Stella Octangula (compound of two tetrahedra).
-      // 《周易·系辞》「太极生两仪」. 12 lines total, ~99% sparser than the previous knot.
-      // Two interlocked tetrahedra: yang (vermillion) + yin (ink).
-      const tetGeo = new THREE.TetrahedronGeometry(2.0);
+      // 《周易·系辞》「太极生两仪」. 12 lines total.
+      const tetGeo = new THREE.TetrahedronGeometry(1.6);
       const tetEdges = new THREE.EdgesGeometry(tetGeo);
       const matYang = new THREE.LineBasicMaterial({
         color: VERMILLION, transparent: true, opacity: 0.32,

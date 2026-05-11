@@ -81,12 +81,14 @@
       text-align: center;
     }
     .hero-3d {
-      position: absolute; inset: 0;
+      width: 220px;
+      height: 220px;
+      margin: 60px auto 36px;
       pointer-events: none;
-      z-index: 0;
+      background: rgba(20, 17, 14, 0.025);
     }
     .hero-3d canvas { display: block; width: 100%; height: 100%; }
-    .hero > *:not(.hero-3d):not(.hero-baibi) { position: relative; z-index: 1; }
+    @media (max-width: 720px) { .hero-3d { width: 160px; height: 160px; margin: 36px auto 24px; } }
     .hero-eyebrow {
       font-family: var(--serif-en);
       font-style: italic;
@@ -505,10 +507,10 @@
 
   <!-- ============== HERO ============== -->
   <section class="hero">
-    <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
     <div class="hero-eyebrow">Marriage · Compatibility</div>
     <div class="hero-mark">合</div>
     <div class="hero-line">A reading for two charts</div>
+    <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
     <div class="hero-sub">Twenty seconds · One reading · Forever</div>
     <a href="#form" class="hero-cta">合 一 次</a>
     <div class="hero-secondary">
@@ -686,7 +688,8 @@
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(40, w() / h(), 0.1, 100);
-      camera.position.set(0, 0, 9);
+      // Closer camera for contained 220px frame
+      camera.position.set(0, 0, 6);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -698,7 +701,7 @@
       // 《周易·系辞》「太极生两仪」.
       const VERMILLION = 0xB8362A;
       const INK = 0x14110E;
-      const tetGeo = new THREE.TetrahedronGeometry(2.0);
+      const tetGeo = new THREE.TetrahedronGeometry(1.6);
       const tetEdges = new THREE.EdgesGeometry(tetGeo);
       const yang = new THREE.LineSegments(tetEdges.clone(),
         new THREE.LineBasicMaterial({ color: VERMILLION, transparent: true, opacity: 0.32 }));
