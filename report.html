@@ -649,16 +649,16 @@
     /* Per-chapter corner 3D — single shared canvas, morphs by active chapter */
     .chapter-art {
       position: fixed;
-      top: 80px;
-      right: 40px;
-      width: 220px;
-      height: 220px;
+      top: 100px;
+      right: 60px;
+      width: 160px;
+      height: 160px;
       z-index: 30;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.6s ease;
+      transition: opacity 0.8s ease;
     }
-    .chapter-art.active { opacity: 0.7; }
+    .chapter-art.active { opacity: 0.45; }
     .chapter-art canvas { width: 100%; height: 100%; display: block; }
     @media (max-width: 880px) { .chapter-art { display: none; } }
     @media print { .chapter-art { display: none; } }
@@ -1298,7 +1298,7 @@
       camera.position.set(0, 0, 9);
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(220, 220);
+      renderer.setSize(160, 160);
       renderer.setClearColor(0x000000, 0);
       mount.appendChild(renderer.domElement);
 
@@ -1318,75 +1318,46 @@
         ch9: { fx: 1.4, fy: 2.6, az: 0.6,  px: 0.8, py: 0.0, tilt: 0.7 },  // 十二月
       };
 
-      // wayofcode-style: a SHEET of horizontal + vertical parallel curves only
-      // (not triangle wireframe). Looks like a flowing scroll of strands.
-      const W = 4.4;
-      const SEGS_X = 36;   // strands across (the "warp")
-      const SEGS_Y = 18;   // strands down (the "weft") — fewer for clarity
-      const RES = 60;      // points per strand — high res for smooth curves
-
+      // wayofcode aesthetic: a single CLOSED form per chapter — wireframe sphere
+      // that breathes via radial noise displacement. No torn-paper edges, no jagged
+      // corners. One organic orb, slowly pulsing.
       function makeFor (id) {
         const p = PARAMS[id] || PARAMS.ch1;
         const g = new THREE.Group();
-        // Build all strands as one BufferGeometry with line segments
-        // Each strand: array of points, drawn as connected line
-        // Total: SEGS_Y horizontal strands × RES segments + SEGS_X vertical strands × RES segments
-        const positions = []; // float[3] triplets, pairs = one line segment
-
-        // We'll generate lazily in the distort function — here just create empty buffers
-        const totalSegs = (SEGS_Y * RES + SEGS_X * RES) * 2; // 2 vertices per segment
-        const arr = new Float32Array(totalSegs * 3);
-        const geom = new THREE.BufferGeometry();
-        geom.setAttribute('position', new THREE.BufferAttribute(arr, 3));
-
-        const mesh = new THREE.LineSegments(geom, matLine);
-        mesh.rotation.x = -Math.PI / 2 + p.tilt;
-        mesh.rotation.z = p.tilt * 0.3;
+        // Subdivided icosahedron (closed surface, organic)
+        const ico = new THREE.IcosahedronGeometry(1.6, 3); // 642 verts, smooth feel
+        const origPos = new Float32Array(ico.attributes.position.array);
+        // Edge-thresholded wireframe (no triangle diagonals)
+        const edges = new THREE.EdgesGeometry(ico, 18);
+        const mesh = new THREE.LineSegments(edges, matLine);
         g.add(mesh);
-        g.userData = { p, mesh, arr };
+        g.userData = { p, mesh, ico, origPos };
         return g;
       }
 
-      // Per-frame: rebuild all strands with displaced z based on wave field
+      // Per-frame: radial noise displacement on each vertex — breathing orb
       function distort (group, t) {
         if (!group || !group.userData) return;
-        const { p, mesh, arr } = group.userData;
-
-        const wave = (x, y) => {
-          // smooth flowing wave — no diagonals, no noise
-          return Math.sin(x * p.fx + t * 0.6 + p.px) *
-                 Math.cos(y * p.fy + t * 0.4 + p.py) * p.az;
-        };
-
-        let i = 0;
-        // Horizontal strands (constant y, varying x)
-        for (let yi = 0; yi <= SEGS_Y; yi++) {
-          const y = -W/2 + (W * yi / SEGS_Y);
-          let lastX = -W/2, lastZ = wave(lastX, y);
-          for (let xi = 1; xi <= RES; xi++) {
-            const x = -W/2 + (W * xi / RES);
-            const z = wave(x, y);
-            // line segment from (lastX, y, lastZ) → (x, y, z)
-            arr[i++] = lastX; arr[i++] = y; arr[i++] = lastZ;
-            arr[i++] = x;     arr[i++] = y; arr[i++] = z;
-            lastX = x; lastZ = z;
-          }
+        const { p, mesh, ico, origPos } = group.userData;
+        const pos = ico.attributes.position;
+        const arr = pos.array;
+        for (let i = 0; i < arr.length; i += 3) {
+          const x0 = origPos[i], y0 = origPos[i+1], z0 = origPos[i+2];
+          const r0 = Math.sqrt(x0*x0 + y0*y0 + z0*z0);
+          // smooth low-frequency noise field for radial displacement
+          const disp = Math.sin(x0 * p.fx + t * 0.35) *
+                       Math.cos(y0 * p.fy + t * 0.27) *
+                       Math.sin(z0 * 1.4 + t * 0.18) * p.az * 0.45;
+          const s = 1 + disp / Math.max(r0, 0.01);
+          arr[i]   = x0 * s;
+          arr[i+1] = y0 * s;
+          arr[i+2] = z0 * s;
         }
-        // Vertical strands (constant x, varying y) — sparser
-        for (let xi = 0; xi <= SEGS_X; xi += 2) { // every-other for less density
-          const x = -W/2 + (W * xi / SEGS_X);
-          let lastY = -W/2, lastZ = wave(x, lastY);
-          for (let yi = 1; yi <= RES; yi++) {
-            const y = -W/2 + (W * yi / RES);
-            const z = wave(x, y);
-            arr[i++] = x; arr[i++] = lastY; arr[i++] = lastZ;
-            arr[i++] = x; arr[i++] = y;     arr[i++] = z;
-            lastY = y; lastZ = z;
-          }
-        }
-        // zero-fill rest of buffer
-        while (i < arr.length) arr[i++] = 0;
-        mesh.geometry.attributes.position.needsUpdate = true;
+        pos.needsUpdate = true;
+        // Rebuild edges (radial distortion can cross threshold)
+        const newEdges = new THREE.EdgesGeometry(ico, 18);
+        mesh.geometry.dispose();
+        mesh.geometry = newEdges;
       }
       window.__distortChapterMesh = distort;
 
@@ -1414,6 +1385,11 @@
         // Hide on cover (before ch1)
         const ch1 = document.getElementById('ch1');
         if (!ch1 || ch1.offsetTop > window.scrollY + window.innerHeight * 0.7) {
+          setChapter(null); return;
+        }
+        // Hide once user scrolls into the final section
+        const finalEl = document.querySelector('.final');
+        if (finalEl && finalEl.offsetTop <= window.scrollY + window.innerHeight * 0.6) {
           setChapter(null); return;
         }
         let active = null;
