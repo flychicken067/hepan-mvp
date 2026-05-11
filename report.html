@@ -195,43 +195,66 @@
       .cover-tier { font-size: 18px; letter-spacing: 8px; }
     }
 
-    /* ============== CHAPTER ============== */
+    /* ============== CHAPTER · wayofcode 2-col layout ============== */
     .chapter {
       min-height: 100vh;
-      padding: 140px 24px 100px;
-      max-width: 720px;
+      padding: 120px 32px 100px;
+      max-width: 1180px;
       margin: 0 auto;
       position: relative;
     }
     .chapter-num {
-      font-family: var(--serif);
-      font-weight: 300;
-      font-size: 140px;
-      line-height: 1;
-      color: var(--vermillion);
-      letter-spacing: -4px;
-      margin-bottom: 24px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 6px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      margin-bottom: 32px;
     }
+    .chapter-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 48px;
+    }
+    @media (max-width: 880px) {
+      .chapter { padding: 80px 22px 60px; }
+      .chapter-2col { grid-template-columns: 1fr; gap: 40px; }
+    }
+    .chapter-art-inline {
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 460px;
+      background: rgba(20, 17, 14, 0.025);
+      position: sticky;
+      top: 100px;
+    }
+    .chapter-art-inline canvas { display: block; width: 100%; height: 100%; }
+    @media (max-width: 880px) {
+      .chapter-art-inline { max-width: 280px; margin: 0 auto; position: static; }
+    }
+    @media print { .chapter-art-inline { display: none; } }
     .chapter-name {
       font-family: var(--serif);
       font-weight: 600;
-      font-size: 48px;
+      font-size: 32px;
       line-height: 1.2;
       letter-spacing: 8px;
       color: var(--ink);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     .chapter-en {
       font-family: var(--serif-en);
       font-style: italic;
-      font-size: 22px;
+      font-size: 18px;
       letter-spacing: 0;
       color: var(--ink-mute);
-      margin-bottom: 80px;
+      margin-bottom: 48px;
     }
     .chapter-body {
-      max-width: 580px;
-      margin: 0 auto;
+      max-width: 100%;
+      margin: 0;
     }
     .chapter-body p {
       margin-bottom: 32px;
@@ -655,22 +678,7 @@
     }
     @media (max-width: 720px), print { .counter { display: none; } }
 
-    /* Per-chapter corner 3D — single shared canvas, morphs by active chapter */
-    .chapter-art {
-      position: fixed;
-      top: 100px;
-      right: 60px;
-      width: 160px;
-      height: 160px;
-      z-index: 30;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-    .chapter-art.active { opacity: 0.45; }
-    .chapter-art canvas { width: 100%; height: 100%; display: block; }
-    @media (max-width: 880px) { .chapter-art { display: none; } }
-    @media print { .chapter-art { display: none; } }
+    /* (Removed old corner-fixed .chapter-art — replaced by inline .chapter-art-inline per chapter) */
 
     /* Bottom hairline progress bar — silent, wayofcode-style */
     .progress {
@@ -954,7 +962,6 @@
   </nav>
 
   <div class="counter" id="counter">00 / 09</div>
-  <div class="chapter-art" id="chapterArt" aria-hidden="true"></div>
   <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
 
   <!-- ====== COVER · wayofcode landing proportions ====== -->
@@ -981,72 +988,84 @@
 
   <!-- ====== 一 · 排盘 ====== -->
   <section class="chapter" id="ch1">
-    <div class="chapter-num">一</div>
-    <div class="chapter-name">排盘</div>
-    <div class="chapter-en">Build the Charts</div>
-    <div class="chapter-body">
-      <p class="lead">命理之始，是把生辰落到天干地支。每个人四柱八字，是后续一切推演的地基。</p>
-      <div class="chapter-svg" id="svg-pillars"></div>
-      <p data-h="ch1-male">男方四柱推演中。</p>
-      <p data-h="ch1-female">女方四柱推演中。</p>
-      <blockquote class="verdict">
+    <div class="chapter-num">CHAPTER 01 · 排盘</div>
+    <blockquote class="verdict">
         <button class="verdict-share" onclick="shareVerdict('ch1')">↗ 截图</button>
         <span class="verdict-line" data-h="v1-line">推演中</span>
         <span class="verdict-meta" data-h="v1-meta">子 平 推 演 · 排 盘</span>
       </blockquote>
+    <div class="chapter-2col">
+      <div class="chapter-art-inline" data-art="ch1"></div>
+      <div class="chapter-body">
+        <div class="chapter-name">排盘</div>
+        <div class="chapter-en">Build the Charts</div>
+      <p class="lead">命理之始，是把生辰落到天干地支。每个人四柱八字，是后续一切推演的地基。</p>
+      <div class="chapter-svg" id="svg-pillars"></div>
+      <p data-h="ch1-male">男方四柱推演中。</p>
+      <p data-h="ch1-female">女方四柱推演中。</p>
+      </div>
     </div>
   </section>
 
   <!-- ====== 二 · 五行 ====== -->
   <section class="chapter" id="ch2">
-    <div class="chapter-num">二</div>
-    <div class="chapter-name">五行</div>
-    <div class="chapter-en">The Five Elements</div>
-    <div class="chapter-body">
-      <p class="lead">五行讲的是命中各种能量的多寡。一人之内已有强弱，两人相照才显互补与缺口。</p>
-      <p data-h="ch2-male">男方五行强弱推演中。</p>
-      <p data-h="ch2-female">女方五行强弱推演中。</p>
-      <p data-h="ch2-mirror" class="lead">两人镜像关系推演中。</p>
-      <blockquote class="verdict">
+    <div class="chapter-num">CHAPTER 02 · 五行</div>
+    <blockquote class="verdict">
         <button class="verdict-share" onclick="shareVerdict('ch2')">↗ 截图</button>
         <span class="verdict-line" data-h="v2-line">推演中</span>
         <span class="verdict-meta" data-h="v2-meta">子 平 推 演 · 五 行</span>
       </blockquote>
+    <div class="chapter-2col">
+      <div class="chapter-art-inline" data-art="ch2"></div>
+      <div class="chapter-body">
+        <div class="chapter-name">五行</div>
+        <div class="chapter-en">The Five Elements</div>
+      <p class="lead">五行讲的是命中各种能量的多寡。一人之内已有强弱，两人相照才显互补与缺口。</p>
+      <p data-h="ch2-male">男方五行强弱推演中。</p>
+      <p data-h="ch2-female">女方五行强弱推演中。</p>
+      <p data-h="ch2-mirror" class="lead">两人镜像关系推演中。</p>
+      </div>
     </div>
   </section>
 
   <!-- ====== 三 · 格局 ====== -->
   <section class="chapter" id="ch3">
-    <div class="chapter-num">三</div>
-    <div class="chapter-name">格局</div>
-    <div class="chapter-en">The Pattern</div>
-    <div class="chapter-body">
-      <p class="lead">格局看的是命主在天地间扮演什么角色。日主之象，是一个人的底色。</p>
-      <p data-h="ch3-male">男方格局推演中。</p>
-      <p data-h="ch3-female">女方格局推演中。</p>
-      <blockquote data-h="ch3-quote">「丙火猛烈，欺霜侮雪。」<cite>— 《滴天髓》论丙火</cite></blockquote>
-      <blockquote class="verdict">
+    <div class="chapter-num">CHAPTER 03 · 格局</div>
+    <blockquote class="verdict">
         <button class="verdict-share" onclick="shareVerdict('ch3')">↗ 截图</button>
         <span class="verdict-line" data-h="v3-line">推演中</span>
         <span class="verdict-meta" data-h="v3-meta">子 平 推 演 · 格 局</span>
       </blockquote>
+    <div class="chapter-2col">
+      <div class="chapter-art-inline" data-art="ch3"></div>
+      <div class="chapter-body">
+        <div class="chapter-name">格局</div>
+        <div class="chapter-en">The Pattern</div>
+      <p class="lead">格局看的是命主在天地间扮演什么角色。日主之象，是一个人的底色。</p>
+      <p data-h="ch3-male">男方格局推演中。</p>
+      <p data-h="ch3-female">女方格局推演中。</p>
+      <blockquote data-h="ch3-quote">「丙火猛烈，欺霜侮雪。」<cite>— 《滴天髓》论丙火</cite></blockquote>
+      </div>
     </div>
   </section>
 
   <!-- ====== 四 · 用神（PAID） ====== -->
   <section class="chapter ch-paid" id="ch4">
-    <div class="chapter-num">四</div>
-    <div class="chapter-name">用神</div>
-    <div class="chapter-en">The Favorable</div>
-    <div class="chapter-body">
-      <p class="lead">用神是命中所求。两人若一方所缺正是另一方所盈，便是「天作之合」的真意。</p>
-      <p data-h="ch4-yongshen">用神判断推演中。</p>
-      <p data-h="ch4-liuhe">天干合化推演中。</p>
-      <blockquote class="verdict">
+    <div class="chapter-num">CHAPTER 04 · 用神</div>
+    <blockquote class="verdict">
         <button class="verdict-share" onclick="shareVerdict('ch4')">↗ 截图</button>
         <span class="verdict-line" data-h="v4-line">推演中</span>
         <span class="verdict-meta" data-h="v4-meta">子 平 推 演 · 用 神</span>
       </blockquote>
+    <div class="chapter-2col">
+      <div class="chapter-art-inline" data-art="ch4"></div>
+      <div class="chapter-body">
+        <div class="chapter-name">用神</div>
+        <div class="chapter-en">The Favorable</div>
+      <p class="lead">用神是命中所求。两人若一方所缺正是另一方所盈，便是「天作之合」的真意。</p>
+      <p data-h="ch4-yongshen">用神判断推演中。</p>
+      <p data-h="ch4-liuhe">天干合化推演中。</p>
+      </div>
     </div>
   </section>
 
@@ -1074,55 +1093,64 @@
 
   <!-- ====== 五 · 大运（PAID） ====== -->
   <section class="chapter ch-paid" id="ch5">
-    <div class="chapter-num">五</div>
-    <div class="chapter-name">大运</div>
-    <div class="chapter-en">The Decade</div>
-    <div class="chapter-body">
-      <p class="lead">大运是十年一节的命运推送。两人节律同步还是错开，决定了你们是同频共振还是轮替供能。</p>
-      <p data-h="ch5-male">男方大运推演中。</p>
-      <p data-h="ch5-female">女方大运推演中。</p>
-      <p data-h="ch5-meta" class="lead">两人节律推演中。</p>
-      <blockquote class="verdict">
+    <div class="chapter-num">CHAPTER 05 · 大运</div>
+    <blockquote class="verdict">
         <button class="verdict-share" onclick="shareVerdict('ch5')">↗ 截图</button>
         <span class="verdict-line" data-h="v5-line">推演中</span>
         <span class="verdict-meta" data-h="v5-meta">子 平 推 演 · 大 运</span>
       </blockquote>
+    <div class="chapter-2col">
+      <div class="chapter-art-inline" data-art="ch5"></div>
+      <div class="chapter-body">
+        <div class="chapter-name">大运</div>
+        <div class="chapter-en">The Decade</div>
+      <p class="lead">大运是十年一节的命运推送。两人节律同步还是错开，决定了你们是同频共振还是轮替供能。</p>
+      <p data-h="ch5-male">男方大运推演中。</p>
+      <p data-h="ch5-female">女方大运推演中。</p>
+      <p data-h="ch5-meta" class="lead">两人节律推演中。</p>
+      </div>
     </div>
   </section>
 
   <!-- ====== 六 · 流年（PAID） ====== -->
   <section class="chapter ch-paid" id="ch6">
-    <div class="chapter-num">六</div>
-    <div class="chapter-name">流年</div>
-    <div class="chapter-en">The Year at Hand</div>
-    <div class="chapter-body">
-      <p class="lead">流年是当下这一年的太岁能量。同一年对你和对她，作用未必相同。</p>
-      <p data-h="ch6-male">流年对男方推演中。</p>
-      <p data-h="ch6-female">流年对女方推演中。</p>
-      <p data-h="ch6-couple">本年两人交互推演中。</p>
-      <blockquote class="verdict">
+    <div class="chapter-num">CHAPTER 06 · 流年</div>
+    <blockquote class="verdict">
         <button class="verdict-share" onclick="shareVerdict('ch6')">↗ 截图</button>
         <span class="verdict-line" data-h="v6-line">推演中</span>
         <span class="verdict-meta" data-h="v6-meta">流年 · 太岁推演</span>
       </blockquote>
+    <div class="chapter-2col">
+      <div class="chapter-art-inline" data-art="ch6"></div>
+      <div class="chapter-body">
+        <div class="chapter-name">流年</div>
+        <div class="chapter-en">The Year at Hand</div>
+      <p class="lead">流年是当下这一年的太岁能量。同一年对你和对她，作用未必相同。</p>
+      <p data-h="ch6-male">流年对男方推演中。</p>
+      <p data-h="ch6-female">流年对女方推演中。</p>
+      <p data-h="ch6-couple">本年两人交互推演中。</p>
+      </div>
     </div>
   </section>
 
   <!-- ====== 七 · 合婚（PAID） ====== -->
   <section class="chapter ch-paid" id="ch7">
-    <div class="chapter-num">七</div>
-    <div class="chapter-name">合婚</div>
-    <div class="chapter-en">The Final Reading</div>
-    <div class="chapter-body">
-      <p class="lead">合婚是七章的归处。前六章一切推演，最终落在两人之间这一笔评断。</p>
-      <div class="chapter-svg" id="svg-hehun"></div>
-      <p data-h="ch7-summary">综合判断推演中。</p>
-      <p data-h="ch7-care">注意事项推演中。</p>
-      <blockquote class="verdict">
+    <div class="chapter-num">CHAPTER 07 · 合婚</div>
+    <blockquote class="verdict">
         <button class="verdict-share" onclick="shareVerdict('ch7')">↗ 截图</button>
         <span class="verdict-line" data-h="v7-line">推演中</span>
         <span class="verdict-meta" data-h="v7-meta">子 平 推 演 · 合 婚</span>
       </blockquote>
+    <div class="chapter-2col">
+      <div class="chapter-art-inline" data-art="ch7"></div>
+      <div class="chapter-body">
+        <div class="chapter-name">合婚</div>
+        <div class="chapter-en">The Final Reading</div>
+      <p class="lead">合婚是七章的归处。前六章一切推演，最终落在两人之间这一笔评断。</p>
+      <div class="chapter-svg" id="svg-hehun"></div>
+      <p data-h="ch7-summary">综合判断推演中。</p>
+      <p data-h="ch7-care">注意事项推演中。</p>
+      </div>
     </div>
   </section>
 
@@ -1292,141 +1320,92 @@
       animate();
     })();
 
-    // ============== PER-CHAPTER CORNER 3D ==============
-    // Single shared canvas, geometry swaps by active chapter — wayofcode style.
-    // Each form is justified by chapter content, not decoration.
+    // ============== PER-CHAPTER INLINE 3D ==============
+    // One canvas per chapter, placed in left column of each chapter's 2-col layout.
+    // Each chapter's art has unique (fx, fy, az) noise params. IntersectionObserver
+    // pauses rendering when not in viewport.
     (function initChapterArt () {
-      const mount = document.getElementById('chapterArt');
-      if (!mount) return;
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const slots = document.querySelectorAll('.chapter-art-inline[data-art]');
+      if (!slots.length) return;
 
-      // wayofcode aesthetic: single thin ink line, no color
       const INK = 0x14110E;
       const matLine = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.42 });
-      const matLineSoft = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.18 });
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-      camera.position.set(0, 0, 9);
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(160, 160);
-      renderer.setClearColor(0x000000, 0);
-      mount.appendChild(renderer.domElement);
-
-      // ----- factory: each chapter gets a parametric flowing mesh (wayofcode-style)
-      // PlaneGeometry 50x50, per-frame vertex displacement via sin/cos waves.
-      // Renders as wireframe LineSegments — looks like flowing cloth / wave field.
-      // Each chapter has unique (freq, amp, phase, tilt) params for visual variety.
       const PARAMS = {
-        ch1: { fx: 1.5, fy: 1.2, az: 0.6,  px: 0.0, py: 0.0, tilt: 0.5 },  // 排盘 · stable
-        ch2: { fx: 1.8, fy: 1.4, az: 0.55, px: 0.5, py: 0.3, tilt: 0.7 },  // 五行 · circular
-        ch3: { fx: 2.2, fy: 1.1, az: 0.5,  px: 0.0, py: 0.8, tilt: 0.4 },  // 格局
-        ch4: { fx: 1.2, fy: 2.4, az: 0.7,  px: 0.7, py: 0.0, tilt: 0.6 },  // 用神
-        ch5: { fx: 1.0, fy: 1.0, az: 0.8,  px: 0.0, py: 0.0, tilt: 0.3 },  // 大运 · long wave
-        ch6: { fx: 2.4, fy: 2.2, az: 0.5,  px: 1.0, py: 0.5, tilt: 0.5 },  // 流年 · 12 ripples
-        ch7: { fx: 1.6, fy: 1.6, az: 0.65, px: 0.3, py: 0.3, tilt: 0.5 },  // 合婚 · symmetric
-        ch8: { fx: 2.8, fy: 1.8, az: 0.55, px: 0.0, py: 1.2, tilt: 0.6 },  // 十二问
-        ch9: { fx: 1.4, fy: 2.6, az: 0.6,  px: 0.8, py: 0.0, tilt: 0.7 },  // 十二月
+        ch1: { fx: 1.5, fy: 1.2, az: 0.6 },
+        ch2: { fx: 1.8, fy: 1.4, az: 0.55 },
+        ch3: { fx: 2.2, fy: 1.1, az: 0.5 },
+        ch4: { fx: 1.2, fy: 2.4, az: 0.7 },
+        ch5: { fx: 1.0, fy: 1.0, az: 0.8 },
+        ch6: { fx: 2.4, fy: 2.2, az: 0.5 },
+        ch7: { fx: 1.6, fy: 1.6, az: 0.65 },
+        ch8: { fx: 2.8, fy: 1.8, az: 0.55 },
+        ch9: { fx: 1.4, fy: 2.6, az: 0.6 },
       };
 
-      // wayofcode aesthetic: a single CLOSED form per chapter — wireframe sphere
-      // that breathes via radial noise displacement. No torn-paper edges, no jagged
-      // corners. One organic orb, slowly pulsing.
-      function makeFor (id) {
+      const allArts = [];
+
+      slots.forEach(slot => {
+        const id = slot.dataset.art;
         const p = PARAMS[id] || PARAMS.ch1;
-        const g = new THREE.Group();
-        // Subdivided icosahedron (closed surface, organic)
-        const ico = new THREE.IcosahedronGeometry(1.6, 3); // 642 verts, smooth feel
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+        camera.position.set(0, 0, 5);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x000000, 0);
+        slot.appendChild(renderer.domElement);
+
+        const resize = () => {
+          const s = slot.clientWidth;
+          if (s > 0) { renderer.setSize(s, s); camera.aspect = 1; camera.updateProjectionMatrix(); }
+        };
+        resize();
+        if (window.ResizeObserver) new ResizeObserver(resize).observe(slot);
+        else window.addEventListener('resize', resize);
+
+        const ico = new THREE.IcosahedronGeometry(1.6, 3);
         const origPos = new Float32Array(ico.attributes.position.array);
-        // Edge-thresholded wireframe (no triangle diagonals)
-        const edges = new THREE.EdgesGeometry(ico, 18);
-        const mesh = new THREE.LineSegments(edges, matLine);
-        g.add(mesh);
-        g.userData = { p, mesh, ico, origPos };
-        return g;
-      }
+        let mesh = new THREE.LineSegments(new THREE.EdgesGeometry(ico, 18), matLine);
+        scene.add(mesh);
 
-      // Per-frame: radial noise displacement on each vertex — breathing orb
-      function distort (group, t) {
-        if (!group || !group.userData) return;
-        const { p, mesh, ico, origPos } = group.userData;
-        const pos = ico.attributes.position;
-        const arr = pos.array;
-        for (let i = 0; i < arr.length; i += 3) {
-          const x0 = origPos[i], y0 = origPos[i+1], z0 = origPos[i+2];
-          const r0 = Math.sqrt(x0*x0 + y0*y0 + z0*z0);
-          // smooth low-frequency noise field for radial displacement
-          const disp = Math.sin(x0 * p.fx + t * 0.35) *
-                       Math.cos(y0 * p.fy + t * 0.27) *
-                       Math.sin(z0 * 1.4 + t * 0.18) * p.az * 0.45;
-          const s = 1 + disp / Math.max(r0, 0.01);
-          arr[i]   = x0 * s;
-          arr[i+1] = y0 * s;
-          arr[i+2] = z0 * s;
-        }
-        pos.needsUpdate = true;
-        // Rebuild edges (radial distortion can cross threshold)
-        const newEdges = new THREE.EdgesGeometry(ico, 18);
-        mesh.geometry.dispose();
-        mesh.geometry = newEdges;
-      }
-      window.__distortChapterMesh = distort;
+        let active = false;
+        new IntersectionObserver(([e]) => { active = e.isIntersecting; }, { threshold: 0.05 }).observe(slot);
 
-      let current = null, currentId = null, dirty = true;
-      function setChapter (id) {
-        if (id === currentId) return;
-        currentId = id;
-        if (current) scene.remove(current);
-        if (id) {
-          current = makeFor(id);
-          if (current) {
-            scene.add(current);
-            mount.classList.add('active');
-          }
-        } else {
-          mount.classList.remove('active');
-        }
-        dirty = true;
-      }
-
-      // Watch which chapter is active by scroll position
-      const chapterIds = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'];
-      window.addEventListener('scroll', () => {
-        const offset = window.scrollY + 240;
-        // Hide on cover (before ch1)
-        const ch1 = document.getElementById('ch1');
-        if (!ch1 || ch1.offsetTop > window.scrollY + window.innerHeight * 0.7) {
-          setChapter(null); return;
-        }
-        // Hide once user scrolls into the final section
-        const finalEl = document.querySelector('.final');
-        if (finalEl && finalEl.offsetTop <= window.scrollY + window.innerHeight * 0.6) {
-          setChapter(null); return;
-        }
-        let active = null;
-        for (const id of chapterIds) {
-          const el = document.getElementById(id);
-          if (el && el.offsetTop <= offset) active = id;
-        }
-        setChapter(active);
-      }, { passive: true });
+        allArts.push({ p, scene, camera, renderer, ico, origPos, getMesh: () => mesh, setMesh: m => mesh = m, isActive: () => active });
+      });
 
       const clock = new THREE.Clock();
-      function animate () {
+      function animateAll () {
         const t = clock.getElapsedTime();
-        if (current) {
-          // Flow the parametric mesh
-          if (window.__distortChapterMesh) window.__distortChapterMesh(current, t);
-          current.rotation.z = Math.sin(t * 0.08) * 0.05;
+        for (const a of allArts) {
+          if (!a.isActive()) continue;
+          const { p, scene, camera, renderer, ico, origPos } = a;
+          const pos = ico.attributes.position;
+          const arr = pos.array;
+          for (let i = 0; i < arr.length; i += 3) {
+            const x0 = origPos[i], y0 = origPos[i+1], z0 = origPos[i+2];
+            const r0 = Math.sqrt(x0*x0 + y0*y0 + z0*z0);
+            const disp = Math.sin(x0 * p.fx + t * 0.35) *
+                         Math.cos(y0 * p.fy + t * 0.27) *
+                         Math.sin(z0 * 1.4 + t * 0.18) * p.az * 0.45;
+            const s = 1 + disp / Math.max(r0, 0.01);
+            arr[i] = x0 * s; arr[i+1] = y0 * s; arr[i+2] = z0 * s;
+          }
+          pos.needsUpdate = true;
+          // Rebuild edges
+          const old = a.getMesh();
+          old.geometry.dispose();
+          const newMesh = new THREE.LineSegments(new THREE.EdgesGeometry(ico, 18), matLine);
+          newMesh.rotation.z = Math.sin(t * 0.08) * 0.05;
+          scene.remove(old);
+          scene.add(newMesh);
+          a.setMesh(newMesh);
           renderer.render(scene, camera);
-        } else if (dirty) {
-          renderer.clear();
-          dirty = false;
         }
-        requestAnimationFrame(animate);
+        requestAnimationFrame(animateAll);
       }
-      animate();
+      animateAll();
     })();
   </script>
 
