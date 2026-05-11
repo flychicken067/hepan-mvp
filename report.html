@@ -1451,32 +1451,20 @@
         if (window.ResizeObserver) new ResizeObserver(resize).observe(slot);
         else window.addEventListener('resize', resize);
 
-        const ico = new THREE.IcosahedronGeometry(1.6, 2);  // 162 verts (lighter)
+        const ico = new THREE.IcosahedronGeometry(1.6, 3);  // 642 verts
         const origPos = new Float32Array(ico.attributes.position.array);
-        // Build EdgesGeometry ONCE — its topology never changes (radial displacement preserves edge classification)
-        const edgesGeom = new THREE.EdgesGeometry(ico, 18);
-        const edgeArr = edgesGeom.attributes.position.array;
-        // Map each edge endpoint position back to its sphere vertex index (one-time)
-        const numEdgePts = edgeArr.length / 3;
-        const edgeToVert = new Int32Array(numEdgePts);
-        for (let i = 0; i < numEdgePts; i++) {
-          const ex = edgeArr[i*3], ey = edgeArr[i*3+1], ez = edgeArr[i*3+2];
-          for (let j = 0; j < origPos.length / 3; j++) {
-            if (Math.abs(origPos[j*3] - ex) < 1e-5 &&
-                Math.abs(origPos[j*3+1] - ey) < 1e-5 &&
-                Math.abs(origPos[j*3+2] - ez) < 1e-5) {
-              edgeToVert[i] = j;
-              break;
-            }
-          }
-        }
-        const mesh = new THREE.LineSegments(edgesGeom, matLine);
+        let mesh = new THREE.LineSegments(new THREE.EdgesGeometry(ico, 18), matLine);
         scene.add(mesh);
 
         let active = false;
         new IntersectionObserver(([e]) => { active = e.isIntersecting; }, { threshold: 0.05 }).observe(slot);
 
-        const artRef = { id, p, scene, camera, renderer, edgesGeom, edgeArr, edgeToVert, origPos, mesh, isActive: () => active };
+        const artRef = {
+          id, p, scene, camera, renderer, ico, origPos,
+          edgeAngle: 18,
+          getMesh: () => mesh, setMesh: m => mesh = m,
+          isActive: () => active,
+        };
         allArts.push(artRef);
 
         // Wire Modify button for this chapter (rebuild geometry from DeepSeek params)
@@ -1520,31 +1508,17 @@
           default: geo = new THREE.IcosahedronGeometry(1.6, sub);
         }
         const origPos = new Float32Array(geo.attributes.position.array);
-        const edgesGeom = new THREE.EdgesGeometry(geo, params.edgeAngle);
-        const edgeArr = edgesGeom.attributes.position.array;
-        const numEdgePts = edgeArr.length / 3;
-        const edgeToVert = new Int32Array(numEdgePts);
-        for (let i = 0; i < numEdgePts; i++) {
-          const ex = edgeArr[i*3], ey = edgeArr[i*3+1], ez = edgeArr[i*3+2];
-          for (let j = 0; j < origPos.length / 3; j++) {
-            if (Math.abs(origPos[j*3] - ex) < 1e-4 &&
-                Math.abs(origPos[j*3+1] - ey) < 1e-4 &&
-                Math.abs(origPos[j*3+2] - ez) < 1e-4) {
-              edgeToVert[i] = j; break;
-            }
-          }
-        }
-        // Replace mesh + buffers
-        art.scene.remove(art.mesh);
-        const newMesh = new THREE.LineSegments(edgesGeom, matLine);
+        // Replace mesh: remove old, install new geometry
+        const old = art.getMesh();
+        art.scene.remove(old);
+        old.geometry.dispose();
+        const newMesh = new THREE.LineSegments(new THREE.EdgesGeometry(geo, params.edgeAngle), matLine);
         art.scene.add(newMesh);
-        art.mesh = newMesh;
-        art.edgesGeom = edgesGeom;
-        art.edgeArr = edgeArr;
-        art.edgeToVert = edgeToVert;
+        art.setMesh(newMesh);
+        art.ico = geo;
         art.origPos = origPos;
+        art.edgeAngle = params.edgeAngle;
         art.p = { fx: params.fx, fy: params.fy, az: params.amp };
-        art.rotSpeed = params.rotSpeed;
       }
 
       const clock = new THREE.Clock();
@@ -1552,23 +1526,28 @@
         const t = clock.getElapsedTime();
         for (const a of allArts) {
           if (!a.isActive()) continue;
-          const { p, scene, camera, renderer, edgesGeom, edgeArr, edgeToVert, origPos, mesh } = a;
-          // Update edge buffer positions in place — no allocation, no GC
-          for (let i = 0; i < edgeToVert.length; i++) {
-            const vi = edgeToVert[i] * 3;
-            const x0 = origPos[vi], y0 = origPos[vi+1], z0 = origPos[vi+2];
+          const { p, scene, camera, renderer, ico, origPos, edgeAngle } = a;
+          // Update icosphere vertex positions (radial noise displacement)
+          const pos = ico.attributes.position;
+          const arr = pos.array;
+          for (let i = 0; i < arr.length; i += 3) {
+            const x0 = origPos[i], y0 = origPos[i+1], z0 = origPos[i+2];
             const r0 = Math.sqrt(x0*x0 + y0*y0 + z0*z0) || 1e-3;
             const disp = Math.sin(x0 * p.fx + t * 0.32) *
                          Math.cos(y0 * p.fy + t * 0.24) *
                          Math.sin(z0 * 1.3 + t * 0.16) * p.az * 0.42;
             const s = 1 + disp / r0;
-            const o = i * 3;
-            edgeArr[o]   = x0 * s;
-            edgeArr[o+1] = y0 * s;
-            edgeArr[o+2] = z0 * s;
+            arr[i] = x0 * s; arr[i+1] = y0 * s; arr[i+2] = z0 * s;
           }
-          edgesGeom.attributes.position.needsUpdate = true;
-          mesh.rotation.z = Math.sin(t * 0.06) * 0.04;
+          pos.needsUpdate = true;
+          // Rebuild EdgesGeometry from updated sphere — known-working approach
+          const old = a.getMesh();
+          old.geometry.dispose();
+          const newMesh = new THREE.LineSegments(new THREE.EdgesGeometry(ico, edgeAngle), matLine);
+          newMesh.rotation.z = Math.sin(t * 0.06) * 0.04;
+          scene.remove(old);
+          scene.add(newMesh);
+          a.setMesh(newMesh);
           renderer.render(scene, camera);
         }
         requestAnimationFrame(animateAll);
