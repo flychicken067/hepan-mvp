@@ -459,6 +459,47 @@
       .price-amount sup { font-size: 40px; }
     }
 
+    /* ============== FAQ ============== */
+    .faq {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 80px 24px 0;
+      border-top: 1px solid var(--hair);
+    }
+    .faq-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--vermillion);
+      text-transform: uppercase;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--hair);
+      padding: 28px 0;
+    }
+    .faq-q {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: 1px;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+    .faq-a {
+      font-family: var(--serif);
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--ink-mute);
+    }
+    .faq-a em {
+      font-style: normal;
+      color: var(--ink);
+      border-bottom: 1px solid var(--hair);
+    }
+    @media (max-width: 720px) { .faq { padding: 60px 20px 0; } }
+
     /* ============== FOOTER ============== */
     .colophon {
       font-family: var(--mono);
@@ -505,173 +546,59 @@
 
   <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
 
-  <!-- ============== HERO ============== -->
+  <!-- ============== SINGLE-SCREEN MVP · Gank case: input + button + pay ============== -->
   <section class="hero">
-    <div class="hero-eyebrow">Marriage · Compatibility</div>
     <div class="hero-mark">合</div>
     <div class="hero-line">A reading for two charts</div>
     <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
-    <div class="hero-sub">Twenty seconds · One reading · Forever</div>
-    <a href="#form" class="hero-cta">合 一 次</a>
-    <div class="hero-secondary">
-      <a href="cases.html">先看 6 对名人是怎么合的</a>
-      <a href="#why">这次和别处算的有什么不一样</a>
-    </div>
-  </section>
 
-  <!-- ============== EPIGRAPH ============== -->
-  <section class="epigraph">
-    <div>
-      <p class="epigraph-text">
-        其实你心里早就有<em>那个问题</em>了——<br>
-        我们能不能走到最后？<br>
-        今年到底是不是那一年？<br>
-        他妈说我俩不合，但我不舍得放手。<br><br>
-        合一次。<br>
-        <em>把心里悬着的那个答案，一次说清。</em>
-      </p>
-      <div class="epigraph-cite">— 给所有还在犹豫的人</div>
-    </div>
-  </section>
-
-  <!-- ============== WHY (outcomes, not features) ============== -->
-  <section class="why" id="why">
-    <div class="why-num">壹</div>
-    <div class="why-title">合 完 你 会 知 道</div>
-
-    <div class="why-row">
-      <div class="why-row-label">01</div>
-      <div class="why-row-text">
-        <b>你和 ta 到底合不合</b>。一个分数，一句卦象，一段三句话能讲清的判决。<em>不是「你温柔体贴他事业有成」那种放谁身上都能用的废话。</em>
-      </div>
-    </div>
-    <div class="why-row">
-      <div class="why-row-label">02</div>
-      <div class="why-row-text">
-        <b>今年是不是那一年</b>。结婚 / 同居 / 生孩子 / 大投资——这一年下手稳不稳，下个月该谁掌舵，明年要不要先沉一沉。<em>具体到月，不打太极。</em>
-      </div>
-    </div>
-    <div class="why-row">
-      <div class="why-row-label">03</div>
-      <div class="why-row-text">
-        <b>12 个心里最难启齿的问题，一张卡一行答</b>。「我们会因为钱吵架吗」「谁更需要谁」「30 年后还在一起吗」——你不好问 ta，也不想问妈。这里替你问，替你答。
-      </div>
-    </div>
-    <div class="why-row">
-      <div class="why-row-label">04</div>
-      <div class="why-row-text">
-        <b>一份能保存、能截图、能给妈看的「凭据」</b>。不是 APP 关了就消失的弹窗，是 PDF 永久存档。<em>下次再被问「你俩到底合不合」，有依据。</em>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== FORM ============== -->
-  <section class="form-section" id="form">
-    <div class="form-num">贰</div>
-    <div class="form-title">合 一 次</div>
-    <p style="font-family:var(--mono);font-size:11px;letter-spacing:4px;color:var(--ink-mute);text-transform:uppercase;text-align:center;margin-bottom:60px;">
-      你 和 ta · 各 填 一 个 生 日 · 不 知 时 辰 也 行
-    </p>
-
-    <form id="hepan-form" onsubmit="return submitForm(event)">
+    <form id="hepan-form" class="hero-form" onsubmit="return submitForm(event)">
       <div class="form-grid">
-        <!-- 男 -->
-        <div>
-          <div class="form-col-eyebrow">男 · MALE</div>
-          <div class="form-field">
-            <label>公 历 出 生 日 期</label>
+        <div class="form-col">
+          <label>男 · MALE</label>
+          <div class="form-row-inputs">
             <input type="date" id="male-date" name="male-date" value="1991-07-25" required>
-          </div>
-          <div class="form-field">
-            <label>出 生 时 辰</label>
             <input type="time" id="male-time" name="male-time" value="12:00" required>
-            <div class="form-hint">不知时辰？保留 12:00 即可（按午时推）</div>
           </div>
           <div class="form-bazi" id="male-bazi" aria-live="polite"></div>
         </div>
-
-        <!-- 女 -->
-        <div>
-          <div class="form-col-eyebrow">女 · FEMALE</div>
-          <div class="form-field">
-            <label>公 历 出 生 日 期</label>
+        <div class="form-col">
+          <label>女 · FEMALE</label>
+          <div class="form-row-inputs">
             <input type="date" id="female-date" name="female-date" value="1992-11-28" required>
-          </div>
-          <div class="form-field">
-            <label>出 生 时 辰</label>
             <input type="time" id="female-time" name="female-time" value="04:00" required>
-            <div class="form-hint">不知时辰？保留 12:00 即可（按午时推）</div>
           </div>
           <div class="form-bazi" id="female-bazi" aria-live="polite"></div>
         </div>
       </div>
-
-      <button type="submit" class="form-submit">合 一 次 →</button>
-
-      <div class="form-foot">
-        前 三 章 免 费 看 · &nbsp;
-        <a onclick="fillSample()" style="color:var(--vermillion);cursor:pointer;border-bottom:1px dashed currentColor;text-decoration:none;">先 用 邓 超 孙 俪 试 试</a>
-      </div>
+      <button type="submit" class="hero-cta">合 一 次 · ¥29</button>
     </form>
-  </section>
 
-  <!-- ============== 三 问 · CANDOR ON LIMITS ============== -->
-  <section class="why" id="three-questions" style="padding-top:60px;">
-    <div class="why-num">叁</div>
-    <div class="why-title">三 问</div>
-    <p style="font-family:var(--mono);font-size:11px;letter-spacing:4px;color:var(--ink-mute);text-transform:uppercase;margin-bottom:60px;">
-      QUESTIONS WORTH ASKING BEFORE YOU PAY
-    </p>
-
-    <div class="why-row">
-      <div class="why-row-label">壹</div>
-      <div class="why-row-text">
-        <b>同样的两个生日，每次推演结果一样吗？</b><br>
-        <em style="color:var(--vermillion);font-style:normal;">一样。</em>本网站完全确定性——同输入永远同输出。不掷骰子，不"千人千面"包装。<br>
-        <span style="color:var(--ink-mute);font-size:14px;">同一份 PDF 你十年后再算一次还是这一份。</span>
-      </div>
-    </div>
-
-    <div class="why-row">
-      <div class="why-row-label">贰</div>
-      <div class="why-row-text">
-        <b>我和我朋友生日完全一样，合盘结果就一样吗？</b><br>
-        <em style="color:var(--vermillion);font-style:normal;">本网站给的同一份。但你们的"运"不会一样。</em><br>
-        复旦王德峰先生当年问过命理大家洪丕谟同样的问题，洪先生答：<br>
-        <span style="color:var(--ink);font-style:italic;">「我看过那么多八字，没看到过完全相同的。」</span><br>
-        <span style="color:var(--ink-mute);font-size:14px;">同八字的人极其罕见——双胞胎也差分秒。我们给「命的设计」，不给「运的展开」。</span>
-      </div>
-    </div>
-
-    <div class="why-row">
-      <div class="why-row-label">叁</div>
-      <div class="why-row-text">
-        <b>这东西到底准不准？</b><br>
-        <em style="color:var(--vermillion);font-style:normal;">十之六七。</em><br>
-        王德峰先生学了三十年命理，亲口说：<br>
-        <span style="color:var(--ink);font-style:italic;">「我最后算的时候，只能看到十之六七，30%-40% 是看不到的。」</span><br>
-        <span style="color:var(--ink-mute);font-size:14px;">你的性格底色、五行配置、合婚等级、大运方向——这些能看到。具体哪天发生什么——看不到。任何说能精确到日的，都另有神通，不是命理学。</span>
-      </div>
+    <div class="hero-foot">
+      前 三 章 免 费 试 看 · 看 完 不 喜 欢 原 路 退 ·
+      <a onclick="fillSample()" style="cursor:pointer;border-bottom:1px dashed currentColor;">先用样例</a> ·
+      <a href="cases.html">看名人案例</a>
     </div>
   </section>
 
-  <!-- ============== TESTIMONIAL · ONE LINE OF CUSTOMER VOICE ============== -->
-  <section class="epigraph" style="min-height:60vh;">
-    <div>
-      <p class="epigraph-text" style="font-size:24px;">
-        「打中了。<br>
-        不是「你温柔体贴他事业有成」那种<br>
-        放谁身上都能用的话——<br>
-        是<em>具体到我和他</em>的那一句。」
-      </p>
-      <div class="epigraph-cite">— 一位用过的人</div>
+  <!-- ============== FAQ ============== -->
+  <section class="faq">
+    <p class="faq-eyebrow">FAQ · 常 见 问 题</p>
+
+    <div class="faq-item">
+      <p class="faq-q">输入的是阳历还是阴历？</p>
+      <p class="faq-a">填<em>阳历（公历）</em>，即身份证上的出生日期。如果你只知道农历生日，可用手机备忘录里的日历 App 转换，或直接告诉我们农历日期，我们后续会支持农历直接输入。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">不知道出生时间怎么办？</p>
+      <p class="faq-a">时间框<em>默认正午 12:00</em>，直接点「合一次」即可。报告会注明「时辰以正午推算，时柱仅供参考」。古法依据：《八字提要》「时柱不确，以日柱为主」——合婚核心看日柱，时柱影响有限。</p>
     </div>
   </section>
 
   <!-- ============== COLOPHON ============== -->
   <p class="colophon">
-    一 次 看 清 · 不 缠 你 不 催 你<br>
-    PDF 永 久 保 存 · 看 完 不 喜 欢 原 路 退
+    HEPAN · 子 平 推 演 · 一 次 买 断 · 不 订 阅
   </p>
 
   <!-- ============== 3D HERO BACKGROUND ============== -->
