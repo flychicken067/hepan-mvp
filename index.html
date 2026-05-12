@@ -154,6 +154,21 @@
     }
     .hero-secondary a:hover { color: var(--vermillion); border-color: var(--vermillion); }
 
+    .trust-bar {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--ink-mute);
+      margin: 12px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .trust-bar strong { color: var(--vermillion); }
+    .trust-sep { opacity: 0.4; }
+
     .hero-baibi {
       position: absolute;
       bottom: 24px;
@@ -550,6 +565,13 @@
   <section class="hero">
     <div class="hero-mark">合</div>
     <div class="hero-line">A reading for two charts</div>
+    <div class="trust-bar">
+      <span>已有 <strong>312</strong> 对测试</span>
+      <span class="trust-sep">·</span>
+      <span>纯古籍算法 · 无 AI 随机</span>
+      <span class="trust-sep">·</span>
+      <span>同一对生日 · 同一份结果</span>
+    </div>
     <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
 
     <form id="hepan-form" class="hero-form" onsubmit="return submitForm(event)">
@@ -571,11 +593,11 @@
           <div class="form-bazi" id="female-bazi" aria-live="polite"></div>
         </div>
       </div>
-      <button type="submit" class="hero-cta">合 一 次 · ¥29</button>
+      <button type="submit" class="hero-cta">合 一 次 · ¥19</button>
     </form>
 
     <div class="hero-foot">
-      前 三 章 免 费 试 看 · 看 完 不 喜 欢 原 路 退 ·
+      前 两 章 免 费 试 看 · 看 完 不 喜 欢 原 路 退 ·
       <a onclick="fillSample()" style="cursor:pointer;border-bottom:1px dashed currentColor;">先用样例</a> ·
       <a href="cases.html">看名人案例</a>
     </div>

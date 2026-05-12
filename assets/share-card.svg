@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" width="1080" height="1350">
+  <defs>
+    <!-- Background gradient: 宣纸暖白 -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#F8F4EC"/>
+      <stop offset="60%"  stop-color="#FAF7F0"/>
+      <stop offset="100%" stop-color="#F2EDE0"/>
+    </linearGradient>
+    <!-- Score accent gradient -->
+    <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#B8362A"/>
+      <stop offset="100%" stop-color="#8B1A10"/>
+    </linearGradient>
+    <!-- Five-element bar gradients -->
+    <linearGradient id="barM" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4dab9e"/><stop offset="100%" stop-color="#7ecfc6"/>
+    </linearGradient>
+    <linearGradient id="barH" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c94a30"/><stop offset="100%" stop-color="#ff8a75"/>
+    </linearGradient>
+    <linearGradient id="barT" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b89200"/><stop offset="100%" stop-color="#ffd060"/>
+    </linearGradient>
+    <linearGradient id="barJ" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8090a0"/><stop offset="100%" stop-color="#c8d0d8"/>
+    </linearGradient>
+    <linearGradient id="barS" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3a70cc"/><stop offset="100%" stop-color="#7eb3ff"/>
+    </linearGradient>
+    <!-- Seal stamp gradient -->
+    <linearGradient id="sealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#B8362A" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#8B1A10" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="1080" height="1350" fill="url(#bgGrad)"/>
+
+  <!-- Subtle grain texture lines -->
+  <rect width="1080" height="1350" fill="none" stroke="#C8B896" stroke-width="0.4" opacity="0.12"/>
+
+  <!-- Top border band -->
+  <rect x="0" y="0" width="1080" height="6" fill="#B8362A" opacity="0.85"/>
+  <!-- Bottom border band -->
+  <rect x="0" y="1344" width="1080" height="6" fill="#B8362A" opacity="0.85"/>
+
+  <!-- ── Decorative ink brush strokes (top-right corner) ── -->
+  <g opacity="0.07" fill="none" stroke="#3A2510" stroke-linecap="round">
+    <path d="M 860,60 Q 920,120 900,200" stroke-width="18"/>
+    <path d="M 900,80 Q 980,160 960,260" stroke-width="10"/>
+    <path d="M 940,50 Q 1020,130 1000,230" stroke-width="6"/>
+  </g>
+
+  <!-- ── Header: 干支 tags ── -->
+  <!-- Male tag -->
+  <rect x="192" y="110" width="220" height="64" rx="4" fill="none" stroke="#3A2510" stroke-width="1.5" opacity="0.35"/>
+  <text x="302" y="150" font-family="'Noto Serif SC', serif" font-size="24" fill="#3A2510" text-anchor="middle" opacity="0.75" letter-spacing="4">男命 · 丙火</text>
+
+  <!-- Female tag -->
+  <rect x="668" y="110" width="220" height="64" rx="4" fill="none" stroke="#B8362A" stroke-width="1.5" opacity="0.45"/>
+  <text x="778" y="150" font-family="'Noto Serif SC', serif" font-size="24" fill="#B8362A" text-anchor="middle" opacity="0.85" letter-spacing="4">女命 · 戊土</text>
+
+  <!-- Connector between tags -->
+  <line x1="412" y1="142" x2="500" y2="142" stroke="#3A2510" stroke-width="1" opacity="0.25" stroke-dasharray="4,6"/>
+  <text x="540" y="148" font-family="serif" font-size="18" fill="#3A2510" text-anchor="middle" opacity="0.35">×</text>
+  <line x1="580" y1="142" x2="668" y2="142" stroke="#3A2510" stroke-width="1" opacity="0.25" stroke-dasharray="4,6"/>
+
+  <!-- ── Hero: Big Score ── -->
+  <text x="540" y="390" font-family="'Cormorant Garamond', 'Georgia', serif" font-size="280" font-weight="700" fill="url(#scoreGrad)" text-anchor="middle" letter-spacing="-8">93</text>
+
+  <!-- Score label -->
+  <text x="540" y="450" font-family="'Noto Serif SC', serif" font-size="28" fill="#6B4E2A" text-anchor="middle" letter-spacing="10" opacity="0.7">缘 分 指 数</text>
+
+  <!-- Tier badge -->
+  <rect x="390" y="475" width="300" height="48" rx="24" fill="#B8362A" opacity="0.12"/>
+  <rect x="390" y="475" width="300" height="48" rx="24" fill="none" stroke="#B8362A" stroke-width="1.5" opacity="0.4"/>
+  <text x="540" y="506" font-family="'Noto Serif SC', serif" font-size="20" fill="#B8362A" text-anchor="middle" letter-spacing="6" opacity="0.9">上 佳 合 婚</text>
+
+  <!-- ── Divider: ink line ── -->
+  <line x1="150" y1="560" x2="930" y2="560" stroke="#C8B896" stroke-width="1" opacity="0.5"/>
+  <circle cx="540" cy="560" r="4" fill="#B8362A" opacity="0.5"/>
+  <circle cx="150" cy="560" r="3" fill="#C8B896" opacity="0.4"/>
+  <circle cx="930" cy="560" r="3" fill="#C8B896" opacity="0.4"/>
+
+  <!-- ── Section label: 五行镜像 ── -->
+  <text x="540" y="620" font-family="'Noto Serif SC', serif" font-size="18" fill="#6B4E2A" text-anchor="middle" letter-spacing="8" opacity="0.55">— 五 行 镜 像 —</text>
+
+  <!-- ── Five-element dual bar chart ── -->
+  <!-- Column headers -->
+  <text x="300" y="660" font-family="'Noto Serif SC', serif" font-size="15" fill="#3A2510" text-anchor="middle" opacity="0.5" letter-spacing="3">男</text>
+  <text x="780" y="660" font-family="'Noto Serif SC', serif" font-size="15" fill="#B8362A" text-anchor="middle" opacity="0.6" letter-spacing="3">女</text>
+
+  <!-- Row: 木 -->
+  <text x="540" y="702" font-family="'Noto Serif SC', serif" font-size="18" fill="#4dab9e" text-anchor="middle" opacity="0.85" letter-spacing="4">木</text>
+  <!-- Male bar (left, extends left from center) -->
+  <rect x="300" y="688" width="200" height="18" rx="2" fill="url(#barM)" opacity="0.75"/>
+  <!-- Female bar (right, extends right from center) -->
+  <rect x="580" y="688" width="140" height="18" rx="2" fill="url(#barM)" opacity="0.55"/>
+
+  <!-- Row: 火 -->
+  <text x="540" y="742" font-family="'Noto Serif SC', serif" font-size="18" fill="#ff8a75" text-anchor="middle" opacity="0.85" letter-spacing="4">火</text>
+  <rect x="370" y="728" width="130" height="18" rx="2" fill="url(#barH)" opacity="0.75"/>
+  <rect x="580" y="728" width="190" height="18" rx="2" fill="url(#barH)" opacity="0.55"/>
+
+  <!-- Row: 土 -->
+  <text x="540" y="782" font-family="'Noto Serif SC', serif" font-size="18" fill="#c8a020" text-anchor="middle" opacity="0.85" letter-spacing="4">土</text>
+  <rect x="420" y="768" width="80" height="18" rx="2" fill="url(#barT)" opacity="0.75"/>
+  <rect x="580" y="768" width="160" height="18" rx="2" fill="url(#barT)" opacity="0.55"/>
+
+  <!-- Row: 金 -->
+  <text x="540" y="822" font-family="'Noto Serif SC', serif" font-size="18" fill="#8090a0" text-anchor="middle" opacity="0.85" letter-spacing="4">金</text>
+  <rect x="340" y="808" width="160" height="18" rx="2" fill="url(#barJ)" opacity="0.75"/>
+  <rect x="580" y="808" width="90" height="18" rx="2" fill="url(#barJ)" opacity="0.55"/>
+
+  <!-- Row: 水 -->
+  <text x="540" y="862" font-family="'Noto Serif SC', serif" font-size="18" fill="#7eb3ff" text-anchor="middle" opacity="0.85" letter-spacing="4">水</text>
+  <rect x="400" y="848" width="100" height="18" rx="2" fill="url(#barS)" opacity="0.75"/>
+  <rect x="580" y="848" width="120" height="18" rx="2" fill="url(#barS)" opacity="0.55"/>
+
+  <!-- ── Divider ── -->
+  <line x1="150" y1="910" x2="930" y2="910" stroke="#C8B896" stroke-width="1" opacity="0.4"/>
+
+  <!-- ── Classical quote ── -->
+  <!-- Decorative quote marks -->
+  <text x="155" y="975" font-family="Georgia, serif" font-size="52" fill="#B8362A" opacity="0.2">"</text>
+
+  <text x="540" y="980" font-family="'Noto Serif SC', serif" font-size="26" fill="#3A2510" text-anchor="middle" letter-spacing="5" opacity="0.85">丙辛合化水，情深义重</text>
+  <text x="540" y="1024" font-family="'Noto Serif SC', serif" font-size="26" fill="#3A2510" text-anchor="middle" letter-spacing="5" opacity="0.85">如深潭之静，岁深情长</text>
+
+  <!-- Source attribution -->
+  <text x="540" y="1070" font-family="'Noto Serif SC', serif" font-size="16" fill="#6B4E2A" text-anchor="middle" letter-spacing="6" opacity="0.5">— 《三命通会》</text>
+
+  <!-- ── Divider ── -->
+  <line x1="150" y1="1110" x2="930" y2="1110" stroke="#C8B896" stroke-width="1" opacity="0.4"/>
+
+  <!-- ── URL / CTA ── -->
+  <text x="540" y="1170" font-family="'Noto Serif SC', serif" font-size="20" fill="#6B4E2A" text-anchor="middle" letter-spacing="4" opacity="0.6">测 你 们 的 缘 分 指 数</text>
+
+  <rect x="190" y="1192" width="700" height="56" rx="6" fill="#B8362A" opacity="0.08"/>
+  <rect x="190" y="1192" width="700" height="56" rx="6" fill="none" stroke="#B8362A" stroke-width="1.5" opacity="0.3"/>
+  <text x="540" y="1227" font-family="'Courier New', monospace" font-size="19" fill="#B8362A" text-anchor="middle" letter-spacing="1" opacity="0.8">flychicken067.github.io/hepan-mvp</text>
+
+  <!-- ── Seal stamp (bottom-right) ── -->
+  <g transform="translate(872, 1265)">
+    <rect x="-44" y="-44" width="88" height="88" rx="4" fill="none" stroke="#B8362A" stroke-width="2.5" opacity="0.6"/>
+    <rect x="-38" y="-38" width="76" height="76" rx="2" fill="none" stroke="#B8362A" stroke-width="1" opacity="0.3"/>
+    <text x="0" y="-8"  font-family="'Noto Serif SC', serif" font-size="20" fill="#B8362A" text-anchor="middle" opacity="0.75" letter-spacing="2">河</text>
+    <text x="0" y="16" font-family="'Noto Serif SC', serif" font-size="20" fill="#B8362A" text-anchor="middle" opacity="0.75" letter-spacing="2">畔</text>
+  </g>
+
+  <!-- ── Branding tagline (bottom-left) ── -->
+  <text x="150" y="1295" font-family="'Noto Serif SC', serif" font-size="15" fill="#6B4E2A" opacity="0.45" letter-spacing="4">古 籍 八 字 合 婚 · 纯 算 法</text>
+  <text x="150" y="1318" font-family="'Courier New', monospace" font-size="12" fill="#6B4E2A" opacity="0.35" letter-spacing="1">2026 · HEPAN MVP</text>
+</svg>

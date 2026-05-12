@@ -6,17 +6,17 @@
   'use strict';
 
   const COLORS = {
-    paper: '#F5EFE0',
-    paperWarm: '#EDE3CB',
-    ink: '#1A1817',
-    inkSoft: '#3A332D',
-    inkMute: '#6B5F52',
-    vermillion: '#B8362A',
-    vermillionSoft: '#C9554A',
-    gold: '#B8924A',
-    goldSoft: '#D4B370',
-    jade: '#4F6B5C',
-    fiveColors: { '木': '#4F6B5C', '火': '#B8362A', '土': '#B8924A', '金': '#92A0A6', '水': '#2A4858' }
+    paper: 'rgba(255,255,255,0.14)',
+    paperWarm: 'rgba(255,255,255,0.22)',
+    ink: 'rgba(255,255,255,0.93)',
+    inkSoft: 'rgba(255,255,255,0.78)',
+    inkMute: 'rgba(255,255,255,0.45)',
+    vermillion: '#ff8a75',
+    vermillionSoft: '#ffb3a8',
+    gold: '#ffd060',
+    goldSoft: '#ffe49a',
+    jade: '#7ecfc6',
+    fiveColors: { '木': '#7ecfc6', '火': '#ff8a75', '土': '#ffd060', '金': '#c8d0d8', '水': '#7eb3ff' }
   };
 
   // ============== 01 · 排盘 (Both charts side by side) ==============

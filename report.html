@@ -983,6 +983,63 @@
       .chapter { min-height: auto; padding: 60px 0; page-break-inside: avoid; }
       .cover { min-height: auto; padding: 40px 0; page-break-after: always; }
     }
+
+    /* ===== PER-CHAPTER GRADIENT ART PANELS ===== */
+    .chapter-art-inline[data-art="ch1"] { background: linear-gradient(145deg, #0d1b5e 0%, #1a2f8a 55%, #0a1230 100%); }
+    .chapter-art-inline[data-art="ch2"] { background: linear-gradient(145deg, #5a0e0e 0%, #8b1a1a 55%, #2d0505 100%); }
+    .chapter-art-inline[data-art="ch3"] { background: linear-gradient(145deg, #0b2d1a 0%, #1a4d2e 55%, #061508 100%); }
+    .chapter-art-inline[data-art="ch4"] { background: linear-gradient(145deg, #1f063a 0%, #3d0a6e 55%, #100330 100%); }
+    .chapter-art-inline[data-art="ch5"] { background: linear-gradient(145deg, #002a2a 0%, #005252 55%, #001515 100%); }
+    .chapter-art-inline[data-art="ch6"] { background: linear-gradient(145deg, #2d1000 0%, #5a2700 55%, #180800 100%); }
+    .chapter-art-inline[data-art="ch7"] { background: linear-gradient(145deg, #141020 0%, #221a3a 55%, #0a0810 100%); }
+    .chapter-art-inline[data-art="ch8"] { background: linear-gradient(145deg, #081520 0%, #102540 55%, #040810 100%); }
+    .chapter-art-inline[data-art="ch9"] { background: linear-gradient(145deg, #280415 0%, #500a28 55%, #140208 100%); }
+
+    /* ===== COVER SHARE HINT ===== */
+    .cover-share {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cover-share-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+    }
+    .btn-share-copy {
+      padding: 8px 22px;
+      background: transparent;
+      border: 1px solid var(--vermillion);
+      color: var(--vermillion);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-share-copy:hover { background: var(--vermillion); color: var(--paper); }
+    .btn-share-copy.copied { background: var(--vermillion); color: var(--paper); opacity: 0.7; }
+
+    /* ===== GATE HOOK TEXT ===== */
+    .gate-hook {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 22px;
+      letter-spacing: 4px;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .gate-sub {
+      font-family: var(--serif);
+      font-size: 15px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      margin-bottom: 0;
+    }
   </style>
 </head>
 <body class="locked">
@@ -1020,6 +1077,10 @@
     <div class="cover-of">/ 100 · classical reading</div>
     <div class="cover-pair" data-h="pair">M · F</div>
     <div class="cover-trigram" data-h="trigram">☲ ☶</div>
+    <div class="cover-share">
+      <span class="cover-share-label">长按截图 · 或</span>
+      <button class="btn-share-copy" onclick="copyShareText()" id="shareBtn">复 制 分 享 文 字 →</button>
+    </div>
     <div class="cover-attribution">
       编 自《穷通宝鉴》《三命通会》<br>
       推 演 · 一 万 刘
@@ -1085,8 +1146,30 @@
     </div>
   </section>
 
-  <!-- ====== 三 · 格局 ====== -->
-  <section class="chapter" id="ch3">
+  <!-- ====== PAYWALL GATE · after ch2 ====== -->
+  <div class="gate" id="gate">
+    <div class="gate-eyebrow">CONTINUE READING</div>
+    <p class="gate-hook" data-h="gate-hook">你们 <span data-h="score-inline">—</span> 分的背后</p>
+    <p class="gate-sub">古籍还藏着 7 个维度的答案</p>
+    <ul style="list-style:none;padding:0;margin:28px auto 32px;max-width:300px;text-align:left;font-size:14px;line-height:2.2;color:var(--ink-soft);">
+      <li>· 格 局 · 两 人 天 干 地 支 象</li>
+      <li>· 用 神 · 互 补 与 化 解</li>
+      <li>· 大 运 · 十 年 节 律 对 接</li>
+      <li>· 流 年 · 2026 深 读</li>
+      <li>· 合 婚 评 分 与 卦 象</li>
+      <li>· 十 二 问 横 滑 卡</li>
+      <li>· 十 二 月 流 月 推 演</li>
+    </ul>
+    <div class="gate-price">¥19</div>
+    <div class="gate-once">一 次 买 断 · 不 订 阅 · 永 久 可 读</div>
+    <a href="javascript:openPay()" class="gate-btn">解 锁 古 籍 完 整 解 读 →</a>
+    <p style="font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--ink-mute);margin-top:24px;text-transform:uppercase;">
+      看 完 不 喜 欢 · 原 路 退 款
+    </p>
+  </div>
+
+  <!-- ====== 三 · 格局（PAID） ====== -->
+  <section class="chapter ch-paid" id="ch3">
     <div class="chapter-2col">
       <div class="art-wrap">
         <div class="chapter-art-inline" data-art="ch3"></div>
@@ -1137,28 +1220,6 @@
       </div>
     </div>
   </section>
-
-  <!-- Paywall gate after ch3 -->
-  <div class="gate" id="gate">
-    <div class="gate-eyebrow">CONTINUE READING</div>
-    <div class="gate-title">解 锁 后 六 章</div>
-    <ul style="list-style:none;padding:0;margin:24px auto 32px;max-width:300px;text-align:left;font-size:14px;line-height:2.0;color:var(--ink-soft);">
-      <li>· 用 神 互 补 与 化 解</li>
-      <li>· 大 运 节 律 对 接</li>
-      <li>· 当 下 流 年 深 读</li>
-      <li>· 合 婚 评 分 与 卦 象</li>
-      <li>· 七 章 verdict 截 图</li>
-      <li>· 十 二 问 横 滑 卡</li>
-      <li>· 十 二 月 流 月 推 演</li>
-      <li>· PDF 永 久 下 载</li>
-    </ul>
-    <div class="gate-price">¥29</div>
-    <div class="gate-once">一 次 买 断 · 不 订 阅</div>
-    <a href="javascript:openPay()" class="gate-btn">解 锁 全 文 →</a>
-    <p style="font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--ink-mute);margin-top:24px;text-transform:uppercase;">
-      看 完 不 喜 欢 · 原 路 退 款
-    </p>
-  </div>
 
   <!-- ====== 五 · 大运（PAID） ====== -->
   <section class="chapter ch-paid" id="ch5">
@@ -1296,12 +1357,12 @@
   <!-- ====== PAY MODAL ====== -->
   <div class="modal-bg" id="modal" onclick="if(event.target===this)closePay()">
     <div class="modal-box">
-      <h3>¥ 29 · 解 锁 全 文</h3>
+      <h3>¥ 19 · 解 锁 全 文</h3>
 
       <!-- Step 1 -->
       <div class="pay-step">
         <div class="pay-step-num">壹</div>
-        <div class="pay-step-text">微 信 扫 码 付 款 ¥29</div>
+        <div class="pay-step-text">微 信 扫 码 付 款 ¥19</div>
         <div class="qr-placeholder">
           <img src="qr.png" alt="WeChat QR" style="width:100%;height:100%;object-fit:contain;display:none;" onload="this.style.display='block';this.parentElement.classList.add('has-qr');" onerror="this.remove();">
           <span class="qr-fallback">微信收款码<br>（qr.png 待替换）</span>
@@ -2021,6 +2082,50 @@
     function closePay() {
       document.getElementById('modal').classList.remove('show');
     }
+
+    // ====== SHARE COPY ======
+    async function copyShareText() {
+      const scoreEl = document.querySelector('[data-h="score"]');
+      const tierEl  = document.querySelector('[data-h="tier"]');
+      const v1El    = document.querySelector('[data-h="v1-line"]');
+      const score   = scoreEl ? scoreEl.innerText.trim() : '—';
+      const tier    = tierEl  ? tierEl.innerText.trim()  : '上佳合婚';
+      const quote   = v1El    ? v1El.innerText.trim()    : '';
+      const url     = 'https://flychicken067.github.io/hepan-mvp/';
+      const text    = `我用古籍算了我们的合婚分：${score}分 · ${tier}\n` +
+                      (quote ? `古籍说：${quote}\n\n` : '\n') +
+                      `测你们的 → ${url}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = document.getElementById('shareBtn');
+        if (btn) {
+          btn.textContent = '✓ 已 复 制';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '复 制 分 享 文 字 →';
+            btn.classList.remove('copied');
+          }, 2000);
+        }
+      } catch (e) {
+        console.warn('clipboard failed', e);
+      }
+    }
+    window.copyShareText = copyShareText;
+
+    // ====== GATE: fill score inline ======
+    (function fillGateScore() {
+      const scoreEl  = document.querySelector('[data-h="score"]');
+      const inlineEl = document.querySelector('[data-h="score-inline"]');
+      if (!inlineEl || !scoreEl) return;
+      const observer = new MutationObserver(() => {
+        const s = scoreEl.innerText.trim();
+        if (s && s !== '—') { inlineEl.textContent = s; observer.disconnect(); }
+      });
+      observer.observe(scoreEl, { childList: true, subtree: true, characterData: true });
+      // also set immediately if already populated
+      const s0 = scoreEl.innerText.trim();
+      if (s0 && s0 !== '—') inlineEl.textContent = s0;
+    })();
 
     // Random case — pick one of 6 demo couples
     const CASES = [
