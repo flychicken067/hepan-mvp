@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>合 盘 · 古籍合婚</title>
-  <meta name="description" content="你和 ta 到底合不合 · 今年是不是结婚年 · 12 个心里最难启齿的问题，一张卡一行答。">
-  <meta property="og:title" content="合 · 给你和 ta 的合盘">
-  <meta property="og:description" content="你和 ta 到底合不合？一份能截图、能保存、能给妈看的答案。">
+  <title>河畔 · ta 在这个宇宙，等你</title>
+  <meta name="description" content="ta 在这个宇宙的底色，古人三千年前就见过了。输入两人生日，看见从未被说出口的那一面。">
+  <meta property="og:title" content="ta 在这个宇宙，等你">
+  <meta property="og:description" content="不是算命。是三千年的观察，还原一个人最深的底色。">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://hepan-mvp.vercel.app/og-image.png">
   <meta property="og:image:width" content="1200">
@@ -124,8 +124,10 @@
       margin-bottom: 100px;
     }
     .hero-cta {
-      display: inline-block;
-      padding: 18px 48px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 48px 14px;
       background: var(--ink);
       color: var(--paper);
       font-family: var(--serif);
@@ -134,8 +136,31 @@
       letter-spacing: 8px;
       text-decoration: none;
       transition: background 0.2s;
+      gap: 4px;
+      cursor: pointer;
+      border: none;
     }
     .hero-cta:hover { background: var(--vermillion); }
+    .cta-price-row {
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .cta-original {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: rgba(250,247,240,0.45);
+      text-decoration: line-through;
+      font-weight: 400;
+    }
+    .cta-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(250,247,240,0.55);
+      text-transform: uppercase;
+      font-weight: 400;
+      padding-top: 2px;
+    }
     .hero-secondary {
       display: flex; gap: 32px; justify-content: center;
       margin-top: 28px;
@@ -554,7 +579,7 @@
     <div class="topbar-mark">合 盘</div>
     <nav class="topbar-links" aria-label="主导航">
       <a href="cases.html">名 人 案 例</a>
-      <a href="#why">合 完 你 会 知 道</a>
+      <a href="#why">看 见 ta 之 后</a>
       <a href="https://ivan-3d-world.vercel.app" target="_blank" rel="noopener">3D 世 界 ↗</a>
     </nav>
   </header>
@@ -564,20 +589,20 @@
   <!-- ============== SINGLE-SCREEN MVP · Gank case: input + button + pay ============== -->
   <section class="hero">
     <div class="hero-mark">合</div>
-    <div class="hero-line">A reading for two charts</div>
+    <div class="hero-line">Ta is waiting for you in this universe</div>
     <div class="trust-bar">
-      <span>已有 <strong>312</strong> 对测试</span>
+      <span>已有 <strong>312</strong> 对，看见了 ta</span>
       <span class="trust-sep">·</span>
       <span>纯古籍算法 · 无 AI 随机</span>
       <span class="trust-sep">·</span>
-      <span>同一对生日 · 同一份结果</span>
+      <span>同一对生日 · 同一份底色</span>
     </div>
     <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
 
     <form id="hepan-form" class="hero-form" onsubmit="return submitForm(event)">
       <div class="form-grid">
         <div class="form-col">
-          <label>男 · MALE</label>
+          <label>他 · HIM</label>
           <div class="form-row-inputs">
             <input type="date" id="male-date" name="male-date" value="1991-07-25" required>
             <input type="time" id="male-time" name="male-time" value="12:00" required>
@@ -585,7 +610,7 @@
           <div class="form-bazi" id="male-bazi" aria-live="polite"></div>
         </div>
         <div class="form-col">
-          <label>女 · FEMALE</label>
+          <label>她 · HER</label>
           <div class="form-row-inputs">
             <input type="date" id="female-date" name="female-date" value="1992-11-28" required>
             <input type="time" id="female-time" name="female-time" value="04:00" required>
@@ -593,11 +618,16 @@
           <div class="form-bazi" id="female-bazi" aria-live="polite"></div>
         </div>
       </div>
-      <button type="submit" class="hero-cta">合 一 次 · ¥19</button>
+      <button type="submit" class="hero-cta">
+        <span class="cta-price-row">
+          <span class="cta-original">¥69</span>看 见 ta · ¥19
+        </span>
+        <span class="cta-badge">发 布 限 时 价</span>
+      </button>
     </form>
 
     <div class="hero-foot">
-      前 两 章 免 费 试 看 · 看 完 不 喜 欢 原 路 退 ·
+      前 两 章 免 费 · 看 完 不 满 意 全 退 ·
       <a onclick="fillSample()" style="cursor:pointer;border-bottom:1px dashed currentColor;">先用样例</a> ·
       <a href="cases.html">看名人案例</a>
     </div>
