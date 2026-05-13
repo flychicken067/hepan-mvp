@@ -107,13 +107,105 @@
       margin-bottom: 36px;
       padding-left: 28px;
     }
+    .hero-classic {
+      font-family: var(--serif);
+      font-size: 22px;
+      letter-spacing: 10px;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+      opacity: 0.72;
+    }
     .hero-line {
       font-family: var(--serif-en);
       font-style: italic;
-      font-size: 30px;
+      font-size: 24px;
       letter-spacing: 1px;
-      color: var(--ink-soft);
+      color: var(--ink-mute);
+      margin-bottom: 24px;
+    }
+
+    /* ── Report preview card ── */
+    .report-preview {
+      margin: 0 auto 52px;
+      text-align: center;
+      max-width: 340px;
+    }
+    .rp-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 4px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
       margin-bottom: 16px;
+      opacity: 0.6;
+    }
+    .rp-card {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 36px 32px 28px;
+      position: relative;
+      border-radius: 2px;
+    }
+    .rp-eyebrow {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: rgba(250,247,240,0.4);
+      margin-bottom: 18px;
+    }
+    .rp-score {
+      font-family: var(--serif-en);
+      font-size: 88px;
+      font-weight: 700;
+      line-height: 1;
+      color: #ff8a75;
+      letter-spacing: -2px;
+      margin-bottom: 6px;
+    }
+    .rp-blur { filter: blur(6px); display: inline-block; }
+    .rp-tier {
+      font-family: var(--serif);
+      font-size: 17px;
+      letter-spacing: 6px;
+      color: rgba(250,247,240,0.9);
+      margin-bottom: 6px;
+    }
+    .rp-of {
+      font-family: var(--serif-en);
+      font-style: italic;
+      font-size: 11px;
+      color: rgba(250,247,240,0.35);
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+    .rp-pair {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: rgba(250,247,240,0.45);
+      margin-bottom: 20px;
+    }
+    .rp-chapters {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(250,247,240,0.25);
+      line-height: 1.8;
+      border-top: 1px solid rgba(250,247,240,0.08);
+      padding-top: 16px;
+    }
+    .rp-hint {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      margin-top: 12px;
+      opacity: 0.5;
+    }
+    @media (max-width: 720px) {
+      .hero-classic { font-size: 18px; letter-spacing: 6px; }
+      .rp-score { font-size: 64px; }
     }
     .hero-sub {
       font-family: var(--serif-en);
@@ -576,7 +668,7 @@
 <body>
 
   <header class="topbar">
-    <div class="topbar-mark">合 盘</div>
+    <div class="topbar-mark">河 畔</div>
     <nav class="topbar-links" aria-label="主导航">
       <a href="cases.html">名 人 案 例</a>
       <a href="#why">看 见 ta 之 后</a>
@@ -589,6 +681,7 @@
   <!-- ============== SINGLE-SCREEN MVP · Gank case: input + button + pay ============== -->
   <section class="hero">
     <div class="hero-mark">合</div>
+    <div class="hero-classic">所谓伊人，在水一方</div>
     <div class="hero-line">Ta is waiting for you in this universe</div>
     <div class="trust-bar">
       <span>已有 <strong>312</strong> 对，看见了 ta</span>
@@ -597,7 +690,20 @@
       <span class="trust-sep">·</span>
       <span>同一对生日 · 同一份底色</span>
     </div>
-    <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
+
+    <!-- 报告预览卡 — 让用户在填表前看到会得到什么 -->
+    <div class="report-preview" aria-label="报告样例预览">
+      <div class="rp-label">付款后你会收到</div>
+      <div class="rp-card">
+        <div class="rp-eyebrow">A portrait that never changes</div>
+        <div class="rp-score">8<span class="rp-blur">7</span></div>
+        <div class="rp-tier">上 佳 合 婚</div>
+        <div class="rp-of">/ 100 · across every universe</div>
+        <div class="rp-pair">丙 火 · 戊 土</div>
+        <div class="rp-chapters">排盘 · 五行 · 格局 · 用神 · 大运 · 流年 · 合婚 · 十二问 · 十二月</div>
+      </div>
+      <div class="rp-hint">↓ 输入你们的生日，得到专属结果</div>
+    </div>
 
     <form id="hepan-form" class="hero-form" onsubmit="return submitForm(event)">
       <div class="form-grid">
@@ -646,6 +752,14 @@
       <p class="faq-q">不知道出生时间怎么办？</p>
       <p class="faq-a">时间框<em>默认正午 12:00</em>，直接点「合一次」即可。报告会注明「时辰以正午推算，时柱仅供参考」。古法依据：《八字提要》「时柱不确，以日柱为主」——合婚核心看日柱，时柱影响有限。</p>
     </div>
+  </section>
+
+  <!-- ============== SECOND CTA ============== -->
+  <section style="text-align:center;padding:60px 24px 72px;border-top:1px solid var(--hair);">
+    <p style="font-family:var(--serif);font-size:20px;letter-spacing:6px;color:var(--ink-mute);margin-bottom:8px;opacity:0.7;">所谓伊人</p>
+    <p style="font-family:var(--serif-en);font-style:italic;font-size:15px;color:var(--ink-mute);margin-bottom:36px;letter-spacing:1px;">Ta has always been this way. You just haven't seen it yet.</p>
+    <a href="#hepan-form" style="display:inline-block;padding:16px 48px;background:var(--ink);color:var(--paper);font-family:var(--serif);font-weight:600;font-size:16px;letter-spacing:8px;text-decoration:none;">看 见 ta →</a>
+    <p style="font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--ink-mute);margin-top:16px;text-transform:uppercase;opacity:0.5;">¥19 · 一次买断 · 永久可读</p>
   </section>
 
   <!-- ============== COLOPHON ============== -->

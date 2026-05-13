@@ -1040,6 +1040,40 @@
       color: var(--ink-mute);
       margin-bottom: 0;
     }
+
+    /* ===== HIDE DEV TOOLS FROM END USERS ===== */
+    .art-row { display: none !important; }
+
+    /* ===== SKELETON LOADER · 占位文字不裸露 ===== */
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    /* 段落级占位：内容 inject 前透明，用渐变条替代 */
+    p[data-h], span[data-h] {
+      transition: opacity 0.5s ease;
+    }
+    body:not([data-built]) p[data-h],
+    body:not([data-built]) span[data-h] {
+      color: transparent !important;
+      background: linear-gradient(
+        90deg,
+        var(--hair) 25%,
+        rgba(31,30,29,0.03) 50%,
+        var(--hair) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.6s ease infinite;
+      border-radius: 4px;
+      min-height: 1.2em;
+      display: block;
+    }
+    /* verdict blockquote: 保持可见，不 shimmer */
+    body:not([data-built]) .verdict span[data-h] {
+      color: var(--ink-mute) !important;
+      background: none;
+      animation: none;
+    }
   </style>
 </head>
 <body class="locked">
@@ -1148,7 +1182,7 @@
 
   <!-- ====== PAYWALL GATE · after ch2 ====== -->
   <div class="gate" id="gate">
-    <div class="gate-eyebrow">TA 还有 7 个面，你没看到</div>
+    <div class="gate-eyebrow">ta 还有 7 个面，你没看到</div>
     <p class="gate-hook" data-h="gate-hook"><span data-h="score-inline">—</span> 分背后</p>
     <p class="gate-sub">ta 在这个宇宙，等你看见</p>
     <ul style="list-style:none;padding:0;margin:28px auto 32px;max-width:320px;text-align:left;font-size:14px;line-height:2.4;color:var(--ink-soft);">
@@ -2314,6 +2348,11 @@
       // Hydration runs synchronously on lunar-javascript callback; check shortly
       setTimeout(() => { if (window.__hepan) { buildDeck(); buildForecast(); } }, 100);
     }
+
+    // Mark body as built → reveal all skeleton-shimmer elements
+    requestAnimationFrame(() => {
+      setTimeout(() => { document.body.setAttribute('data-built', ''); }, 400);
+    });
 
     // ====== SCROLL-SPY ======
     const sectionIds = ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'];
