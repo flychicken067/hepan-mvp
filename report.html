@@ -253,12 +253,7 @@
       background: var(--paper-frame);
     }
     .chapter-art-inline canvas { display: block; width: 100%; height: 100%; }
-    .art-row {
-      display: flex;
-      gap: 0;
-      margin-top: 14px;
-      align-items: stretch;
-    }
+    .art-row { display: none !important; }
     .modify-input {
       flex: 1;
       padding: 8px 14px;
@@ -1041,8 +1036,88 @@
       margin-bottom: 0;
     }
 
+    /* ===== MOBILE · ≤ 480px ===== */
+    @media (max-width: 480px) {
+      /* Topbar */
+      .topbar { padding: 0 16px; }
+      .topbar-brand { font-size: 17px; letter-spacing: 4px; }
+      .topbar-links { gap: 14px; font-size: 9px; letter-spacing: 2px; }
+
+      /* Cover */
+      .cover { padding: 40px 20px 48px; }
+      .cover-3d { width: 110px; height: 110px; margin: 0 auto 28px; }
+      .cover-eyebrow { font-size: 13px; margin: 28px 0 22px; }
+      .cover-mark { font-size: 80px; letter-spacing: 6px; padding-left: 6px; margin-bottom: 12px; }
+      .cover-tag { font-size: 18px; letter-spacing: 1px; margin-bottom: 20px; }
+      .cover-score { font-size: 52px; margin-top: 16px; }
+      .cover-tier { font-size: 14px; letter-spacing: 5px; }
+      .cover-of { font-size: 12px; margin-top: 4px; }
+      .cover-pair { font-size: 13px; letter-spacing: 4px; }
+      .cover-share { gap: 10px; margin-top: 20px; }
+      .btn-share-copy { padding: 10px 20px; font-size: 10px; width: 100%; }
+
+      /* Chapters */
+      .chapter { padding: 56px 20px 64px; min-height: auto; }
+      .chapter-2col { gap: 28px; }
+      /* Cap art panel height — don't let it eat the whole screen */
+      .chapter-art-inline { max-height: 260px !important; }
+      .chapter-num { font-size: 11px; margin-bottom: 16px; }
+      .chapter-name { font-size: 19px; letter-spacing: 3px; margin-bottom: 6px; }
+      .chapter-name-en { font-size: 11px; letter-spacing: 2px; margin-bottom: 28px; }
+      .chapter-lead { font-size: 13px; letter-spacing: 1px; line-height: 2.2; margin-bottom: 28px; }
+
+      /* Verdicts / scores in chapters */
+      .verdict { font-size: 13px; letter-spacing: 1px; }
+
+      /* Paywall gate */
+      .gate { margin: 36px 0; padding: 36px 20px 40px; }
+      .gate-eyebrow { font-size: 10px; letter-spacing: 4px; }
+      .gate-title { font-size: 22px; letter-spacing: 3px; }
+      .gate-hook { font-size: 19px; letter-spacing: 3px; }
+      .gate-sub { font-size: 13px; letter-spacing: 2px; }
+      .gate-price { font-size: 52px; }
+      .gate-once { font-size: 10px; letter-spacing: 2px; }
+      .gate-btn { display: block; width: 100%; padding: 17px 16px; font-size: 14px; letter-spacing: 4px; }
+
+      /* Modal */
+      .modal-box { padding: 28px 20px 24px; }
+      .modal-box h3 { font-size: 18px; letter-spacing: 4px; }
+      .modal-box .qr-placeholder { width: 180px; height: 180px; }
+
+      /* Final */
+      .final { padding: 80px 20px 80px; min-height: auto; }
+      .final-mark { font-size: 52px; letter-spacing: 10px; }
+
+      /* Colophon */
+      .colophon { font-size: 9px; padding: 40px 20px 36px; }
+    }
+
     /* ===== HIDE DEV TOOLS FROM END USERS ===== */
     .art-row { display: none !important; }
+
+    /* ===== SCROLL-REVEAL · wayofcode chapter entrance ===== */
+    .chapter-reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .chapter-reveal.in { opacity: 1; transform: translateY(0); }
+    /* Art panel enters slightly later for stagger effect */
+    .chapter-reveal .art-wrap {
+      transition-delay: 0.08s;
+    }
+    .chapter-reveal .chapter-body {
+      transition-delay: 0.18s;
+    }
+
+    /* ===== TOPBAR scroll-aware ===== */
+    .topbar { transition: background 0.4s ease, box-shadow 0.4s ease; }
+    .topbar.scrolled {
+      background: rgba(250,247,240,0.94);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--hair);
+    }
 
     /* ===== SKELETON LOADER · 占位文字不裸露 ===== */
     @keyframes shimmer {
@@ -1112,14 +1187,13 @@
     <div class="cover-pair" data-h="pair">M · F</div>
     <div class="cover-trigram" data-h="trigram">☲ ☶</div>
     <div class="cover-share">
-      <span class="cover-share-label">长按截图 · 或</span>
-      <button class="btn-share-copy" onclick="copyShareText()" id="shareBtn">把 ta 发 给 ta 看 →</button>
+      <button class="btn-share-copy" onclick="copyShareText()" id="shareBtn">分 享 →</button>
     </div>
     <div class="cover-attribution">
       三千年前，古人见过这种人。<br>
       今天，你也见到了。
     </div>
-    <div class="cover-scroll">scroll</div>
+    <div class="cover-scroll">↓</div>
     <aside class="cover-baibi" aria-label="设计哲学">
       白 贲 无 咎
       <small>《周易》贲卦 · 上九</small>
@@ -1127,15 +1201,11 @@
   </section>
 
   <!-- ====== 一 · 排盘 ====== -->
-  <section class="chapter" id="ch1">
+  <section class="chapter chapter-reveal" id="ch1">
     <div class="chapter-2col">
       <div class="art-wrap">
         <div class="chapter-art-inline" data-art="ch1"></div>
-        <div class="art-row">
-          <input type="text" class="modify-input" data-art-input="ch1" placeholder="如果它失重？" maxlength="60">
-          <button class="btn-modify" data-art-btn="ch1" type="button">Modify <span style="font-style:italic;letter-spacing:0;">↗</span></button>
-        </div>
-      </div>
+</div>
       <div class="chapter-body">
         <div class="chapter-num">01</div>
         <blockquote class="verdict">
@@ -1154,15 +1224,11 @@
   </section>
 
   <!-- ====== 二 · 五行 ====== -->
-  <section class="chapter" id="ch2">
+  <section class="chapter chapter-reveal" id="ch2">
     <div class="chapter-2col">
       <div class="art-wrap">
         <div class="chapter-art-inline" data-art="ch2"></div>
-        <div class="art-row">
-          <input type="text" class="modify-input" data-art-input="ch2" placeholder="如果它失重？" maxlength="60">
-          <button class="btn-modify" data-art-btn="ch2" type="button">Modify <span style="font-style:italic;letter-spacing:0;">↗</span></button>
-        </div>
-      </div>
+</div>
       <div class="chapter-body">
         <div class="chapter-num">02</div>
         <blockquote class="verdict">
@@ -1182,36 +1248,28 @@
 
   <!-- ====== PAYWALL GATE · after ch2 ====== -->
   <div class="gate" id="gate">
-    <div class="gate-eyebrow">ta 还有 7 个面，你没看到</div>
+    <div class="gate-eyebrow">古 籍 还 有 七 个 维 度</div>
     <p class="gate-hook" data-h="gate-hook"><span data-h="score-inline">—</span> 分背后</p>
-    <p class="gate-sub">ta 在这个宇宙，等你看见</p>
-    <ul style="list-style:none;padding:0;margin:28px auto 32px;max-width:320px;text-align:left;font-size:14px;line-height:2.4;color:var(--ink-soft);">
-      <li>· ta 真正的命格，是什么形状</li>
-      <li>· ta 命里缺的，你有没有</li>
-      <li>· 你们十年的节律，同频还是错位</li>
-      <li>· 2026，这一年对 ta 意味着什么</li>
+    <p class="gate-sub">ta 命里最深的一面</p>
+    <ul style="list-style:none;padding:0;margin:28px auto 32px;max-width:320px;text-align:left;font-size:14px;line-height:2.8;color:var(--ink-soft);">
+      <li>· ta 的命格，是什么形状</li>
+      <li>· 你们的节律，同频还是错位</li>
       <li>· 古籍给你们的最终一笔</li>
-      <li>· ta 说不出口的 12 个答案</li>
-      <li>· 接下来 12 个月，古人怎么看</li>
     </ul>
-    <div class="gate-price"><s style="font-size:0.5em;opacity:0.45;vertical-align:middle;margin-right:6px;">¥69</s>¥19</div>
-    <div class="gate-once">发 布 限 时 价 · 一 次 买 断 · 永 久 可 读</div>
-    <a href="javascript:openPay()" class="gate-btn">看 见 ta 的 底 色 →</a>
+    <div class="gate-price">¥19</div>
+    <div class="gate-once">一 次 · 永 久 · 不 订 阅</div>
+    <a href="javascript:openPay()" class="gate-btn">看 见 ta →</a>
     <p style="font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--ink-mute);margin-top:24px;text-transform:uppercase;">
       看 完 不 满 意 · 原 路 退 款
     </p>
   </div>
 
   <!-- ====== 三 · 格局（PAID） ====== -->
-  <section class="chapter ch-paid" id="ch3">
+  <section class="chapter ch-paid chapter-reveal" id="ch3">
     <div class="chapter-2col">
       <div class="art-wrap">
         <div class="chapter-art-inline" data-art="ch3"></div>
-        <div class="art-row">
-          <input type="text" class="modify-input" data-art-input="ch3" placeholder="如果它失重？" maxlength="60">
-          <button class="btn-modify" data-art-btn="ch3" type="button">Modify <span style="font-style:italic;letter-spacing:0;">↗</span></button>
-        </div>
-      </div>
+</div>
       <div class="chapter-body">
         <div class="chapter-num">03</div>
         <blockquote class="verdict">
@@ -1230,15 +1288,11 @@
   </section>
 
   <!-- ====== 四 · 用神（PAID） ====== -->
-  <section class="chapter ch-paid" id="ch4">
+  <section class="chapter ch-paid chapter-reveal" id="ch4">
     <div class="chapter-2col">
       <div class="art-wrap">
         <div class="chapter-art-inline" data-art="ch4"></div>
-        <div class="art-row">
-          <input type="text" class="modify-input" data-art-input="ch4" placeholder="如果它失重？" maxlength="60">
-          <button class="btn-modify" data-art-btn="ch4" type="button">Modify <span style="font-style:italic;letter-spacing:0;">↗</span></button>
-        </div>
-      </div>
+</div>
       <div class="chapter-body">
         <div class="chapter-num">04</div>
         <blockquote class="verdict">
@@ -1256,15 +1310,11 @@
   </section>
 
   <!-- ====== 五 · 大运（PAID） ====== -->
-  <section class="chapter ch-paid" id="ch5">
+  <section class="chapter ch-paid chapter-reveal" id="ch5">
     <div class="chapter-2col">
       <div class="art-wrap">
         <div class="chapter-art-inline" data-art="ch5"></div>
-        <div class="art-row">
-          <input type="text" class="modify-input" data-art-input="ch5" placeholder="如果它失重？" maxlength="60">
-          <button class="btn-modify" data-art-btn="ch5" type="button">Modify <span style="font-style:italic;letter-spacing:0;">↗</span></button>
-        </div>
-      </div>
+</div>
       <div class="chapter-body">
         <div class="chapter-num">05</div>
         <blockquote class="verdict">
@@ -1283,15 +1333,11 @@
   </section>
 
   <!-- ====== 六 · 流年（PAID） ====== -->
-  <section class="chapter ch-paid" id="ch6">
+  <section class="chapter ch-paid chapter-reveal" id="ch6">
     <div class="chapter-2col">
       <div class="art-wrap">
         <div class="chapter-art-inline" data-art="ch6"></div>
-        <div class="art-row">
-          <input type="text" class="modify-input" data-art-input="ch6" placeholder="如果它失重？" maxlength="60">
-          <button class="btn-modify" data-art-btn="ch6" type="button">Modify <span style="font-style:italic;letter-spacing:0;">↗</span></button>
-        </div>
-      </div>
+</div>
       <div class="chapter-body">
         <div class="chapter-num">06</div>
         <blockquote class="verdict">
@@ -1310,15 +1356,11 @@
   </section>
 
   <!-- ====== 七 · 合婚（PAID） ====== -->
-  <section class="chapter ch-paid" id="ch7">
+  <section class="chapter ch-paid chapter-reveal" id="ch7">
     <div class="chapter-2col">
       <div class="art-wrap">
         <div class="chapter-art-inline" data-art="ch7"></div>
-        <div class="art-row">
-          <input type="text" class="modify-input" data-art-input="ch7" placeholder="如果它失重？" maxlength="60">
-          <button class="btn-modify" data-art-btn="ch7" type="button">Modify <span style="font-style:italic;letter-spacing:0;">↗</span></button>
-        </div>
-      </div>
+</div>
       <div class="chapter-body">
         <div class="chapter-num">07</div>
         <blockquote class="verdict">
@@ -1503,37 +1545,106 @@
       animate();
     })();
 
-    // ============== PER-CHAPTER INLINE 3D ==============
-    // One canvas per chapter, placed in left column of each chapter's 2-col layout.
-    // Each chapter's art has unique (fx, fy, az) noise params. IntersectionObserver
-    // pauses rendering when not in viewport.
+    // ============== PER-CHAPTER INLINE 3D — 所谓伊人，在水一方 ==============
+    // White-on-dark line art. Camera looks slightly downward (across water).
+    // Each chapter has a unique geometry reflecting its meaning.
+    // A shared water-plane grid grounds every scene with horizontal horizon lines.
     (function initChapterArt () {
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const slots = document.querySelectorAll('.chapter-art-inline[data-art]');
       if (!slots.length) return;
 
-      const INK = 0x14110E;
-      const matLine = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.42 });
+      // ── White line material — visible on all dark gradient backgrounds ──
+      const matLine  = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.38 });
+      const matAccent = new THREE.LineBasicMaterial({ color: 0xffd080, transparent: true, opacity: 0.55 }); // gold accent
+      const matWater = new THREE.LineBasicMaterial({ color: 0xaaccff, transparent: true, opacity: 0.18 }); // pale water blue
+
+      // ── Noise animation params per chapter ──
       const PARAMS = {
-        ch1: { fx: 1.5, fy: 1.2, az: 0.6 },
-        ch2: { fx: 1.8, fy: 1.4, az: 0.55 },
-        ch3: { fx: 2.2, fy: 1.1, az: 0.5 },
-        ch4: { fx: 1.2, fy: 2.4, az: 0.7 },
-        ch5: { fx: 1.0, fy: 1.0, az: 0.8 },
-        ch6: { fx: 2.4, fy: 2.2, az: 0.5 },
-        ch7: { fx: 1.6, fy: 1.6, az: 0.65 },
-        ch8: { fx: 2.8, fy: 1.8, az: 0.55 },
-        ch9: { fx: 1.4, fy: 2.6, az: 0.6 },
+        ch1: { fx: 1.5, fy: 1.2, az: 0.55 },
+        ch2: { fx: 1.8, fy: 1.4, az: 0.50 },
+        ch3: { fx: 2.2, fy: 1.1, az: 0.45 },
+        ch4: { fx: 1.2, fy: 2.4, az: 0.60 },
+        ch5: { fx: 1.0, fy: 1.0, az: 0.70 },
+        ch6: { fx: 2.4, fy: 2.2, az: 0.45 },
+        ch7: { fx: 1.6, fy: 1.6, az: 0.58 },
+        ch8: { fx: 2.8, fy: 1.8, az: 0.50 },
+        ch9: { fx: 1.4, fy: 2.6, az: 0.55 },
       };
+
+      // ── Water plane: horizontal grid suggesting river surface ──
+      function makeWaterPlane () {
+        const geom = new THREE.BufferGeometry();
+        const verts = [];
+        const rows = 7, cols = 10, w = 4.5, h = 1.8;
+        // horizontal lines (ripples)
+        for (let r = 0; r <= rows; r++) {
+          const y = -1.5 + (r / rows) * h;
+          for (let c = 0; c < cols; c++) {
+            const x0 = -w/2 + (c / cols) * w;
+            const x1 = -w/2 + ((c+1) / cols) * w;
+            verts.push(x0, y, 0,  x1, y, 0);
+          }
+        }
+        // very sparse verticals (like reeds at river edge)
+        for (let c = 0; c <= 4; c++) {
+          const x = -w/2 + (c / 4) * w;
+          verts.push(x, -1.5, 0,  x, -1.5 + h * 0.35, 0);
+        }
+        geom.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+        return new THREE.LineSegments(geom, matWater);
+      }
+
+      // ── Per-chapter geometry factory ──
+      // Philosophy: each chapter's main form is an abstraction of its content.
+      // The water plane is always behind, slightly below, creating the river horizon.
+      function makeMainGeo (id) {
+        switch (id) {
+          case 'ch1': // 排盘 — The Blueprint: two mirrored pillar clusters (四柱 = 4 pillars)
+            return new THREE.IcosahedronGeometry(1.55, 2);
+
+          case 'ch2': // 五行 — Five rings in quintet arrangement
+            return new THREE.TorusGeometry(1.4, 0.04, 4, 48);
+
+          case 'ch3': // 格局 — Octahedron: angular, architectural soul shape
+            return new THREE.OctahedronGeometry(1.65, 1);
+
+          case 'ch4': // 用神 — Two tetrahedra pointing toward center (what ta needs / what you have)
+            return new THREE.TetrahedronGeometry(1.75, 1);
+
+          case 'ch5': // 大运 — Dodecahedron: 12 faces = 12 运 cycles
+            return new THREE.DodecahedronGeometry(1.55, 0);
+
+          case 'ch6': // 流年 — Icosahedron fine subdivision: flowing year-cycles
+            return new THREE.IcosahedronGeometry(1.6, 3);
+
+          case 'ch7': // 合婚 — TorusKnot: two threads woven together
+            return new THREE.TorusKnotGeometry(1.1, 0.35, 80, 10, 2, 3);
+
+          case 'ch8': // 十二问 — Dodecahedron: 12 faces, 12 questions
+            return new THREE.DodecahedronGeometry(1.6, 1);
+
+          case 'ch9': // 十二月 — Torus: the wheel of months, circular and returning
+            return new THREE.TorusGeometry(1.35, 0.45, 6, 36);
+
+          default:
+            return new THREE.IcosahedronGeometry(1.6, 2);
+        }
+      }
 
       const allArts = [];
 
       slots.forEach(slot => {
         const id = slot.dataset.art;
         const p = PARAMS[id] || PARAMS.ch1;
+
         const scene = new THREE.Scene();
+
+        // Camera: position slightly above center, look slightly down → "gazing across water"
         const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-        camera.position.set(0, 0, 5);
+        camera.position.set(0, 0.6, 5);
+        camera.lookAt(0, -0.4, 0);
+
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setClearColor(0x000000, 0);
@@ -1547,23 +1658,33 @@
         if (window.ResizeObserver) new ResizeObserver(resize).observe(slot);
         else window.addEventListener('resize', resize);
 
-        const ico = new THREE.IcosahedronGeometry(1.6, 3);  // 642 verts
-        const origPos = new Float32Array(ico.attributes.position.array);
-        let mesh = new THREE.LineSegments(new THREE.EdgesGeometry(ico, 18), matLine);
+        // Water plane — behind and below the main form
+        const waterPlane = makeWaterPlane();
+        waterPlane.position.set(0, -1.6, -0.8);
+        waterPlane.rotation.x = -0.22; // tilt back: perspective recession
+        scene.add(waterPlane);
+
+        // Main geometry
+        const geo = makeMainGeo(id);
+        const origPos = new Float32Array(geo.attributes.position.array);
+        let mesh = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 20), matLine);
+        // ch7 合婚 gets gold accent (union)
+        if (id === 'ch7') mesh.material = matAccent;
         scene.add(mesh);
 
         let active = false;
         new IntersectionObserver(([e]) => { active = e.isIntersecting; }, { threshold: 0.05 }).observe(slot);
 
         const artRef = {
-          id, p, scene, camera, renderer, ico, origPos,
-          edgeAngle: 18,
+          id, p, scene, camera, renderer,
+          geo, origPos, edgeAngle: 20,
+          waterPlane,
           getMesh: () => mesh, setMesh: m => mesh = m,
           isActive: () => active,
         };
         allArts.push(artRef);
 
-        // Wire Modify button for this chapter (rebuild geometry from DeepSeek params)
+        // Wire Modify button (dev tool — hidden from users via .art-row display:none)
         const btn = document.querySelector(`[data-art-btn="${id}"]`);
         const inp = document.querySelector(`[data-art-input="${id}"]`);
         if (btn && inp) {
@@ -1587,68 +1708,101 @@
               btn.disabled = false;
             }
           });
-          // Enter key submits
           inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') btn.click(); });
         }
       });
 
-      // ----- Apply new geometry params (called by Modify) -----
+      // ----- Apply new geometry params (called by Modify dev tool) -----
       function applyParams (art, params) {
         let geo;
         const sub = params.subdivision;
         switch (params.geo) {
-          case 'torusKnot': geo = new THREE.TorusKnotGeometry(1.4, 0.4, 64, 8, params.p, params.q); break;
-          case 'octahedron': geo = new THREE.OctahedronGeometry(1.6, sub); break;
-          case 'dodecahedron': geo = new THREE.DodecahedronGeometry(1.6, sub); break;
+          case 'torusKnot':   geo = new THREE.TorusKnotGeometry(1.4, 0.4, 64, 8, params.p, params.q); break;
+          case 'octahedron':  geo = new THREE.OctahedronGeometry(1.6, sub); break;
+          case 'dodecahedron':geo = new THREE.DodecahedronGeometry(1.6, sub); break;
           case 'tetrahedron': geo = new THREE.TetrahedronGeometry(1.8); break;
-          default: geo = new THREE.IcosahedronGeometry(1.6, sub);
+          default:            geo = new THREE.IcosahedronGeometry(1.6, sub);
         }
         const origPos = new Float32Array(geo.attributes.position.array);
-        // Replace mesh: remove old, install new geometry
         const old = art.getMesh();
         art.scene.remove(old);
         old.geometry.dispose();
         const newMesh = new THREE.LineSegments(new THREE.EdgesGeometry(geo, params.edgeAngle), matLine);
         art.scene.add(newMesh);
         art.setMesh(newMesh);
-        art.ico = geo;
+        art.geo = geo;
         art.origPos = origPos;
         art.edgeAngle = params.edgeAngle;
         art.p = { fx: params.fx, fy: params.fy, az: params.amp };
       }
 
+      // ── Animation loop ──
       const clock = new THREE.Clock();
       function animateAll () {
         const t = clock.getElapsedTime();
         for (const a of allArts) {
           if (!a.isActive()) continue;
-          const { p, scene, camera, renderer, ico, origPos, edgeAngle } = a;
-          // Update icosphere vertex positions (radial noise displacement)
-          const pos = ico.attributes.position;
+          const { p, scene, camera, renderer, geo, origPos, edgeAngle, waterPlane } = a;
+
+          // Vertex noise displacement — organic, wave-like motion
+          const pos = geo.attributes.position;
           const arr = pos.array;
           for (let i = 0; i < arr.length; i += 3) {
             const x0 = origPos[i], y0 = origPos[i+1], z0 = origPos[i+2];
             const r0 = Math.sqrt(x0*x0 + y0*y0 + z0*z0) || 1e-3;
-            const disp = Math.sin(x0 * p.fx + t * 0.32) *
-                         Math.cos(y0 * p.fy + t * 0.24) *
-                         Math.sin(z0 * 1.3 + t * 0.16) * p.az * 0.42;
+            const disp = Math.sin(x0 * p.fx + t * 0.28) *
+                         Math.cos(y0 * p.fy + t * 0.22) *
+                         Math.sin(z0 * 1.2  + t * 0.14) * p.az * 0.38;
             const s = 1 + disp / r0;
             arr[i] = x0 * s; arr[i+1] = y0 * s; arr[i+2] = z0 * s;
           }
           pos.needsUpdate = true;
-          // Rebuild EdgesGeometry from updated sphere — known-working approach
+
+          // Rebuild edges (required after vertex displacement)
           const old = a.getMesh();
           old.geometry.dispose();
-          const newMesh = new THREE.LineSegments(new THREE.EdgesGeometry(ico, edgeAngle), matLine);
-          newMesh.rotation.z = Math.sin(t * 0.06) * 0.04;
+          const mat = (a.id === 'ch7') ? matAccent : matLine;
+          const newMesh = new THREE.LineSegments(new THREE.EdgesGeometry(geo, edgeAngle), mat);
+          // Slow, gentle rotation — like something floating on still water
+          newMesh.rotation.y = t * 0.08;
+          newMesh.rotation.z = Math.sin(t * 0.05) * 0.06;
           scene.remove(old);
           scene.add(newMesh);
           a.setMesh(newMesh);
+
+          // Water plane: slow horizontal drift = ripple suggestion
+          if (waterPlane) {
+            waterPlane.position.y = -1.6 + Math.sin(t * 0.18) * 0.06;
+          }
+
           renderer.render(scene, camera);
         }
         requestAnimationFrame(animateAll);
       }
       animateAll();
+    })();
+  </script>
+
+  <script>
+    // ====== SCROLL-REVEAL + TOPBAR ======
+    (function () {
+      // Topbar scroll-aware
+      const topbar = document.querySelector('.topbar');
+      window.addEventListener('scroll', () => {
+        if (topbar) topbar.classList.toggle('scrolled', window.scrollY > 40);
+      }, { passive: true });
+
+      // Chapter entrance animation
+      if (window.IntersectionObserver) {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+          });
+        }, { threshold: 0.06, rootMargin: '0px 0px -60px 0px' });
+        document.querySelectorAll('.chapter-reveal').forEach(el => obs.observe(el));
+      } else {
+        document.querySelectorAll('.chapter-reveal').forEach(el => el.classList.add('in'));
+      }
     })();
   </script>
 

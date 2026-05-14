@@ -70,15 +70,35 @@
     .topbar-links a:hover { color: var(--vermillion); }
     @media (max-width: 720px) { .topbar { padding: 16px 20px; } .topbar-links { gap: 16px; } }
 
-    /* ============== HERO ============== */
+    /* ============== HERO · 2-column split (brand left / form right) ============== */
     .hero {
       min-height: 100vh;
       position: relative;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 100px 24px 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 80px;
+      align-items: center;
+      padding: 80px 120px 60px;
+      max-width: 1440px;
+      margin: 0 auto;
       overflow: hidden;
-      text-align: center;
+    }
+    .hero-left {
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+    }
+    .hero-right {
+      display: flex; flex-direction: column;
+      align-items: center;
+    }
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 80px 40px 60px;
+        column-gap: 0; row-gap: 48px;
+        justify-items: center; text-align: center;
+      }
+      .hero-left, .hero-right { width: 100%; align-items: center; }
     }
     .hero-3d {
       width: 220px;
@@ -445,6 +465,13 @@
       grid-template-columns: 1.5fr 1fr 1fr;
       gap: 12px;
     }
+    /* Date + time side-by-side within each person column */
+    .form-row-inputs {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .form-row-inputs input { flex: 1; min-width: 0; }
     .form-field input[type="date"],
     .form-field input[type="time"],
     .form-field input[type="text"] {
@@ -632,6 +659,53 @@
     }
     @media (max-width: 720px) { .faq { padding: 60px 20px 0; } }
 
+    /* ============== MOBILE · ≤ 480px ============== */
+    @media (max-width: 480px) {
+      /* Topbar */
+      .topbar { padding: 0 16px; }
+      .topbar-brand { font-size: 16px; letter-spacing: 3px; }
+      .topbar-links { gap: 12px; font-size: 9px; letter-spacing: 1px; }
+
+      /* Hero */
+      .hero { padding: 60px 20px 70px; }
+      .hero-mark { font-size: 110px; letter-spacing: 14px; padding-left: 14px; }
+      .hero-classic { font-size: 15px; letter-spacing: 4px; margin-bottom: 12px; }
+      .hero-line { font-size: 18px; letter-spacing: 4px; }
+      .hero-sub { font-size: 14px; margin-bottom: 64px; }
+      .trust-bar { font-size: 10px; letter-spacing: 1px; gap: 6px; }
+
+      /* CTA — full width on phone */
+      .hero-cta { display: flex; width: 100%; padding: 18px 16px 16px; font-size: 16px; letter-spacing: 6px; }
+
+      /* Hero foot */
+      .hero-foot { font-size: 10px; letter-spacing: 2px; margin-top: 16px; }
+
+      /* Report preview card */
+      .report-preview { margin-top: 56px; }
+      .rp-card { padding: 28px 20px 24px; }
+      .rp-score { font-size: 72px; }
+      .rp-chapters { font-size: 9px; letter-spacing: 2px; }
+
+      /* Form section */
+      .hepan-form-wrap { padding: 80px 20px 60px; }
+      .form-section-eyebrow { font-size: 9px; letter-spacing: 3px; }
+      /* Date+time fields — stack to 2 columns on narrow screens */
+      .form-row { grid-template-columns: 1fr 1fr; }
+      .form-field input { font-size: 16px; } /* prevent iOS zoom */
+
+      /* Price section */
+      .price-amount { font-size: 110px; }
+      .price-amount sup { font-size: 30px; }
+      .price-list li { font-size: 15px; }
+
+      /* FAQ */
+      .faq-q { font-size: 15px; }
+      .faq-a { font-size: 14px; }
+
+      /* Second CTA section */
+      #hepan-form ~ section { padding: 48px 20px 56px; }
+    }
+
     /* ============== FOOTER ============== */
     .colophon {
       font-family: var(--mono);
@@ -663,6 +737,102 @@
       opacity: 0.5;
       transition: width 0.15s linear;
     }
+
+    /* ============== SCROLL-REVEAL · wayofcode breathing entrance ============== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.75s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.10s; }
+    .reveal-delay-2 { transition-delay: 0.22s; }
+    .reveal-delay-3 { transition-delay: 0.34s; }
+
+    /* ============== TOPBAR · appears on scroll ============== */
+    .topbar {
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+    .topbar.scrolled {
+      background: rgba(250,247,240,0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--hair);
+    }
+
+    /* ============== FORM INPUTS · Moonly precision ============== */
+    .form-field input[type="date"],
+    .form-field input[type="time"] {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    /* Pillar preview typography */
+    .form-bazi {
+      font-family: var(--serif);
+      font-size: 18px;
+      letter-spacing: 6px;
+      color: var(--ink-soft);
+      margin-top: 14px;
+      min-height: 28px;
+      text-align: center;
+    }
+    .form-bazi .pillar-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      margin-top: 6px;
+      opacity: 0.6;
+    }
+
+    /* ============== RPC CARD HOVER · Moonly premium feel ============== */
+    .rp-card {
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
+                  box-shadow 0.4s ease;
+    }
+    .rp-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(20,17,14,0.18);
+    }
+    /* Compact card for 2-col hero context */
+    .hero-right .rp-card {
+      padding: 24px 28px 20px;
+    }
+    .hero-right .rp-score { font-size: 68px; margin-bottom: 2px; }
+    .hero-right .rp-tier { font-size: 15px; margin-bottom: 4px; }
+    .hero-right .rp-eyebrow { margin-bottom: 10px; }
+    .hero-right .rp-of { margin-bottom: 10px; }
+    .hero-right .rp-pair { margin-bottom: 14px; }
+    /* Compact bazi preview — single line, hide verbose YEAR/MONTH labels */
+    .form-bazi {
+      font-size: 14px;
+      letter-spacing: 3px;
+      margin-top: 8px;
+      min-height: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hero-right .form-bazi .pillar-label { display: none; }
+    .hero-right .form-col label {
+      font-size: 10px;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+    }
+    .hero-right .form-grid { gap: 16px; }
+
+    /* ============== SECTION DIVIDER · ink-line wayofcode style ============== */
+    .section-mark {
+      display: block;
+      width: 1px;
+      height: 60px;
+      background: var(--hair);
+      margin: 0 auto;
+      opacity: 0.6;
+    }
   </style>
 </head>
 <body>
@@ -670,92 +840,95 @@
   <header class="topbar">
     <div class="topbar-mark">河 畔</div>
     <nav class="topbar-links" aria-label="主导航">
-      <a href="cases.html">名 人 案 例</a>
-      <a href="#why">看 见 之 后</a>
-      <a href="https://ivan-3d-world.vercel.app" target="_blank" rel="noopener">3D 世 界 ↗</a>
+      <a href="cases.html">名 人 合 盘</a>
+      <a href="#faq">常 见 问 题</a>
     </nav>
   </header>
 
   <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
 
-  <!-- ============== SINGLE-SCREEN MVP · Gank case: input + button + pay ============== -->
+  <!-- ============== HERO · 2-col: brand left / form right (Gank: input+gen+pay all above fold) ============== -->
   <section class="hero">
-    <div class="hero-mark">合</div>
-    <div class="hero-classic">所谓伊人，在水一方</div>
-    <div class="hero-line">Ta is waiting for you in this universe</div>
-    <div class="trust-bar">
-      <span>已有 <strong>312</strong> 对，看见了 ta</span>
-      <span class="trust-sep">·</span>
-      <span>纯古籍算法 · 无 AI 随机</span>
-      <span class="trust-sep">·</span>
-      <span>同一对生日 · 同一份底色</span>
-    </div>
 
-    <!-- 报告预览卡 — 让用户在填表前看到会得到什么 -->
-    <div class="report-preview" aria-label="报告样例预览">
-      <div class="rp-label">付款后你会收到</div>
-      <div class="rp-card">
-        <div class="rp-eyebrow">A portrait that never changes</div>
-        <div class="rp-score">8<span class="rp-blur">7</span></div>
-        <div class="rp-tier">上 佳 合 婚</div>
-        <div class="rp-of">/ 100 · across every universe</div>
-        <div class="rp-pair">丙 火 · 戊 土</div>
-        <div class="rp-chapters">排盘 · 五行 · 格局 · 用神 · 大运 · 流年 · 合婚 · 十二问 · 十二月</div>
+    <!-- LEFT: emotional brand anchor -->
+    <div class="hero-left">
+      <div class="hero-mark">合</div>
+      <div class="hero-classic">所谓伊人，在水一方</div>
+      <div class="trust-bar" style="margin-top:24px;">
+        <span>已有 <strong>312</strong> 对</span>
+        <span class="trust-sep">·</span>
+        <span>纯古籍算法</span>
+        <span class="trust-sep">·</span>
+        <span>永不改写</span>
       </div>
-      <div class="rp-hint">↓ 输入你们的生日，得到专属结果</div>
     </div>
 
-    <form id="hepan-form" class="hero-form" onsubmit="return submitForm(event)">
-      <div class="form-grid">
-        <div class="form-col">
-          <label>他 · HIM</label>
-          <div class="form-row-inputs">
-            <input type="date" id="male-date" name="male-date" value="1991-07-25" required>
-            <input type="time" id="male-time" name="male-time" value="12:00" required>
-          </div>
-          <div class="form-bazi" id="male-bazi" aria-live="polite"></div>
-        </div>
-        <div class="form-col">
-          <label>她 · HER</label>
-          <div class="form-row-inputs">
-            <input type="date" id="female-date" name="female-date" value="1992-11-28" required>
-            <input type="time" id="female-time" name="female-time" value="04:00" required>
-          </div>
-          <div class="form-bazi" id="female-bazi" aria-live="polite"></div>
+    <!-- RIGHT: preview → form → CTA (all 3 Gank elements, above fold) -->
+    <div class="hero-right">
+      <!-- 报告预览卡 -->
+      <div class="report-preview" aria-label="报告样例预览" style="margin-bottom:28px;margin-top:0;">
+        <div class="rp-card">
+          <div class="rp-eyebrow">A portrait that never changes</div>
+          <div class="rp-score">93</div>
+          <div class="rp-tier">上 佳 合 婚</div>
+          <div class="rp-of">/ 100 · across every universe</div>
+          <div class="rp-pair">丙 火 · 戊 土</div>
+          <div class="rp-chapters">九 章 · 子 平 底 色</div>
         </div>
       </div>
-      <button type="submit" class="hero-cta">
-        <span class="cta-price-row">
-          <span class="cta-original">¥69</span>看 见 ta · ¥19
-        </span>
-        <span class="cta-badge">发 布 限 时 价</span>
-      </button>
-    </form>
 
-    <div class="hero-foot">
-      前 两 章 免 费 · 看 完 不 满 意 全 退 ·
-      <a onclick="fillSample()" style="cursor:pointer;border-bottom:1px dashed currentColor;">先用样例</a> ·
-      <a href="cases.html">看名人案例</a>
+      <!-- Form: INPUT -->
+      <form id="hepan-form" class="hero-form" onsubmit="return submitForm(event)" style="width:100%;max-width:420px;">
+        <div class="form-grid">
+          <div class="form-col">
+            <label>他 · HIM</label>
+            <div class="form-row-inputs">
+              <input type="date" id="male-date" name="male-date" value="1991-07-25" required>
+              <input type="time" id="male-time" name="male-time" value="12:00" required>
+            </div>
+            <div class="form-bazi" id="male-bazi" aria-live="polite"></div>
+          </div>
+          <div class="form-col">
+            <label>她 · HER</label>
+            <div class="form-row-inputs">
+              <input type="date" id="female-date" name="female-date" value="1992-11-28" required>
+              <input type="time" id="female-time" name="female-time" value="04:00" required>
+            </div>
+            <div class="form-bazi" id="female-bazi" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- GENERATE + PAY: single CTA button -->
+        <button type="submit" class="hero-cta" style="width:100%;margin-top:28px;">
+          看 见 ta · ¥19
+        </button>
+      </form>
+
+      <div class="hero-foot" style="margin-top:14px;text-align:center;">
+        两章免费 · 退款保障 ·
+        <a onclick="fillSample()" style="cursor:pointer;border-bottom:1px dashed currentColor;">先用样例</a>
+      </div>
     </div>
+
   </section>
 
   <!-- ============== FAQ ============== -->
-  <section class="faq">
+  <section class="faq reveal" id="faq">
     <p class="faq-eyebrow">FAQ · 常 见 问 题</p>
 
     <div class="faq-item">
       <p class="faq-q">输入的是阳历还是阴历？</p>
-      <p class="faq-a">填<em>阳历（公历）</em>，即身份证上的出生日期。如果你只知道农历生日，可用手机备忘录里的日历 App 转换，或直接告诉我们农历日期，我们后续会支持农历直接输入。</p>
+      <p class="faq-a">填<em>阳历（公历）</em>，即身份证上的出生日期。不知道农历怎么换，用手机日历 App 转一下。</p>
     </div>
 
     <div class="faq-item">
       <p class="faq-q">不知道出生时间怎么办？</p>
-      <p class="faq-a">时间框<em>默认正午 12:00</em>，直接点「合一次」即可。报告会注明「时辰以正午推算，时柱仅供参考」。古法依据：《八字提要》「时柱不确，以日柱为主」——合婚核心看日柱，时柱影响有限。</p>
+      <p class="faq-a">默认<em>正午 12:00</em>，直接提交即可。合婚核心看日柱，时柱影响有限。</p>
     </div>
   </section>
 
   <!-- ============== SECOND CTA ============== -->
-  <section style="text-align:center;padding:60px 24px 72px;border-top:1px solid var(--hair);">
+  <section class="reveal" style="text-align:center;padding:60px 24px 72px;border-top:1px solid var(--hair);">
     <p style="font-family:var(--serif);font-size:20px;letter-spacing:6px;color:var(--ink-mute);margin-bottom:8px;opacity:0.7;">所谓伊人</p>
     <p style="font-family:var(--serif-en);font-style:italic;font-size:15px;color:var(--ink-mute);margin-bottom:36px;letter-spacing:1px;">Ta has always been this way. You just haven't seen it yet.</p>
     <a href="#hepan-form" style="display:inline-block;padding:16px 48px;background:var(--ink);color:var(--paper);font-family:var(--serif);font-weight:600;font-size:16px;letter-spacing:8px;text-decoration:none;">看 见 ta →</a>
@@ -793,13 +966,12 @@
       // Stella Octangula — same as report cover. Two interlocked tetrahedra.
       // 《周易·系辞》「太极生两仪」.
       const VERMILLION = 0xB8362A;
-      const INK = 0x14110E;
       const tetGeo = new THREE.TetrahedronGeometry(1.6);
       const tetEdges = new THREE.EdgesGeometry(tetGeo);
       const yang = new THREE.LineSegments(tetEdges.clone(),
-        new THREE.LineBasicMaterial({ color: VERMILLION, transparent: true, opacity: 0.32 }));
+        new THREE.LineBasicMaterial({ color: VERMILLION, transparent: true, opacity: 0.35 }));
       const yin = new THREE.LineSegments(tetEdges.clone(),
-        new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.20 }));
+        new THREE.LineBasicMaterial({ color: 0x8B6E5A, transparent: true, opacity: 0.22 }));
       yin.rotation.y = Math.PI;
       yin.rotation.z = Math.PI;
       scene.add(yang); scene.add(yin);
@@ -886,11 +1058,27 @@
 
     // Bottom hairline progress
     const progressFill = document.getElementById('progressFill');
+
+    // Topbar: becomes visible on scroll
+    const topbar = document.querySelector('.topbar');
     window.addEventListener('scroll', () => {
       const docH = document.documentElement.scrollHeight - window.innerHeight;
       const pct = docH > 0 ? Math.min(100, (window.scrollY / docH) * 100) : 0;
       if (progressFill) progressFill.style.width = pct + '%';
+      if (topbar) topbar.classList.toggle('scrolled', window.scrollY > 60);
     }, { passive: true });
+
+    // Scroll-reveal: sections animate in as they enter viewport
+    const revealEls = document.querySelectorAll('.reveal');
+    if (revealEls.length && window.IntersectionObserver) {
+      const revealObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      revealEls.forEach(el => revealObs.observe(el));
+    } else {
+      // Fallback: show all immediately
+      revealEls.forEach(el => el.classList.add('in'));
+    }
   </script>
 </body>
 </html>
