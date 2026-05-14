@@ -896,16 +896,55 @@
       text-transform: uppercase;
       margin-top: 6px;
     }
-    .pay-email {
+    .pay-wechat-id {
       display: inline-block;
       font-family: var(--mono);
-      font-size: 14px;
-      letter-spacing: 1px;
+      font-size: 15px;
+      letter-spacing: 2px;
       color: var(--vermillion);
-      text-decoration: none;
       border-bottom: 1px solid var(--vermillion);
       padding: 4px 0;
       margin: 6px 0;
+      user-select: all;
+    }
+    .pay-code-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 12px 0 6px;
+    }
+    .pay-code-input {
+      flex: 1;
+      background: none;
+      border: 1px solid var(--hair);
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 18px;
+      letter-spacing: 6px;
+      text-align: center;
+      color: var(--ink);
+      outline: none;
+    }
+    .pay-code-input:focus { border-color: var(--vermillion); }
+    .pay-code-btn {
+      background: var(--vermillion);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 16px;
+      font-family: var(--serif);
+      font-size: 13px;
+      letter-spacing: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .pay-code-err {
+      font-size: 12px;
+      color: #c94a30;
+      letter-spacing: 1px;
+      min-height: 18px;
+      text-align: center;
     }
     .pay-promise {
       font-family: var(--mono);
@@ -1450,16 +1489,20 @@
       <!-- Step 2 -->
       <div class="pay-step">
         <div class="pay-step-num">贰</div>
-        <div class="pay-step-text">截 图 + 邮 箱 发 到</div>
-        <a href="mailto:liufan067@gmail.com?subject=合盘付款&body=微信付款截图见附件，请回复解锁链接。" class="pay-email">liufan067@gmail.com</a>
-        <div class="pay-step-meta">备 注 · 你 的 收 件 邮 箱</div>
+        <div class="pay-step-text">截 图 发 到 微 信</div>
+        <span class="pay-wechat-id">hepan2026</span>
+        <div class="pay-step-meta">5 分 钟 内 回 复 解 锁 码</div>
       </div>
 
-      <!-- Step 3 -->
+      <!-- Step 3 — code unlock -->
       <div class="pay-step">
         <div class="pay-step-num">叁</div>
-        <div class="pay-step-text">1 小 时 内 收 到 解 锁 链 接</div>
-        <div class="pay-step-meta">人 工 回 复 · 全 天 在 线</div>
+        <div class="pay-step-text">输 入 解 锁 码</div>
+        <div class="pay-code-row">
+          <input class="pay-code-input" id="unlockCodeInput" type="text" maxlength="6" placeholder="— — — — — —" autocomplete="off" inputmode="numeric">
+          <button class="pay-code-btn" onclick="verifyUnlockCode()">解 锁</button>
+        </div>
+        <div class="pay-code-err" id="unlockErr"></div>
       </div>
 
       <p class="pay-promise">看 完 不 喜 欢 · 原 路 退 款</p>
@@ -2267,10 +2310,46 @@
 
     function openPay() {
       document.getElementById('modal').classList.add('show');
+      setTimeout(() => { const inp = document.getElementById('unlockCodeInput'); if(inp) inp.focus(); }, 300);
     }
     function closePay() {
       document.getElementById('modal').classList.remove('show');
     }
+
+    // ====== DAILY ROTATING UNLOCK CODE ======
+    // Formula: (YYYYMMDD × 7919 + 314159) % 900000 + 100000
+    // Ivan computes today's code with: Math.floor((new Date().toISOString().slice(0,10).replace(/-/g,'') * 7919 + 314159) % 900000 + 100000)
+    function getTodayCode() {
+      const d = new Date();
+      const ymd = parseInt(d.getUTCFullYear() + String(d.getUTCMonth()+1).padStart(2,'0') + String(d.getUTCDate()).padStart(2,'0'), 10);
+      return String((ymd * 7919 + 314159) % 900000 + 100000);
+    }
+    function verifyUnlockCode() {
+      const input = document.getElementById('unlockCodeInput');
+      const errEl = document.getElementById('unlockErr');
+      if (!input || !errEl) return;
+      const val = input.value.replace(/\s/g,'').trim();
+      if (val === getTodayCode()) {
+        errEl.style.color = '#4dab9e';
+        errEl.textContent = '✓ 解锁成功';
+        localStorage.setItem('hepan-unlocked', '1');
+        document.body.classList.remove('locked');
+        setTimeout(() => {
+          document.getElementById('modal').classList.remove('show');
+          const gate = document.getElementById('gate');
+          if (gate) gate.scrollIntoView({ behavior: 'smooth' });
+        }, 600);
+      } else {
+        errEl.style.color = '#c94a30';
+        errEl.textContent = '码不对，找微信 hepan2026 确认';
+        input.value = '';
+        input.focus();
+      }
+    }
+    // Allow Enter key to submit code
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && document.getElementById('modal').classList.contains('show')) verifyUnlockCode();
+    });
 
     // ====== SHARE COPY ======
     async function copyShareText() {
