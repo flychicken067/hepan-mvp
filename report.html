@@ -2318,11 +2318,25 @@
 
     // ====== DAILY ROTATING UNLOCK CODE ======
     // Formula: (YYYYMMDD × 7919 + 314159) % 900000 + 100000
-    // Ivan computes today's code with: Math.floor((new Date().toISOString().slice(0,10).replace(/-/g,'') * 7919 + 314159) % 900000 + 100000)
+    // YMD is pinned to BEIJING TIME (Asia/Shanghai) regardless of viewer's timezone,
+    // so Ivan's manual computation and user's input match anywhere in the world.
+    // Ivan computes today's code (locally on his phone in CN): take YYYYMMDD as Beijing-time date,
+    //   const ymd = parseInt(new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()).replace(/-/g,''),10);
+    //   const code = String((ymd * 7919 + 314159) % 900000 + 100000);
     function getTodayCode() {
-      const d = new Date();
-      const ymd = parseInt(d.getUTCFullYear() + String(d.getUTCMonth()+1).padStart(2,'0') + String(d.getUTCDate()).padStart(2,'0'), 10);
-      return String((ymd * 7919 + 314159) % 900000 + 100000);
+      try {
+        const fmt = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Shanghai',
+          year: 'numeric', month: '2-digit', day: '2-digit',
+        });
+        const ymd = parseInt(fmt.format(new Date()).replace(/-/g, ''), 10);
+        return String((ymd * 7919 + 314159) % 900000 + 100000);
+      } catch (e) {
+        // Fallback to local time if Intl.DateTimeFormat unavailable
+        const d = new Date();
+        const ymd = parseInt(d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0'), 10);
+        return String((ymd * 7919 + 314159) % 900000 + 100000);
+      }
     }
     function verifyUnlockCode() {
       const input = document.getElementById('unlockCodeInput');
